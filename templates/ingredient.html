@@ -1,0 +1,32 @@
+﻿<html>
+<body>
+	<h1>{{ ingredient.name }}</h1>
+	<strong>{% if ingredient.category != None %}
+			<a href="ingredientCategory?ingredientCategoryKey={{ ingredient.category.key() }}">{{ ingredient.category.name }}</a>
+	{% else %}Nincs kategória{% endif %}</strong>
+	<form method="post">
+		<select name="ingredientCategoryKey">
+			<option value="">-- törlés a kategóriából --</option>
+			{% for availableCategory in availableCategories %}
+				<option value="{{ availableCategory.key() }}"
+					{% if ((ingredient.category != None) and (availableCategory.key()==ingredient.category.key())) %}
+						selected="true"
+					{% endif %}
+
+				>{{ availableCategory.name }}</option>
+			{% endfor %}
+
+		</select>
+		<input type="hidden" name="ingredientKey" value="{{ ingredient.key() }}"/>
+		<table>
+			<th><td colspan="2">100g-ban</td></th>
+			<tr><td>Energia</td><td><input type="text" name="energy" value="{{ ingredient.energy }}"/> kCal</td></tr>
+			<tr><td>Szénhidrát</td><td><input type="text" name="carbs" value="{{ ingredient.carbs }}"/> g</td></tr>
+			<tr><td>Fehérje</td><td><input type="text" name="protein" value="{{ ingredient.protein }}"/> g</td></tr>
+			<tr><td>Zsír</td><td><input type="text" name="fat" value="{{ ingredient.fat }}"/> g</td></tr>
+			<tr><td>Rost</td><td><input type="text" name="fiber" value="{{ ingredient.fiber }}"/> g</td></tr>
+			<tr><td colspan="2" align="right"><input type="submit" name="Mentés"/></td></tr>
+		</table>
+	</form>	
+	</body>
+</html>

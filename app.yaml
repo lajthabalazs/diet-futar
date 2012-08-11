@@ -1,0 +1,15 @@
+application: diet-futar
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: no
+
+handlers:
+- url: .*
+  script: dish.app
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+- name: jinja2
+  version: latest
