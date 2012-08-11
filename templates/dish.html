@@ -1,20 +1,32 @@
-﻿<html>
-  <body>
-    <h2>{{ dish.title }}</h2>
+﻿	<h2>{{ dish.title }}</h2>
 	<h3>{{ dish.subTitle }}</h3>
 	<p>{{ dish.description }}</p>
 	<form method="post">
 		<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
 		<input type="text" name="title" value="{{ dish.title }}"/><br/>
 		<input type="text" name="subTitle" value="{{ dish.subTitle }}"/><br/>
-		<textarea name="description" cols="40" lines="3">{{ dish.description }}</textarea><br/>
+		<textarea name="description" cols="40">{{ dish.description }}</textarea><br/>
 		<td><input type="submit" value ="Mentés"/></td>
 	</form>
+	
+		<!-- Add a new ingredient -->
+	<form action="{{ add_url }}" method="post">
+		<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
+		<select name = "ingredientKey">
+		{% for ingredient in availableIngredients %}
+			<option value="{{ ingredient.key() }}">{{ ingredient.name }}</option>
+		{% endfor %}
+		</select>
+		<input type="text" name="quantity" cols="5"/> g
+		<input type="submit" value="Hozzáadás">
+	</form>
+	<a href="/ingredient">Új alapanyag felvitele</a>
+
 	<!-- List of ingredients -->
-    <h3>Hozzávalók</h3>
+	<h3>Hozzávalók</h3>
 
 	<table>
-    {% for ingredient in dish.ingredients %}
+	{% for ingredient in dish.ingredients %}
 	<tr>
 	<form action="{{ add_url }}" method="post">
 		<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
@@ -33,19 +45,5 @@
 	<tr><td>Energia</td><td>{% print dish.energy %} kcal</td></tr>
 	</table>
 	
-	<!-- Add a new ingredient -->
-	<form action="{{ add_url }}" method="post">
-		<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
-		<select name = "ingredientKey">
-		{% for ingredient in availableIngredients %}
-			<option value="{{ ingredient.key() }}">{{ ingredient.name }}</option>
-		{% endfor %}
-		</select>
-		<input type="text" name="quantity" cols="5"/> g
-		<input type="submit" value="Hozzáadás">
-	</form>
-	<a href="/ingredient">Új alapanyag felvitele</a>
-  </body>
-</html>
-  </body>
+	</body>
 </html>

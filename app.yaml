@@ -1,12 +1,12 @@
 application: diet-futar
-version: 1
+version: 3
 runtime: python27
 api_version: 1
 threadsafe: no
 
 handlers:
 - url: .*
-  script: dish.app
+  script: switch.app
 
 libraries:
 - name: webapp2

@@ -1,0 +1,33 @@
+'''
+Created on Aug 11, 2012
+
+@author: lajthabalazs
+'''
+from google.appengine.ext import db
+class Dish(db.Model):
+	title = db.StringProperty()
+	subTitle = db.StringProperty()
+	description = db.StringProperty(multiline=True)
+
+class IngredientCategory(db.Model):
+	name = db.StringProperty()
+
+class Ingredient(db.Model):
+	name = db.StringProperty()
+	category = db.ReferenceProperty(IngredientCategory, collection_name='ingredients')
+	energy = db.FloatProperty(default=0.0)
+	carbs = db.FloatProperty(default=0.0)
+	protein = db.FloatProperty(default=0.0)
+	fat = db.FloatProperty(default=0.0)
+	fiber = db.FloatProperty(default=0.0)
+
+class IngredientListItem(db.Model):
+	ingredient = db.ReferenceProperty(Ingredient, collection_name='dishes')
+	dish = db.ReferenceProperty(Dish, collection_name='ingredients')
+	#ingredient type
+	quantity = db.FloatProperty()
+	
+class Wish(db.Model):
+	title = db.StringProperty()
+	description=db.StringProperty(multiline=True)
+	ready=db.BooleanProperty()

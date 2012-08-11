@@ -1,6 +1,4 @@
-﻿<html>
-<body>
-	<h1>{{ ingredient.name }}</h1>
+﻿	<h1>{{ ingredient.name }}</h1>
 	<strong>{% if ingredient.category != None %}
 			<a href="ingredientCategory?ingredientCategoryKey={{ ingredient.category.key() }}">{{ ingredient.category.name }}</a>
 	{% else %}Nincs kategória{% endif %}</strong>
