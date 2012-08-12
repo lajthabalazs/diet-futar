@@ -4,6 +4,15 @@ Created on Aug 11, 2012
 @author: lajthabalazs
 '''
 from google.appengine.ext import db
+
+class Role (db.Model):
+	name = db.StringProperty()
+
+class User(db.Model):
+	userName = db.StringProperty()
+	password = db.StringProperty()
+	role = db.ReferenceProperty(Role, collection_name='users')
+
 class Dish(db.Model):
 	title = db.StringProperty()
 	subTitle = db.StringProperty()

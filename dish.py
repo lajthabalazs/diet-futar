@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-import webapp2
 import jinja2
 import os
 
 from google.appengine.ext import db
 from model import Dish, Ingredient, IngredientListItem
-from ingredient import CategoryIngredientDeletePage, IngredientDeletePage,IngredientAddPage, IngredientPage, IngredientCategoryPage,\
-	IngredientCategoryDeletePage
+
 from base_handler import BaseHandler
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
