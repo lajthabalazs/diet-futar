@@ -5,6 +5,7 @@ Created on Aug 11, 2012
 '''
 from google.appengine.ext import db
 
+ROLE_ADMIN="admin"
 class Role (db.Model):
 	name = db.StringProperty()
 

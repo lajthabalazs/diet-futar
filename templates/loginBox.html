@@ -1,8 +1,19 @@
 ﻿<div>
 	{% if user %}
-		<a href="">Kilépés</a>
+		<a href="/logout">Kilépés</a>
 	{% else %}
-		Belépés<br/>
-		Regisztráció
+		<form action="/login" method="post">
+			<table>
+				<tr><td>Felhasználónév</td><td><input type="text" name="userName"/></td></tr>
+				<tr><td>Jelszó</td><td><input type="password" name="password"/></td></tr>
+				{% if (login_error) %}
+				<tr><td colspan="2"><span style="color: 'RED'">{{ login_error }}</span></td></tr>
+				{% else %}
+				<tr><td colspan="2"><br/></td></tr>
+				{% endif %}
+				<tr><td colspan="2" align="right"><input type="submit" value="Belépés"/></td></tr>
+			</table>
+		</form>	
+		<a href="registration">Regisztráció</a>
 	{% endif %}
 </div>
