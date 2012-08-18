@@ -1,14 +1,12 @@
-﻿	<h1>Regisztráció</h1>
-	<form method="post">
-		<table>
-			<tr><td>Felhasználónév</td><td><input type="text" name="userName"/></td></tr>
-			<tr><td>Jelszó</td><td><input type="password" name="password"/></td></tr>
-			<tr><td>Jelszó mégegyszer</td><td><input type="password" name="passwordCheck"/></td></tr>
-			{% if (registration_error) %}
-			<tr><td colspan="2"><span style="color: 'RED'">{{ registration_error }}</span></td></tr>
-			{% endif %}
-			<tr><td colspan="2" align="right"><input type="submit" name="Belépés"/></td></tr>
-		</table>
-	</form>	
-	</body>
-</html>
+﻿<h1>Regisztráció</h1>
+<form method="post">
+	<table>
+		<tr><td>Felhasználónév</td><td><input type="text" name="userName"/></td></tr>
+		<tr><td>Jelszó</td><td><input type="password" name="password"/></td></tr>
+		<tr><td>Jelszó mégegyszer</td><td><input type="password" name="passwordCheck"/></td></tr>
+		{% if (registration_error) %}
+		<tr><td colspan="2"><span style="color: 'RED'">{{ registration_error }}</span></td></tr>
+		{% endif %}
+		<tr><td colspan="2" align="right"><input type="submit" name="Belépés"/></td></tr>
+	</table>
+</form>	

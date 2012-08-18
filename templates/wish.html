@@ -1,10 +1,8 @@
-﻿	<h2>{{ wish.title }}</h2>
-	<p>{{ wish.description }}</p>
-	<form method="post">
-		<input type="hidden" name="wishKey" value="{{ wish.key() }}"/>
-		<input type="text" name="title" value="{{ wish.title }}"/><br/>
-		<textarea name="description" cols="40">{{ wish.description }}</textarea><br/>
-		<td><input type="submit" value ="Mentés"/></td>
-	</form>
-	</body>
-</html>
+﻿<h2>{{ wish.title }}</h2>
+<p>{{ wish.description }}</p>
+<form method="post">
+	<input type="hidden" name="wishKey" value="{{ wish.key() }}"/>
+	<input type="text" name="title" value="{{ wish.title }}"/><br/>
+	<textarea name="description" cols="40">{{ wish.description }}</textarea><br/>
+	<td><input type="submit" value ="Mentés"/></td>
+</form>

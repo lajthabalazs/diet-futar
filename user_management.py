@@ -11,12 +11,12 @@ from model import User, Role, ROLE_ADMIN
 USER_KEY="dietUserKey"
 
 LOGIN_ERROR_KEY="login_error"
-LOGIN_ERROR_UNKNOWN_USER="Ismeretlen felhas"
+LOGIN_ERROR_UNKNOWN_USER="Ismeretlen felhasznalo"
 LOGIN_ERROR_WRONG_PASSWORD="Hiba jelsz"
-
-REGISTRATION_ERROR_EXISTING_USER="Letezo df"
-REGISTRATION_ERROR_WEAK_PASSWORD=2
-REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH=3
+REGISTRATION_ERROR_KEY="registration_error"
+REGISTRATION_ERROR_EXISTING_USER="Letezo felhasznalo"
+REGISTRATION_ERROR_WEAK_PASSWORD="Gyenge jelszo"
+REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH="Ket jelszo nem egyezik"
 LOGIN_NEXT_PAGE_KEY="next_page"
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -47,6 +47,13 @@ def clearLoginError(handler):
 	if (LOGIN_ERROR_KEY in handler.session):
 		loginError=handler.session[LOGIN_ERROR_KEY]
 		del handler.session[LOGIN_ERROR_KEY]
+	return loginError
+
+def clearRegistrationError(handler):
+	loginError=None
+	if (REGISTRATION_ERROR_KEY in handler.session):
+		loginError=handler.session[REGISTRATION_ERROR_KEY]
+		del handler.session[REGISTRATION_ERROR_KEY]
 	return loginError
 
 '''

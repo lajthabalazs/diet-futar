@@ -1,0 +1,51 @@
+body {
+	padding-left: 20em;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	color: purple;
+	background-color: #d8da3d
+}
+	
+div#login_box {
+	background-color: #eeeeff;
+	padding: 1em;
+	margin: 10px;
+	position: absolute;
+	top:0em;
+	width:17em;
+	left:0em;
+}
+
+div#menu_bar {
+	float:left;
+	padding:1em;
+	background-color: #000000
+}
+
+div#content {
+	float: none
+}
+
+h1 {
+	font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif;
+	margin-top: 0px;
+}
+
+div#menu_bar a {
+	background: white;
+	margin: 0.5em 0;
+	padding: 0.3em;
+	border-left: 1em solid #ff5555
+}
+
+div#menu_bar a {
+	text-decoration: none
+}
+
+a:active {
+	color: blue }
+a:visited {
+	color: purple }
+address {
+	margin-top: 1em;
+	padding-top: 1em;
+	border-top: thin dotted }

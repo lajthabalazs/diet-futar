@@ -1,5 +1,9 @@
-﻿<div>
+﻿<div id="login_box">
 	{% if user %}
+		Belépve<br/>
+		{{ user.userName }}<br/>
+		
+		<a href="/orders">Korábbi rendelések</a><br/>
 		<a href="/logout">Kilépés</a>
 	{% else %}
 		<form action="/login" method="post">

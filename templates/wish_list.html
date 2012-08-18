@@ -1,19 +1,17 @@
-﻿	<table>
-	<form method="post">
-		<tr><td>Cím</td><td><input type="text" name="title" cols="60"/></td></tr>
-		<tr><td>Leírás</td><td><textarea name="description" cols="60"></textarea></td></tr>
-		<tr><td colspan="2" align="right"><input type="submit" value="Kívánom"></td></tr>
-	</form>
-	</table>
-	<table width="400px">
-	{% for wish in wishes %}
-		<tr><td><a href="?wishKey={{ wish.key() }}">{{ wish.title }}</a></td>
-		<td align="right"><form action="deleteWish" method="post">
-			<input type="hidden" name="wishKey" value="{{ wish.key() }}"/>
-			<input type="submit" value="Kérés törlése">
-		</form></td></tr>
-		<tr><td colspan="3">{{ wish.description }}</td></tr>
-	{% endfor %}
-	</table>
-	</body>
-</html>
+﻿<table>
+<form method="post">
+	<tr><td>Cím</td><td><input type="text" name="title" cols="60"/></td></tr>
+	<tr><td>Leírás</td><td><textarea name="description" cols="60"></textarea></td></tr>
+	<tr><td colspan="2" align="right"><input type="submit" value="Kívánom"></td></tr>
+</form>
+</table>
+<table width="400px">
+{% for wish in wishes %}
+	<tr><td><a href="?wishKey={{ wish.key() }}">{{ wish.title }}</a></td>
+	<td align="right"><form action="deleteWish" method="post">
+		<input type="hidden" name="wishKey" value="{{ wish.key() }}"/>
+		<input type="submit" value="Kérés törlése">
+	</form></td></tr>
+	<tr><td colspan="3">{{ wish.description }}</td></tr>
+{% endfor %}
+</table>

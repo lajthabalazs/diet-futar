@@ -28,15 +28,46 @@ class BaseHandler(webapp2.RequestHandler):
 			"pageTitle":title
 		}
 		ret=jinja_environment.get_template('templates/header.html').render(template_params)
+		#Set menu items
+		menuItems=[]
+		weeklyMenu={}
+		weeklyMenu["label"]="Heti ajanlat"
+		weeklyMenu["target"]="/weekly"
+		menuItems.append(weeklyMenu)
+		if (isUserLoggedIn(self)):
+			profile={}
+			profile["label"]="Szemelyes adatok"
+			profile["target"]="/profile"
+			menuItems.append(profile)
+		if (isUserAdmin(self)):
+			ingredients={}
+			ingredients["label"]="Alapanyagok"
+			ingredients["target"]="/ingredient"
+			menuItems.append(ingredients)
+			categories={}
+			categories["label"]="Ketegoriak"
+			categories["target"]="/ingredientCategory"
+			menuItems.append(categories)
+			recepies={}
+			recepies["label"]="Receptek"
+			recepies["target"]="/dish"
+			menuItems.append(recepies)
+		about={}
+		about["label"]="Rolunk"
+		about["target"]="/about"
+		menuItems.append(about)
 		template_params={
-			"pageTitle":title
+			"pageTitle":title,
+			"menuItems":menuItems
 		}
 		ret=ret+jinja_environment.get_template('templates/menu.html').render(template_params)
 		ret=ret+getUserBox(self)
+		ret=ret+"<div id='content'>"
 		if(forAnonymus or (forLoggedIn and isUserLoggedIn(self)) or isUserAdmin(self)):
 			ret=ret+content
 		else:
 			ret=ret + "A tartalom nem jelenitheto meg"
+		ret=ret+"</div>"
 		ret=ret+jinja_environment.get_template('templates/footer.html').render()
 		self.response.out.write(ret);
 	@webapp2.cached_property

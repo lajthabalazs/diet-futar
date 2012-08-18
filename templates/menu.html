@@ -1,1 +1,5 @@
-﻿<a href="/ingredient">Alapanyagok</a> <a href="/ingredientCategory">Kategóriák</a> <a href="/dish">Receptek</a> <a href="/wish">Kívánságok</a>
+﻿<div id="menu_bar">
+	{% for menuItem in menuItems %}
+	<a href="{{ menuItem.target }}">{{ menuItem.label }}</a>
+	{% endfor %}
+</div>
