@@ -5,6 +5,7 @@ Created on Aug 11, 2012
 '''
 import webapp2
 from webapp2_extras import sessions
+
 class BaseHandler(webapp2.RequestHandler):
 	def dispatch(self):
 		# Get a session store for this request.

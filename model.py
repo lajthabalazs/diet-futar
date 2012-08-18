@@ -29,6 +29,7 @@ class Ingredient(db.Model):
 	protein = db.FloatProperty(default=0.0)
 	fat = db.FloatProperty(default=0.0)
 	fiber = db.FloatProperty(default=0.0)
+	glucozeFree = db.BooleanProperty(default=False)
 
 class IngredientListItem(db.Model):
 	ingredient = db.ReferenceProperty(Ingredient, collection_name='dishes')

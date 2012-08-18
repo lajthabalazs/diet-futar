@@ -7,12 +7,18 @@ from google.appengine.ext import db
 from model import Dish, Ingredient, IngredientListItem
 
 from base_handler import BaseHandler
+from user_management import getUserBox
+#from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class MainPage(BaseHandler):
 	def get(self):
-		self.response.out.write('<html><body>' + jinja_environment.get_template('templates/header.html').render() + '</body></html>');
+		ret='<html><body>'
+		ret=ret+jinja_environment.get_template('templates/header.html').render()
+		ret=ret+getUserBox(self)
+		ret=ret+'</body></html>'
+		self.response.out.write(ret);
 		
 class DeleteDishPage(BaseHandler):
 	def post(self):

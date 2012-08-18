@@ -11,7 +11,7 @@ from ingredient import CategoryIngredientDeletePage, IngredientDeletePage,\
 from dish import MainPage, DishPage, DeleteDishPage, DishIngredientAddPage,\
 	DishIngredientDeletePage
 from wish import WishPage, DeleteWishPage
-from user_forms import Login
+from user_forms import LoginPage, RegisterPage, LogoutPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -19,7 +19,9 @@ config = {}
 config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key',
 												}
 app = webapp2.WSGIApplication([('/', MainPage),
-										('/login', Login),
+										('/login', LoginPage),
+										('/logout', LogoutPage),
+										('/register', RegisterPage),
 										('/dish', DishPage),
 										('/wish', WishPage),
 										('/deleteDish', DeleteDishPage),
