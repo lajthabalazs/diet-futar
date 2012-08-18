@@ -9,6 +9,8 @@ from user_management import getUserBox, isUserLoggedIn, isUserAdmin
 import jinja2
 import os
 
+PAGE_TITLE="Diet futar"
+
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class BaseHandler(webapp2.RequestHandler):

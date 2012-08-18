@@ -12,7 +12,7 @@ from google.appengine.ext import db
 from base_handler import BaseHandler
 from model import User
 from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
-	REGISTRATION_ERROR_KEY, REGISTRATION_ERROR_EXISTING_USER,\
+	REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
 	LOGIN_ERROR_WRONG_PASSWORD
 
@@ -59,7 +59,6 @@ class LoginPage(BaseHandler):
 			self.session[USER_KEY]=str(users[0].key())
 			self.redirect(clearNextPage(self))
 
-
 class LogoutPage(BaseHandler):
 	def get(self):
 		if (USER_KEY in self.session):
@@ -69,6 +68,7 @@ class LogoutPage(BaseHandler):
 class RegisterPage(BaseHandler):
 	def get(self):
 		template = jinja_environment.get_template('templates/register.html')
+		
 		self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render())
 	def post(self):
 		userName = self.request.get('userName')
@@ -76,11 +76,11 @@ class RegisterPage(BaseHandler):
 		passwordCheck = self.request.get('passwordCheck')
 		users = User.gql('WHERE userName = :1', userName)
 		if (users.count(1)>0):
-			self.session[REGISTRATION_ERROR_KEY]=REGISTRATION_ERROR_EXISTING_USER
-			self.redirect('/register')
+			self.session[LOGIN_ERROR_KEY]=REGISTRATION_ERROR_EXISTING_USER
+			self.redirect('/registration')
 		elif (passwordCheck != password):
-			self.session[REGISTRATION_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
-			self.redirect('/register')
+			self.session[LOGIN_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
+			self.redirect('/registration')
 		else:
 			#Everything went ok, create the user and log him in
 			user = User()

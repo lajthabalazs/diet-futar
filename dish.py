@@ -6,15 +6,11 @@ import os
 from google.appengine.ext import db
 from model import Dish, Ingredient, IngredientListItem
 
-from base_handler import BaseHandler
+from base_handler import BaseHandler, PAGE_TITLE
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
-class MainPage(BaseHandler):
-	def get(self):
-		self.printPage("Kezdooldal", "Hello!", True)
-		
 class DeleteDishPage(BaseHandler):
 	def post(self):
 		dish = db.get(self.request.get('dishKey'))
@@ -41,7 +37,7 @@ class DishPage(BaseHandler):
 	def get(self):
 		if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
 		# A single dish with editable ingredient list
-			dish = db.get(self.request.get('dishKey'))
+			dish = Dish(db.get(self.request.get('dishKey')))
 			ingredients = dish.ingredients
 			dish.energy = 0
 			for ingredient in ingredients:
@@ -54,7 +50,7 @@ class DishPage(BaseHandler):
 				'delete_url':"/deleteIngredientFromDish"
 			}
 			template = jinja_environment.get_template('templates/dish.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
+			self.printPage(PAGE_TITLE + " - " + dish.title, template.render(template_values), False, False)
 		else:
 		# All the dishes
 			dishes = Dish.gql("ORDER BY title")
@@ -62,7 +58,7 @@ class DishPage(BaseHandler):
 			  'dishes': dishes,
 			}
 			template = jinja_environment.get_template('templates/dish_list.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
+			self.printPage(PAGE_TITLE + " - Receptek", template.render(template_values), False, False)
 
 class DishIngredientDeletePage(BaseHandler):
 	def post(self):

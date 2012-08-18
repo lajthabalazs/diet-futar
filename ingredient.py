@@ -2,7 +2,7 @@ from google.appengine.ext import db
 from model import Ingredient, IngredientCategory
 import jinja2
 import os
-from base_handler import BaseHandler
+from base_handler import BaseHandler, PAGE_TITLE
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -43,7 +43,7 @@ class IngredientPage(BaseHandler):
 				'availableCategories':availableCategories
 			}
 			template = jinja_environment.get_template('templates/ingredient.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
+			self.printPage(PAGE_TITLE + " - " + ingredient.name, template.render(template_values), False, False)
 		else:
 			ingredients = Ingredient.gql("ORDER BY name")
 			template_values = {
@@ -51,7 +51,7 @@ class IngredientPage(BaseHandler):
 				'delete_url':"/deleteIngredient"
 			}
 			template = jinja_environment.get_template('templates/ingredient_list.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
+			self.printPage(PAGE_TITLE + " - Alapanyagok", template.render(template_values), False, False)
 
 class CategoryIngredientDeletePage(BaseHandler):
 	def post(self):
@@ -95,7 +95,7 @@ class IngredientCategoryPage(BaseHandler):
 				'delete_url':"/deleteIngredientFromCategory"
 			}
 			template = jinja_environment.get_template('templates/ingredient_category.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
+			self.printPage(PAGE_TITLE + " - " + ingredientCategory.name, template.render(template_values), False, False)
 		else:
 		# All categories
 			ingredientCategories = IngredientCategory.gql("ORDER BY name")
@@ -104,7 +104,7 @@ class IngredientCategoryPage(BaseHandler):
 				'delete_url':"/deleteIngredientCategory"
 			}
 			template = jinja_environment.get_template('templates/ingredient_category_list.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
+			self.printPage(PAGE_TITLE + " - Alapanyag kategoriak", template.render(template_values), False, False)
 
 class IngredientCategoryDeletePage(BaseHandler):
 	def post(self):
