@@ -35,9 +35,15 @@ class Ingredient(db.Model):
 class IngredientListItem(db.Model):
 	ingredient = db.ReferenceProperty(Ingredient, collection_name='dishes')
 	dish = db.ReferenceProperty(Dish, collection_name='ingredients')
-	#ingredient type
 	quantity = db.FloatProperty()
 	
+class MenuItem(db.Model):
+	dish = db.ReferenceProperty(Dish, collection_name='menu_occurrences')
+	#Day when dish is served
+	day = db.DateProperty()
+	#Type of the dish
+	type = db.StringProperty()
+
 class Wish(db.Model):
 	title = db.StringProperty()
 	description=db.StringProperty(multiline=True)

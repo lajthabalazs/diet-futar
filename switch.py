@@ -13,6 +13,7 @@ from dish import DishPage, DeleteDishPage, DishIngredientAddPage,\
 from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage
 from main import MainPage
+from menu import DayMenuPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -25,6 +26,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/registration', RegisterPage),
 										('/dish', DishPage),
 										('/wish', WishPage),
+										('/weekly', DayMenuPage),
 										('/deleteDish', DeleteDishPage),
 										('/deleteWish', DeleteWishPage),
 										('/addIngredientToDish', DishIngredientAddPage),
