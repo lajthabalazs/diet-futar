@@ -7,37 +7,44 @@ from google.appengine.ext import db
 from model import Dish, Ingredient, IngredientListItem
 
 from base_handler import BaseHandler, PAGE_TITLE
+from user_management import isUserAdmin
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class DeleteDishPage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin):
+			self.redirect("/dish")	
 		dish = db.get(self.request.get('dishKey'))
 		dish.delete()
 		self.redirect('/dish')
 	
 class DishPage(BaseHandler):
 	def post(self):
-		if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
-		#Modification of basic data
-			dish = db.get(self.request.get('dishKey'))
-			dish.title = self.request.get('title')
-			dish.subTitle = self.request.get('subTitle')
-			dish.description = self.request.get('description')
-			dish.put()
-			self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
+		if(not isUserAdmin):
+			self.redirect("/dish")	
 		else:
-			dish = Dish()
-			dish.title = self.request.get('title')
-			dish.subTitle = self.request.get('subTitle')
-			dish.description = self.request.get('description')
-			dish.put()
-			self.redirect('/dish?dishKey=%s' % dish.key())
+			if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
+			#Modification of basic data
+				dish = db.get(self.request.get('dishKey'))
+				dish.title = self.request.get('title')
+				dish.subTitle = self.request.get('subTitle')
+				dish.description = self.request.get('description')
+				dish.put()
+				self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
+			else:
+				dish = Dish()
+				dish.title = self.request.get('title')
+				dish.subTitle = self.request.get('subTitle')
+				dish.description = self.request.get('description')
+				dish.put()
+				self.redirect('/dish?dishKey=%s' % dish.key())
 	def get(self):
-		if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
+		dishKey=self.request.get('dishKey')
+		if ((dishKey != None) and (dishKey != "")):
 		# A single dish with editable ingredient list
-			dish = Dish(db.get(self.request.get('dishKey')))
+			dish=db.get(dishKey)
 			ingredients = dish.ingredients
 			dish.energy = 0
 			for ingredient in ingredients:
@@ -62,6 +69,8 @@ class DishPage(BaseHandler):
 
 class DishIngredientDeletePage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin):
+			self.redirect("/dish")	
 		# Retrieve the dish
 		dish = db.get(self.request.get('dishKey'))
 		ingredientToDish = db.get(self.request.get('dishIngredientKey'))
@@ -70,6 +79,8 @@ class DishIngredientDeletePage(BaseHandler):
 
 class DishIngredientAddPage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin):
+			self.redirect("/dish")	
 		# Retrieve the dish
 		dish = db.get(self.request.get('dishKey'))
 		if ((self.request.get('dishIngredientKey') != None) and (self.request.get('dishIngredientKey') != "")):

@@ -30,16 +30,20 @@ class BaseHandler(webapp2.RequestHandler):
 		ret=jinja_environment.get_template('templates/header.html').render(template_params)
 		#Set menu items
 		menuItems=[]
-		weeklyMenu={}
-		weeklyMenu["label"]="Heti ajanlat"
-		weeklyMenu["target"]="/weekly"
-		menuItems.append(weeklyMenu)
+		weeklyOrderMenu={}
+		weeklyOrderMenu["label"]="Heti ajanlat"
+		weeklyOrderMenu["target"]="/order"
+		menuItems.append(weeklyOrderMenu)
 		if (isUserLoggedIn(self)):
 			profile={}
 			profile["label"]="Szemelyes adatok"
 			profile["target"]="/profile"
 			menuItems.append(profile)
 		if (isUserAdmin(self)):
+			weeklyMenu={}
+			weeklyMenu["label"]="Menu osszeallitas"
+			weeklyMenu["target"]="/menuEdit"
+			menuItems.append(weeklyMenu)
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"
@@ -62,7 +66,7 @@ class BaseHandler(webapp2.RequestHandler):
 		}
 		ret=ret+jinja_environment.get_template('templates/menu.html').render(template_params)
 		ret=ret+getUserBox(self)
-		ret=ret+"<div id='content'>"
+		ret=ret+"<span class='clear'></span><div id='content'>"
 		if(forAnonymus or (forLoggedIn and isUserLoggedIn(self)) or isUserAdmin(self)):
 			ret=ret+content
 		else:

@@ -2,9 +2,11 @@ body {
 	padding-left: 20em;
 	font-family: Georgia, "Times New Roman", Times, serif;
 	color: purple;
-	background-color: #d8da3d
+	background-color: #d8da3d;
 }
-	
+
+span.clear { clear: left; display: block; }
+
 div#login_box {
 	background-color: #eeeeff;
 	padding: 1em;
@@ -18,11 +20,16 @@ div#login_box {
 div#menu_bar {
 	float:left;
 	padding:1em;
-	background-color: #000000
+	background-color: #000000;
+}
+
+div.menuEditorDay {
+	float:left;
 }
 
 div#content {
-	float: none
+	float: none;
+	overflow: hidden;
 }
 
 h1 {

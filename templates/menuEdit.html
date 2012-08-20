@@ -1,0 +1,26 @@
+﻿<p><a href="/menuEdit?day={{ prev }}">Előző hét</a> <p><a href="/menuEdit?day={{ actual }}">Aktuális hét</a> <a href="/menuEdit?day={{ next }}">Következő hét</a></p>
+{% for day in days %}
+<div class="menuEditorDay">
+	<h2>{{ day.day }}</h2>
+	<span>{{ day.date }}</span>
+	<table>
+		{% for menuItem in day.menuItems %}
+		<tr><td> {{ menuItem.dish.title }} </td>
+			<td><form action="/deleteMenuItem" method="post">
+				<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+				<input type="submit" value="Törlés"/>
+			</form></td>
+		</tr>
+		{% endfor %}
+	</table>
+	<form method="post">
+		<input type="hidden" name="formDay" value="{{ day.date }}"/>
+		<select name="dishKey">
+			{% for dish in availableDishes %}
+			<option value="{{dish.key()}}">{{ dish.title }}</option>
+			{% endfor %}
+		</select>
+		<input type="submit" value="Hozzáadás"/>
+	</form>
+</div>
+{% endfor %}

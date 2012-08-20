@@ -8,24 +8,31 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 class IngredientPage(BaseHandler):
 	def post(self):
-	#Check if ingredient exists
-		if ((self.request.get('ingredientKey') != None) and (self.request.get('ingredientKey') != "")):
+		#Check if ingredient exists
+		ingredientKey=self.request.get('ingredientKey')
+		if ((ingredientKey != None) and (ingredientKey != "")):
 			#Ingredient must exist
-			ingredient = db.get(self.request.get('ingredientKey'))
-			if ((self.request.get('ingredientCategoryKey') != None) and (self.request.get('ingredientCategoryKey') != "")):
-				category = db.get(self.request.get('ingredientCategoryKey'))
+			ingredient = db.get(ingredientKey)
+			ingredientCategoryKey=self.request.get('ingredientCategoryKey')
+			if ((ingredientCategoryKey != None) and (ingredientCategoryKey != "")):
+				category = db.get(ingredientCategoryKey)
 				ingredient.category = category
 			else:
 				ingredient.category = None
-			if ((self.request.get('energy') != None) and (self.request.get('energy') != "")):
-				ingredient.energy = float(self.request.get('energy'))
-			if ((self.request.get('protein') != None) and (self.request.get('protein') != "")):
-				ingredient.protein = float(self.request.get('protein'))
-			if ((self.request.get('carbs') != None) and (self.request.get('carbs') != "")):
-				ingredient.carbs = float(self.request.get('carbs'))
-			if ((self.request.get('fat') != None) and (self.request.get('fat') != "")):
-				ingredient.fat = float(self.request.get('fat'))
-			if ((self.request.get('fiber') != None) and (self.request.get('fiber') != "")):
+				energy=self.request.get('energy')
+				protein=self.request.get('protein')
+				carbs=self.request.get('carbs')
+				fat=self.request.get('fat')
+				fiber=self.request.get('fiber')
+			if ((energy != None) and (energy != "")):
+				ingredient.energy = float(energy)
+			if ((protein != None) and (protein != "")):
+				ingredient.protein = float(protein)
+			if ((carbs != None) and (carbs != "")):
+				ingredient.carbs = float(carbs)
+			if ((fat != None) and (fat != "")):
+				ingredient.fat = float(fat)
+			if ((fiber != None) and (fiber != "")):
 				ingredient.fiber = float(self.request.get('fiber'))
 			ingredient.put()
 			self.redirect('/ingredient?ingredientKey=%s' % ingredient.key())
@@ -35,8 +42,9 @@ class IngredientPage(BaseHandler):
 			ingredient.put()
 			self.redirect('/ingredient')
 	def get(self):
-		if ((self.request.get('ingredientKey') != None) and (self.request.get('ingredientKey') != "")):
-			ingredient = db.get(self.request.get('ingredientKey'))
+		ingredientKey=self.request.get('ingredientKey')
+		if ((ingredientKey != None) and (ingredientKey != "")):
+			ingredient = db.get(ingredientKey)
 			availableCategories = IngredientCategory.gql("ORDER BY name")
 			template_values = {
 				'ingredient': ingredient,
