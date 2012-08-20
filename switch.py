@@ -14,6 +14,7 @@ from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage
 from main import MainPage
 from menu import MenuEditPage, MenuDeleteDishPage
+from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -28,6 +29,9 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/wish', WishPage),
 										('/menuEdit', MenuEditPage),
 										('/deleteMenuItem', MenuDeleteDishPage),
+										('/order', MenuOrderPage),
+										('/pendingOrder', ReviewPendingOrderPage),
+										('/clearOrder', ClearOrderPage),
 										('/deleteDish', DeleteDishPage),
 										('/deleteWish', DeleteWishPage),
 										('/addIngredientToDish', DishIngredientAddPage),

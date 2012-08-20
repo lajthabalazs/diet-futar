@@ -1,0 +1,17 @@
+﻿	<h1>Kosár</h1>
+	{% for day in days %}
+		<h3>{{ day.date }}({{ day.name }})</h3><br />
+		<table>
+		{% for menuItem in day.menuItems%}
+			<tr>
+				<td>{{menuItem.dish.title}}</td>
+				<td>
+					<form action="deleteOrderItem" method="post">
+						<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}" />
+						<input type="submit" value="Törlés" />
+					</form>
+				</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% endfor %}

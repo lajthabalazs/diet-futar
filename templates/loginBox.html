@@ -3,6 +3,7 @@
 		Belépve<br/>
 		{{ user.userName }}<br/>
 		
+		<a href="pendingOrder">Kosár</a><br/>
 		<a href="/orders">Korábbi rendelések</a><br/>
 		<a href="/logout">Kilépés</a>
 	{% else %}
@@ -18,6 +19,7 @@
 				<tr><td colspan="2" align="right"><input type="submit" value="Belépés"/></td></tr>
 			</table>
 		</form>	
+		<a href="pendingOrder">Kosár</a><br/>
 		<a href="registration">Regisztráció</a>
 	{% endif %}
 </div>

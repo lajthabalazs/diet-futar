@@ -1,0 +1,33 @@
+﻿<p><a href="/order?day={{ prev }}">Előző hét</a> <p><a href="/order?day={{ actual }}">Aktuális hét</a> <a href="/order?day={{ next }}">Következő hét</a></p>
+<form action="/clearOrder" method="post">
+	<input type="hidden" name="formDay" value="{{ days[0].date }}"/>
+	<input type="submit" value="Kosár üritése" />
+</form>
+<form method="post">
+<input type="hidden" name="formDay" value="{{ days[0].date }}"/>
+<input type="submit" value="Kosárba" />
+{% for day in days %}
+<div class="menuOrderDay">
+	<h2>{{ day.day }}</h2>
+	<span>{{ day.date }}</span>
+	<table>
+		{% for menuItem in day.menuItems %}
+			<input type="hidden" name="MIH{{ menuItem.key() }}"/>
+			<tr>
+				<td>
+					{% if menuItem.inCurrentOrder %}
+						<input type="checkbox" name="MIC{{ menuItem.key() }}" checked="checked"/>
+					{% elif menuItem.ordered %}
+						Rendleve
+					{% else %}
+						<input type="checkbox" name="MIC{{ menuItem.key() }}"/>
+					{% endif %}
+				</td>
+				<td> {{ menuItem.dish.title }} </td>
+			</tr>
+		{% endfor %}
+	</table>
+</div>
+{% endfor %}
+<input type="submit" value="Kosárba" />
+</form>
