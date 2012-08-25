@@ -13,14 +13,17 @@
 		</tr>
 		{% endfor %}
 	</table>
-	<form method="post">
-		<input type="hidden" name="formDay" value="{{ day.date }}"/>
-		<select name="dishKey">
-			{% for dish in availableDishes %}
-			<option value="{{dish.key()}}">{{ dish.title }}</option>
-			{% endfor %}
-		</select>
-		<input type="submit" value="Hozzáadás"/>
-	</form>
+	{% for dishCategory in availableDishes %}
+	{{ dishCategory.category.name }}
+		<form method="post">
+			<input type="hidden" name="formDay" value="{{ day.date }}"/>
+			<select name="dishKey">
+				{% for dish in dishCategory.dishes %}
+				<option value="{{dish.key() }}">{{ dish.title }}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" value="Hozzáadás"/>
+		</form>
+	{% endfor %}
 </div>
 {% endfor %}

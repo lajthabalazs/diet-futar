@@ -14,10 +14,15 @@ class User(db.Model):
 	password = db.StringProperty()
 	role = db.ReferenceProperty(Role, collection_name='users')
 
+class DishCategory(db.Model):
+	name = db.StringProperty()
+	index=db.IntegerProperty()
+
 class Dish(db.Model):
 	title = db.StringProperty()
 	subTitle = db.StringProperty()
 	description = db.StringProperty(multiline=True)
+	category=db.ReferenceProperty(DishCategory, collection_name='dishes')
 
 class IngredientCategory(db.Model):
 	name = db.StringProperty()

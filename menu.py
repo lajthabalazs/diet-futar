@@ -5,14 +5,13 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, PAGE_TITLE
+from base_handler import BaseHandler
 import datetime
-from model import Dish, MenuItem
+from model import MenuItem, DishCategory
 from user_management import isUserAdmin
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-
 class MenuEditPage(BaseHandler):
 	def get(self):
 		day=datetime.date.today()
@@ -25,7 +24,7 @@ class MenuEditPage(BaseHandler):
 		#Organize into days
 		days=[]
 		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
-		for i in range(1, 8):
+		for i in range(1, 6):
 			actualDay=day+datetime.timedelta(days=-calendar[2]+i)
 			actualDayItems=MenuItem.gql("WHERE day=DATE(:1,:2,:3)", actualDay.year, actualDay.month, actualDay.day)
 			actualDayObject={}
@@ -34,21 +33,29 @@ class MenuEditPage(BaseHandler):
 			actualDayObject["menuItems"]=actualDayItems
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
-		dishes=Dish.gql("ORDER BY title")
 		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
 		nextMonday=day+datetime.timedelta(days=-calendar[2]+1+7)
 		today=datetime.date.today()
 		todayCalendat=today.isocalendar()
 		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
+		dishCategories=DishCategory.gql("ORDER BY index")
+		templateCategories=[]
+		for dishCategory in dishCategories:
+			dishes=sorted(dishCategory.dishes, key=lambda dish: dish.title)
+			templateCategory={
+				'category':dishCategory,
+				'dishes':dishes
+			}
+			templateCategories.append(templateCategory)
 		template_values = {
 			'days':days,
 			'prev':prevMonday,
 			'next':nextMonday,
 			'actual':actualMonday,
-			'availableDishes':dishes
+			'availableDishes':templateCategories
 		}
 		template = jinja_environment.get_template('templates/menuEdit.html')
-		self.printPage(PAGE_TITLE + " - " + str(day), template.render(template_values), False, False)
+		self.printPage(str(day), template.render(template_values), False, False)
 	def post(self):
 		if(not isUserAdmin):
 			self.redirect("/menuEdit")	
@@ -67,7 +74,6 @@ class MenuEditPage(BaseHandler):
 				menuItem.dish=dish
 				menuItem.put()
 			self.redirect("/menuEdit?day="+str(day))
-			
 			
 class MenuDeleteDishPage(BaseHandler):
 	def post(self):

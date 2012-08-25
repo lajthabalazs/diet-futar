@@ -9,11 +9,10 @@
 	<table width="400px">
 	{% for dish in dishes %}
 		<tr><td><a href="?dishKey={{ dish.key() }}">{{ dish.title }}</a></td>
-		<td>{{ dish.subTitle }}</td>
+		<td>{{ dish.category.name }}</td>
 		<td align="right"><form action="deleteDish" method="post">
 			<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
 			<input type="submit" value="Törlés">
 		</form></td></tr>
-		<tr><td colspan="3">{{ dish.description }}</td></tr>
 	{% endfor %}
 	</table>

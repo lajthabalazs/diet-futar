@@ -2,7 +2,7 @@ from google.appengine.ext import db
 from model import Ingredient, IngredientCategory
 import jinja2
 import os
-from base_handler import BaseHandler, PAGE_TITLE
+from base_handler import BaseHandler
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -57,7 +57,7 @@ class IngredientPage(BaseHandler):
 				'source':sourceKey
 			}
 			template = jinja_environment.get_template('templates/ingredient.html')
-			self.printPage(PAGE_TITLE + " - " + ingredient.name, template.render(template_values), False, False)
+			self.printPage(ingredient.name, template.render(template_values), False, False)
 		else:
 			ingredients = Ingredient.gql("ORDER BY name")
 			template_values = {
@@ -65,15 +65,7 @@ class IngredientPage(BaseHandler):
 				'delete_url':"/deleteIngredient"
 			}
 			template = jinja_environment.get_template('templates/ingredient_list.html')
-			self.printPage(PAGE_TITLE + " - Alapanyagok", template.render(template_values), False, False)
-
-class CategoryIngredientDeletePage(BaseHandler):
-	def post(self):
-		category = db.get(self.request.get('ingredientCategoryKey'))
-		ingredient = db.get(self.request.get('ingredientKey'))
-		ingredient.category=None
-		ingredient.put()
-		self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
+			self.printPage("Alapanyagok", template.render(template_values), False, False)
 
 class IngredientDeletePage(BaseHandler):
 	def post(self):
@@ -91,38 +83,22 @@ class IngredientAddPage(BaseHandler):
 		ingredient.name = self.request.get('ingredient_name')
 		ingredient.category = category
 		ingredient.put()
-		#self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
 		self.redirect('/ingredient?ingredientKey=%s&source=%s' % (ingredient.key(), category.key()))
 
-class IngredientCategoryPage(BaseHandler):
-	def post(self):
-		ingredientCategory = IngredientCategory()
-		ingredientCategory.name = self.request.get('ingredient_category_name')
-		ingredientCategory.put()
-		self.redirect('/ingredientCategory')
-	def get(self):
-		if ((self.request.get('ingredientCategoryKey') != None) and (self.request.get('ingredientCategoryKey') != "")):
-		# List every ingredient in the category
-			ingredientCategory = db.get(self.request.get('ingredientCategoryKey'))
-			template_values = {
-				'ingredientCategory': ingredientCategory,
-				'add_url':"/addIngredientToCategory",
-				'delete_url':"/deleteIngredientFromCategory"
-			}
-			template = jinja_environment.get_template('templates/ingredient_category.html')
-			self.printPage(PAGE_TITLE + " - " + ingredientCategory.name, template.render(template_values), False, False)
-		else:
-		# All categories
-			ingredientCategories = IngredientCategory.gql("ORDER BY name")
-			template_values = {
-				'ingredientCategories': ingredientCategories,
-				'delete_url':"/deleteIngredientCategory"
-			}
-			template = jinja_environment.get_template('templates/ingredient_category_list.html')
-			self.printPage(PAGE_TITLE + " - Alapanyag kategoriak", template.render(template_values), False, False)
 
-class IngredientCategoryDeletePage(BaseHandler):
-	def post(self):
-		ingredientCategory = db.get(self.request.get('ingredientCategoryKey'))	  
-		ingredientCategory.delete()
-		self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % self.request.get('ingredientCategoryKey'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

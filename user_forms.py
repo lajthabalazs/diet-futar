@@ -9,7 +9,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, PAGE_TITLE
+from base_handler import BaseHandler
 from model import User
 from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_EXISTING_USER,\
@@ -72,7 +72,7 @@ class RegisterPage(BaseHandler):
 		}
 		clearRegistrationError(self)
 		template = jinja_environment.get_template('templates/register.html')
-		self.printPage(PAGE_TITLE + " - Regisztracio", template.render(template_params), True, True)
+		self.printPage("Regisztracio", template.render(template_params), True, True)
 		#self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render())
 	def post(self):
 		userName = self.request.get('userName')

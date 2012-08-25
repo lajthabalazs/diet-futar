@@ -5,7 +5,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, PAGE_TITLE
+from base_handler import BaseHandler
 import datetime
 from model import Dish, MenuItem
 #from user_management import getUserBox
@@ -61,7 +61,7 @@ class MenuOrderPage(BaseHandler):
 			'availableDishes':dishes
 		}
 		template = jinja_environment.get_template('templates/menuOrder.html')
-		self.printPage(PAGE_TITLE + " - " + str(day), template.render(template_values), True)
+		self.printPage(str(day), template.render(template_values), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,[])
 		#Adds a dish to current days menu
@@ -123,7 +123,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			'days':days
 		}
 		template = jinja_environment.get_template('templates/reviewPendingOrder.html')
-		self.printPage(PAGE_TITLE + " - Aktualis rendeles", template.render(template_values), True)
+		self.printPage("Aktualis rendeles", template.render(template_values), True)
 
 
 

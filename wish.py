@@ -5,7 +5,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, PAGE_TITLE
+from base_handler import BaseHandler
 from model import Wish
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -33,7 +33,7 @@ class WishPage(BaseHandler):
 				'wish': wish,
 			}
 			template = jinja_environment.get_template('templates/wish.html')
-			self.printPage(PAGE_TITLE + " - " + wish.title, template.render(template_values), False, False)
+			self.printPage(wish.title, template.render(template_values), False, False)
 		else:
 		# All the wishes
 			wishes = Wish.gql("ORDER BY title")
@@ -41,7 +41,7 @@ class WishPage(BaseHandler):
 			  'wishes': wishes,
 			}
 			template = jinja_environment.get_template('templates/wish_list.html')
-			self.printPage(PAGE_TITLE + " - Fejlesztesi kivansagok", template.render(template_values), False, False)
+			self.printPage("Fejlesztesi kivansagok", template.render(template_values), False, False)
 
 class DeleteWishPage(BaseHandler):
 	def post(self):

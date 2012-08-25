@@ -8,8 +8,7 @@ from webapp2_extras import sessions
 from user_management import getUserBox, isUserLoggedIn, isUserAdmin
 import jinja2
 import os
-
-PAGE_TITLE="Diet futar"
+from keys import DISH_CATEGORY_URL
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -24,6 +23,10 @@ class BaseHandler(webapp2.RequestHandler):
 			# Save all sessions.
 			self.session_store.save_sessions(self.response)
 	def printPage(self, title, content, forAnonymus=False, forLoggedIn=False):
+		if (title != None and title != ""):
+			title = "Diet futar - " + title
+		else:
+			title="Diet futar"
 		template_params={
 			"pageTitle":title
 		}
@@ -56,6 +59,10 @@ class BaseHandler(webapp2.RequestHandler):
 			recepies["label"]="Receptek"
 			recepies["target"]="/dish"
 			menuItems.append(recepies)
+			dishCategories={}
+			dishCategories["label"]="Fogasok"
+			dishCategories["target"]=DISH_CATEGORY_URL
+			menuItems.append(dishCategories)
 		about={}
 		about["label"]="Rolunk"
 		about["target"]="/about"
