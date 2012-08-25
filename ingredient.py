@@ -19,11 +19,11 @@ class IngredientPage(BaseHandler):
 				ingredient.category = category
 			else:
 				ingredient.category = None
-				energy=self.request.get('energy')
-				protein=self.request.get('protein')
-				carbs=self.request.get('carbs')
-				fat=self.request.get('fat')
-				fiber=self.request.get('fiber')
+			energy=self.request.get('energy')
+			protein=self.request.get('protein')
+			carbs=self.request.get('carbs')
+			fat=self.request.get('fat')
+			fiber=self.request.get('fiber')
 			if ((energy != None) and (energy != "")):
 				ingredient.energy = float(energy)
 			if ((protein != None) and (protein != "")):
@@ -35,20 +35,26 @@ class IngredientPage(BaseHandler):
 			if ((fiber != None) and (fiber != "")):
 				ingredient.fiber = float(self.request.get('fiber'))
 			ingredient.put()
-			self.redirect('/ingredient?ingredientKey=%s' % ingredient.key())
+			sourceKey=self.request.get('source')
+			if ((sourceKey == ingredientCategoryKey) and (sourceKey!=None) and (sourceKey != "")):
+				self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
+			else:
+				self.redirect('/ingredient')
 		else:
 			ingredient = Ingredient()
 			ingredient.name = self.request.get('ingredient_name')
 			ingredient.put()
-			self.redirect('/ingredient')
+			self.redirect('/ingredient?ingredientKey=%s' % ingredient.key())
 	def get(self):
 		ingredientKey=self.request.get('ingredientKey')
+		sourceKey=self.request.get('source')
 		if ((ingredientKey != None) and (ingredientKey != "")):
 			ingredient = db.get(ingredientKey)
 			availableCategories = IngredientCategory.gql("ORDER BY name")
 			template_values = {
 				'ingredient': ingredient,
-				'availableCategories':availableCategories
+				'availableCategories':availableCategories,
+				'source':sourceKey
 			}
 			template = jinja_environment.get_template('templates/ingredient.html')
 			self.printPage(PAGE_TITLE + " - " + ingredient.name, template.render(template_values), False, False)
@@ -85,7 +91,8 @@ class IngredientAddPage(BaseHandler):
 		ingredient.name = self.request.get('ingredient_name')
 		ingredient.category = category
 		ingredient.put()
-		self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
+		#self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
+		self.redirect('/ingredient?ingredientKey=%s&source=%s' % (ingredient.key(), category.key()))
 
 class IngredientCategoryPage(BaseHandler):
 	def post(self):
