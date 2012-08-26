@@ -27,7 +27,7 @@ class MenuOrderPage(BaseHandler):
 		days=[]
 		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 		actualOrder=self.session.get(ACTUAL_ORDER,[])
-		for i in range(1, 8):
+		for i in range(0, 5):
 			actualDay=day+datetime.timedelta(days=-calendar[2]+i)
 			actualDayItems=MenuItem.gql("WHERE day=DATE(:1,:2,:3)", actualDay.year, actualDay.month, actualDay.day)
 			refreshedItems=[]

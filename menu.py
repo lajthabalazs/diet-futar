@@ -22,15 +22,39 @@ class MenuEditPage(BaseHandler):
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days
-		days=[]
+		menu=[]
 		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
-		for i in range(1, 6):
-			actualDay=day+datetime.timedelta(days=-calendar[2]+i)
-			actualDayItems=MenuItem.gql("WHERE day=DATE(:1,:2,:3)", actualDay.year, actualDay.month, actualDay.day)
+		dishCategories=DishCategory.gql("ORDER BY index")
+		monday=day+datetime.timedelta(days=-calendar[2]+1)
+		sunday=day+datetime.timedelta(days=-calendar[2]+7)
+		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
+		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
+		for category in dishCategories:
+			actualCategoryObject={}
+			actualCategoryObject['category']=category
+			availableDishes=sorted(category.dishes, key=lambda dish: dish.title)
+			actualCategoryObject['availableDishes']=availableDishes
+			menu.append(actualCategoryObject)
+			items=[]
+			for i in range(0,5):
+				actualDay=monday+datetime.timedelta(days=i)
+				actualDayObject={}
+				actualDayObject["day"]=dayNames[i]
+				actualDayObject["date"]=actualDay
+				#Filter menu items
+				actualMenuItems=[]
+				for menuItem in menuItems:
+					if (menuItem.dish.category.key()==category.key()):
+						if (menuItem.day==actualDay):
+							actualMenuItems.append(menuItem)
+				actualDayObject["menuItems"]=actualMenuItems
+				items.append(actualDayObject)
+			actualCategoryObject["days"]=items
+		days=[]
+		for i in range(0,5):
 			actualDayObject={}
-			actualDayObject["day"]=dayNames[i-1]
-			actualDayObject["date"]=actualDay
-			actualDayObject["menuItems"]=actualDayItems
+			actualDayObject["day"]=dayNames[i]
+			actualDayObject["date"]=monday+datetime.timedelta(days=i)
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
@@ -38,21 +62,12 @@ class MenuEditPage(BaseHandler):
 		today=datetime.date.today()
 		todayCalendat=today.isocalendar()
 		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
-		dishCategories=DishCategory.gql("ORDER BY index")
-		templateCategories=[]
-		for dishCategory in dishCategories:
-			dishes=sorted(dishCategory.dishes, key=lambda dish: dish.title)
-			templateCategory={
-				'category':dishCategory,
-				'dishes':dishes
-			}
-			templateCategories.append(templateCategory)
 		template_values = {
 			'days':days,
 			'prev':prevMonday,
 			'next':nextMonday,
 			'actual':actualMonday,
-			'availableDishes':templateCategories
+			'menu':menu
 		}
 		template = jinja_environment.get_template('templates/menuEdit.html')
 		self.printPage(str(day), template.render(template_values), False, False)

@@ -1,29 +1,50 @@
-﻿<p><a href="/menuEdit?day={{ prev }}">Előző hét</a> <p><a href="/menuEdit?day={{ actual }}">Aktuális hét</a> <a href="/menuEdit?day={{ next }}">Következő hét</a></p>
-{% for day in days %}
-<div class="menuEditorDay">
-	<h2>{{ day.day }}</h2>
-	<span>{{ day.date }}</span>
-	<table>
-		{% for menuItem in day.menuItems %}
-		<tr><td> {{ menuItem.dish.title }} </td>
-			<td><form action="/deleteMenuItem" method="post">
-				<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
-				<input type="submit" value="Törlés"/>
-			</form></td>
-		</tr>
+﻿<a href="/menuEdit?day={{ prev }}">Előző hét</a> <a href="/menuEdit?day={{ actual }}">Aktuális hét</a> <a href="/menuEdit?day={{ next }}">Következő hét</a>
+<table border="1">
+	<tr>
+		<th> </th>
+		{% for day in days %}
+			<th>{{ day.day }}<br/>{{ day.date }}</th>
+		{% endfor%}
+	</tr>
+	{% for category in menu%}
+		<tr><td> {{ category.category.name }} </td>
+		{% for day in category.days %}
+			<td valign="bottom">
+			<div style="width:100%; text-align:right">
+			{% for menuItem in day.menuItems %}
+				<form action="/deleteMenuItem" method="post">
+					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+					{{menuItem.dish.title}}<input type="submit" value="Törlés"/>
+				</form>
+			{% endfor %}
+			</div>
+			<form method="post">
+				<input type="hidden" name="formDay" value="{{ day.date }}"/>
+				<select name="dishKey">
+					{% for dish in category.availableDishes %}
+						<option value="{{dish.key() }}">{{ dish.title }}</option>
+					{% endfor %}
+				</select>
+				<input type="submit" value="Hozzáadás"/>
+			</form>
+		</td>
 		{% endfor %}
-	</table>
-	{% for dishCategory in availableDishes %}
-	{{ dishCategory.category.name }}
-		<form method="post">
-			<input type="hidden" name="formDay" value="{{ day.date }}"/>
-			<select name="dishKey">
-				{% for dish in dishCategory.dishes %}
-				<option value="{{dish.key() }}">{{ dish.title }}</option>
-				{% endfor %}
-			</select>
-			<input type="submit" value="Hozzáadás"/>
-		</form>
+	</tr>
 	{% endfor %}
-</div>
-{% endfor %}
+</table>
+
+
+			<!--
+			{% for dishCategory in availableDishes %}
+			{{ dishCategory.category.name }}
+				<form method="post">
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<select name="dishKey">
+						{% for dish in dishCategory.dishes %}
+						<option value="{{dish.key() }}">{{ dish.title }}</option>
+						{% endfor %}
+					</select>
+					<input type="submit" value="Hozzáadás"/>
+				</form>
+			{% endfor %}
+			-->
