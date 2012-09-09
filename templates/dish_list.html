@@ -1,9 +1,18 @@
 ﻿	<table>
 	<form method="post">
-		<tr><td>Név</td><td><input type="text" name="title" cols="60"/></td></tr>
-		<tr><td>Rövid leírás</td><td><textarea name="subTitle" cols="60"></textarea></td></tr>
-		<tr><td>Hosszú leírás</td><td><textarea name="description" cols="60"></textarea></td></tr>
-		<tr><td colspan="2" align="right"><input type="submit" value="Add dish"></td></tr>
+		<tr><td>Név</td><td><input type="text" name="title" cols="60"/></td>
+			<td align="right">
+			<select name="dishCategoryKey">
+				{% for availableCategory in availableCategories %}
+					<option value="{{ availableCategory.key() }}"
+					>{{ availableCategory.name }}</option>
+				{% endfor %}
+		
+			</select>
+		</td></tr>
+		<tr><td>Rövid leírás</td><td colspan="2"><textarea name="subTitle" cols="60"></textarea></td></tr>
+		<tr><td>Hosszú leírás</td><td colspan="2"><textarea name="description" cols="60"></textarea></td></tr>
+		<tr><td colspan="3" align="right"><input type="submit" value="Add dish"></td></tr>
 	</form>
 	</table>
 	<table width="400px">

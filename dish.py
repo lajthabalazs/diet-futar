@@ -9,6 +9,7 @@ from model import Dish, Ingredient, IngredientListItem, DishCategory
 from base_handler import BaseHandler
 from user_management import isUserAdmin
 from keys import DISH_CATEGORY_KEY
+from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -46,6 +47,7 @@ class DishPage(BaseHandler):
 				dish.title = self.request.get('title')
 				dish.subTitle = self.request.get('subTitle')
 				dish.description = self.request.get('description')
+				dish.category = DishCategory.get(self.request.get('dishCategoryKey'))
 				dish.put()
 				self.redirect('/dish?dishKey=%s' % dish.key())
 	def get(self):
@@ -53,6 +55,11 @@ class DishPage(BaseHandler):
 		if ((dishKey != None) and (dishKey != "")):
 		# A single dish with editable ingredient list
 			dish=db.get(dishKey)
+			#Check if category exists
+			try:
+				dish.category
+			except ReferencePropertyResolveError:
+				dish.category = None
 			ingredients = dish.ingredients
 			dish.energy = 0
 			for ingredient in ingredients:
@@ -70,9 +77,18 @@ class DishPage(BaseHandler):
 			self.printPage(dish.title, template.render(template_values), False, False)
 		else:
 		# All the dishes
-			dishes = Dish.gql("ORDER BY title")
+			unprocessedDishes = Dish.gql("ORDER BY title")
+			dishes = []
+			for dish in unprocessedDishes:
+				try:
+					dish.category
+				except ReferencePropertyResolveError:
+					dish.category = None
+				dishes.append(dish)
+			ingredientCategories =DishCategory.gql("ORDER BY index")
 			template_values = {
 			  'dishes': dishes,
+			  'availableCategories': ingredientCategories
 			}
 			template = jinja_environment.get_template('templates/dish_list.html')
 			self.printPage("Receptek", template.render(template_values), False, False)

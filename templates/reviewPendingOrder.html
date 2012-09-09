@@ -1,17 +1,69 @@
-﻿	<h1>Kosár</h1>
-	{% for day in days %}
-		<h3>{{ day.date }}({{ day.name }})</h3><br />
-		<table>
-		{% for menuItem in day.menuItems%}
-			<tr>
-				<td>{{menuItem.dish.title}}</td>
-				<td>
-					<form action="deleteOrderItem" method="post">
-						<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}" />
-						<input type="submit" value="Törlés" />
-					</form>
-				</td>
-			</tr>
+﻿{% if prev %}<a href="/pendingOrder?day={{ prev }}">Előző hét</a> {% endif %} <a href="/pendingOrder?day={{ actual }}">Adktuális hét</a> <a href="/pendingOrder?day={{ next }}">Következő hét</a>
+<form action="/confirmOrder" method="get">
+	<input type="submit" value="Megrendel"/>
+</form>
+<form method="post">
+<input type="hidden" name="formDay" value="{{ days[0].date }}"/>
+<input type="submit" value="Ment" />
+<table border="1">
+	<tr>
+		<th> </th>
+		{% for day in days %}
+			<th>{{ day.day }}<br/>{{ day.date }}</th>
+		{% endfor%}
+	</tr>
+	{% for category in menu%}
+		<tr><td> {{ category.category.name }} </td>
+		{% for day in category.days %}
+			<td valign="bottom">
+			<div>
+			{% for menuItem in day.menuItems %}
+				{% if menuItem.inCurrentOrder %}
+					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
+				{% elif menuItem.ordered %}
+					Rendleve
+				{% else %}
+					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="0"/>
+				{% endif %}
+				{{ menuItem.dish.title }}
+				{% for component in menuItem.components %}
+					,{{ component.dish.title }}
+				{% endfor %}
+				<br/>
+			{% endfor %}
+			</div>
+		</td>
 		{% endfor %}
-		</table>
+	</tr>
 	{% endfor %}
+	<tr>
+		<td>Energia</td>
+		{% for day in days %}
+			<td><span id="energy">0</span></td>
+		{% endfor%}
+	</tr>
+</table>
+<input type="submit" value="Ment" />
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,33 +1,60 @@
-﻿<p><a href="/order?day={{ prev }}">Előző hét</a> <p><a href="/order?day={{ actual }}">Aktuális hét</a> <a href="/order?day={{ next }}">Következő hét</a></p>
-<form action="/clearOrder" method="post">
-	<input type="hidden" name="formDay" value="{{ days[0].date }}"/>
-	<input type="submit" value="Kosár üritése" />
-</form>
+﻿{% if prev %}<a href="/order?day={{ prev }}">Előző hét</a> {% endif %} <a href="/order?day={{ actual }}">Aktuális hét</a> <a href="/order?day={{ next }}">Következő hét</a>
 <form method="post">
 <input type="hidden" name="formDay" value="{{ days[0].date }}"/>
 <input type="submit" value="Kosárba" />
-{% for day in days %}
-<div class="menuOrderDay">
-	<h2>{{ day.day }}</h2>
-	<span>{{ day.date }}</span>
-	<table>
-		{% for menuItem in day.menuItems %}
-			<input type="hidden" name="MIH{{ menuItem.key() }}"/>
-			<tr>
-				<td>
-					{% if menuItem.inCurrentOrder %}
-						<input type="checkbox" name="MIC{{ menuItem.key() }}" checked="checked"/>
-					{% elif menuItem.ordered %}
-						Rendleve
-					{% else %}
-						<input type="checkbox" name="MIC{{ menuItem.key() }}"/>
-					{% endif %}
-				</td>
-				<td> {{ menuItem.dish.title }} </td>
-			</tr>
+<table border="1">
+	<tr>
+		<th> </th>
+		{% for day in days %}
+			<th>{{ day.day }}<br/>{{ day.date }}</th>
+		{% endfor%}
+	</tr>
+	{% for category in menu%}
+		<tr><td> {{ category.category.name }} </td>
+		{% for day in category.days %}
+			<td valign="bottom">
+			<div>
+			{% for menuItem in day.menuItems %}
+				{{ menuItem.orderedQuantity}} + 
+				{% if menuItem.inCurrentOrder %}
+					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
+				{% elif menuItem.ordered %}
+					Rendleve
+				{% else %}
+					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="0"/>
+				{% endif %}
+				{{ menuItem.dish.title }}
+				{% for component in menuItem.components %}
+					,{{ component.dish.title }}
+				{% endfor %}
+				<br/>
+			{% endfor %}
+			</div>
+		</td>
 		{% endfor %}
-	</table>
-</div>
-{% endfor %}
+	</tr>
+	{% endfor %}
+	<tr>
+		<td>Energia</td>
+		{% for day in days %}
+			<td><span id="energy">0</span></td>
+		{% endfor%}
+	</tr>
+</table>
 <input type="submit" value="Kosárba" />
 </form>
+
+			<!--
+			{% for dishCategory in availableDishes %}
+			{{ dishCategory.category.name }}
+				<form method="post">
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<select name="dishKey">
+						{% for dish in dishCategory.dishes %}
+						<option value="{{dish.key() }}">{{ dish.title }}</option>
+						{% endfor %}
+					</select>
+					<input type="submit" value="Hozzáadás"/>
+				</form>
+			{% endfor %}
+			-->

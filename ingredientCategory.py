@@ -45,7 +45,7 @@ class IngredientCategoryDeletePage(BaseHandler):
 	def post(self):
 		ingredientCategory = db.get(self.request.get('ingredientCategoryKey'))	  
 		ingredientCategory.delete()
-		self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % self.request.get('ingredientCategoryKey'))
+		self.redirect('/ingredientCategory')
 
 
 

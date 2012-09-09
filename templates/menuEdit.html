@@ -12,9 +12,27 @@
 			<td valign="bottom">
 			<div style="width:100%; text-align:right">
 			{% for menuItem in day.menuItems %}
+				{{menuItem.dish.title}}
+				<!-- References of components -->
+				{% for component in menuItem.components %}
+					{{ component.dish.title }}
+					<form action="/deleteMenuItem" method="post">
+						<input type="hidden" name="menuItemKey" value="{{ component.key() }}"/>
+						<input type="submit" value="Törlés"/>
+					</form>
+				{% endfor %}
+				<form action="/addMenuItemComponent" method="post">
+					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+					<select name="componentDishKey">
+						{% for dish in allDishes %}
+							<option value="{{dish.key() }}">{{ dish.title }}</option>
+						{% endfor %}
+					</select>
+					<input type="submit" value="Csatol"/>
+				</form>
 				<form action="/deleteMenuItem" method="post">
 					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
-					{{menuItem.dish.title}}<input type="submit" value="Törlés"/>
+					<input type="submit" value="Törlés"/>
 				</form>
 			{% endfor %}
 			</div>

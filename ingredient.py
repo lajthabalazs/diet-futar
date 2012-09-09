@@ -3,6 +3,7 @@ from model import Ingredient, IngredientCategory
 import jinja2
 import os
 from base_handler import BaseHandler
+from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -59,7 +60,14 @@ class IngredientPage(BaseHandler):
 			template = jinja_environment.get_template('templates/ingredient.html')
 			self.printPage(ingredient.name, template.render(template_values), False, False)
 		else:
-			ingredients = Ingredient.gql("ORDER BY name")
+			oldIngredients = Ingredient.gql("ORDER BY name")
+			ingredients = []
+			for ingredient in oldIngredients:
+				try:
+					ingredient.category
+				except ReferencePropertyResolveError:
+					ingredient.category = None
+				ingredients.append(ingredient)
 			template_values = {
 				'ingredients': ingredients,
 				'delete_url':"/deleteIngredient"

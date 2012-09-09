@@ -1,0 +1,9 @@
+﻿<h1>Korábbi rendelések</h1>
+<table>
+	<tr><th>Dátum</th><th>Ár</th></tr>
+{% for userOrder in userOrders %}
+	<tr>
+		<td><a href="/previousOrder?orderKey={{userOrder.key()}}">{{userOrder.orderDate.strftime('%Y-%m-%d %H:%M')}}</a></td><td style="text-align: right">{{userOrder.price}} Ft</td>
+	</tr>
+{% endfor %}
+</table>

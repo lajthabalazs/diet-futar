@@ -7,8 +7,9 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 import datetime
-from model import MenuItem, DishCategory
+from model import MenuItem, DishCategory, Dish
 from user_management import isUserAdmin
+from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -44,8 +45,18 @@ class MenuEditPage(BaseHandler):
 				#Filter menu items
 				actualMenuItems=[]
 				for menuItem in menuItems:
+					try:
+						menuItem.dish.category
+					except ReferencePropertyResolveError:
+						continue
 					if (menuItem.dish.category.key()==category.key()):
-						if (menuItem.day==actualDay):
+						try:
+							menuItem.containingMenuItem
+						# If menu item's parent is deleted, delete the menu item too
+						except ReferencePropertyResolveError:
+							menuItem.delete()
+							continue
+						if (menuItem.day==actualDay and menuItem.containingMenuItem == None):
 							actualMenuItems.append(menuItem)
 				actualDayObject["menuItems"]=actualMenuItems
 				items.append(actualDayObject)
@@ -62,12 +73,14 @@ class MenuEditPage(BaseHandler):
 		today=datetime.date.today()
 		todayCalendat=today.isocalendar()
 		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
+		allDishes=Dish.gql("ORDER BY title")
 		template_values = {
 			'days':days,
 			'prev':prevMonday,
 			'next':nextMonday,
 			'actual':actualMonday,
-			'menu':menu
+			'menu':menu,
+			'allDishes':allDishes
 		}
 		template = jinja_environment.get_template('templates/menuEdit.html')
 		self.printPage(str(day), template.render(template_values), False, False)
@@ -108,6 +121,33 @@ class MenuDeleteDishPage(BaseHandler):
 					menuItem.delete()
 			self.redirect("/menuEdit?day="+str(day))
 			
+			
+class AddMenuItemComponent(BaseHandler):
+	def post(self):
+		if(not isUserAdmin):
+			self.redirect("/menuEdit")	
+		else:
+			day=datetime.date.today()
+			requestDay=self.request.get('formDay')
+			if ((requestDay != None) and (requestDay != "")):
+				parts=requestDay.rsplit("-")
+				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			#Adds a dish to menu item
+			menuItemKey=self.request.get('menuItemKey')
+			if ((menuItemKey != None) and (menuItemKey != "")):
+				menuItem=db.get(menuItemKey)
+				if (menuItem != None):
+					#Get the dish
+					dishKey = self.request.get('componentDishKey')
+					dish = db.get(dishKey)
+					#Create a menu item for the dish
+					componentItem = MenuItem()
+					componentItem.dish = dish
+					componentItem.day = menuItem.day
+					#Add the menu item to the current MenuItem
+					componentItem.containingMenuItem = menuItem
+					componentItem.put()
+			self.redirect("/menuEdit?day="+str(day))
 			
 			
 			

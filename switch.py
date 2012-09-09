@@ -6,13 +6,13 @@ import os
 import webapp2
 
 from ingredient import IngredientDeletePage, IngredientAddPage, IngredientPage
-from dish import DishPage, DeleteDishPage, DishIngredientAddPage,\
-	DishIngredientDeletePage
+from dish import DishPage, DeleteDishPage, DishIngredientAddPage, DishIngredientDeletePage
 from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage
 from main import MainPage
-from menu import MenuEditPage,MenuDeleteDishPage
-from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage
+from menu import MenuEditPage,MenuDeleteDishPage, AddMenuItemComponent
+from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage,\
+	ConfirmOrder, PreviousOrders, PreviousOrder
 from ingredientCategory import CategoryIngredientDeletePage,\
 	IngredientCategoryPage, IngredientCategoryDeletePage
 from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
@@ -32,8 +32,10 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										(DISH_CATEGORY_DELETE_URL, DishCategoryDeletePage),
 										('/wish', WishPage),
 										('/menuEdit', MenuEditPage),
+										('/addMenuItemComponent',AddMenuItemComponent),
 										('/deleteMenuItem', MenuDeleteDishPage),
 										('/order', MenuOrderPage),
+										('/clearOrder', ClearOrderPage),
 										('/pendingOrder', ReviewPendingOrderPage),
 										('/clearOrder', ClearOrderPage),
 										('/deleteDish', DeleteDishPage),
@@ -45,6 +47,9 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/addIngredientToCategory', IngredientAddPage),
 										('/ingredient', IngredientPage),
 										('/deleteIngredientCategory', IngredientCategoryDeletePage),
+										('/confirmOrder', ConfirmOrder),
+										('/previousOrders', PreviousOrders),
+										('/previousOrder', PreviousOrder),
 										('/ingredientCategory', IngredientCategoryPage)],
 										debug=True, config=config)
 

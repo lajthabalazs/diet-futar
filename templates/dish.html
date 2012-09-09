@@ -15,7 +15,6 @@
 					{% if ((dish.category != None) and (availableCategory.key()==dish.category.key())) %}
 						selected="true"
 					{% endif %}
-	
 				>{{ availableCategory.name }}</option>
 			{% endfor %}
 	
@@ -25,7 +24,8 @@
 		<textarea name="description" cols="40">{{ dish.description }}</textarea><br/>
 		<td><input type="submit" value ="Mentés"/></td>
 	</form>
-	
+	<br/>
+	<br/>
 		<!-- Add a new ingredient -->
 	<form action="{{ add_url }}" method="post">
 		<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>

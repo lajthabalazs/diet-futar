@@ -20,6 +20,7 @@ class DishCategory(db.Model):
 
 class Dish(db.Model):
 	title = db.StringProperty()
+	price = db.IntegerProperty()
 	subTitle = db.StringProperty()
 	description = db.StringProperty(multiline=True)
 	category=db.ReferenceProperty(DishCategory, collection_name='dishes')
@@ -29,6 +30,7 @@ class IngredientCategory(db.Model):
 
 class Ingredient(db.Model):
 	name = db.StringProperty()
+	price = db.IntegerProperty()
 	category = db.ReferenceProperty(IngredientCategory, collection_name='ingredients')
 	energy = db.FloatProperty(default=0.0)
 	carbs = db.FloatProperty(default=0.0)
@@ -44,14 +46,27 @@ class IngredientListItem(db.Model):
 	
 class MenuItem(db.Model):
 	dish=db.ReferenceProperty(Dish, collection_name='occurrences')
+	price = db.IntegerProperty()
 	day=db.DateProperty()
-	#type=db.StringProperty()
-	#menuItemIndex=db.IntegerProperty()
+	containingMenuItem=db.SelfReferenceProperty('Containing menu item', collection_name='components')
+
+class UserOrder(db.Model):
+	orderDate=db.DateTimeProperty()
+	price=db.IntegerProperty()
+	user=db.ReferenceProperty(User, collection_name='userOrders')
+	canceled=db.BooleanProperty()
+
+class UserOrderItem(db.Model):
+	price=db.IntegerProperty()
+	userOrder=db.ReferenceProperty(UserOrder, collection_name='items')
+	itemCount=db.IntegerProperty()
+	orderedItem=db.ReferenceProperty(MenuItem, collection_name='occurrences')
 
 class Wish(db.Model):
 	title = db.StringProperty()
 	description=db.StringProperty(multiline=True)
 	ready=db.BooleanProperty()
+	
 	
 	
 	

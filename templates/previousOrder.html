@@ -1,0 +1,10 @@
+﻿<h1>Rendelés - {{userOrder.orderDate.strftime('%Y-%m-%d %H:%M')}}</h1>
+<table border="1">
+	<tr><th>Termék</th><th>Darab</th><th>Ár</th></tr>
+	{% for orderItem in userOrder.items %}
+		<tr>
+			<td>{{orderItem.orderedItem.dish.title}}</td><td style="text-align: right">{{orderItem.itemCount}}</td><td style="text-align: right">{{orderItem.price}} Ft</td>
+		</tr>
+	{% endfor %}
+<tr><td colspan="2">Összesen</td><td>{{userOrder.price}} Ft</td></tr>
+</table>
