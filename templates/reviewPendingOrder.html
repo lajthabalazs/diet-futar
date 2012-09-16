@@ -18,17 +18,12 @@
 			<td valign="bottom">
 			<div>
 			{% for menuItem in day.menuItems %}
-				{% if menuItem.inCurrentOrder %}
-					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
-				{% elif menuItem.ordered %}
-					Rendleve
-				{% else %}
-					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="0"/>
-				{% endif %}
+				<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
 				{{ menuItem.dish.title }}
 				{% for component in menuItem.components %}
 					,{{ component.dish.title }}
 				{% endfor %}
+				{{ menuItem.basketprice }} Ft
 				<br/>
 			{% endfor %}
 			</div>
@@ -37,9 +32,9 @@
 	</tr>
 	{% endfor %}
 	<tr>
-		<td>Energia</td>
+		<td>Összesen</td>
 		{% for day in days %}
-			<td><span id="energy">0</span></td>
+			<td style="text-align: right">{{ day.total }} Ft</td>
 		{% endfor%}
 	</tr>
 </table>

@@ -100,13 +100,15 @@ class MenuEditPage(BaseHandler):
 				menuItem=MenuItem()
 				menuItem.day=day
 				menuItem.dish=dish
+				menuItem.price = dish.price
+				menuItem.sumprice = dish.price
 				menuItem.put()
 			self.redirect("/menuEdit?day="+str(day))
 			
 class MenuDeleteDishPage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/menuEdit")	
+		if(not isUserAdmin(self)):
+			self.redirect("/menuEdit")
 		else:
 			day=datetime.date.today()
 			requestDay=self.request.get('formDay')
@@ -118,15 +120,26 @@ class MenuDeleteDishPage(BaseHandler):
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
 				if (menuItem != None):
+					if menuItem.containingMenuItem != None:
+						sumprice = menuItem.containingMenuItem.dish.price
+						for component in menuItem.containingMenuItem.components:
+							if (component.dish.price != None):
+								sumprice = sumprice + component.dish.price
+						if menuItem.dish.price != None:
+							sumprice = sumprice - menuItem.dish.price
+						menuItem.containingMenuItem.sumprice = sumprice
+						menuItem.containingMenuItem.put()
+
 					menuItem.delete()
 			self.redirect("/menuEdit?day="+str(day))
 			
 			
 class AddMenuItemComponent(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/menuEdit")	
+		if(not isUserAdmin(self)):
+			self.redirect("/menuEdit")
 		else:
+			sumprice = 0
 			day=datetime.date.today()
 			requestDay=self.request.get('formDay')
 			if ((requestDay != None) and (requestDay != "")):
@@ -137,6 +150,7 @@ class AddMenuItemComponent(BaseHandler):
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
 				if (menuItem != None):
+					sumprice = menuItem.dish.price
 					#Get the dish
 					dishKey = self.request.get('componentDishKey')
 					dish = db.get(dishKey)
@@ -147,8 +161,31 @@ class AddMenuItemComponent(BaseHandler):
 					#Add the menu item to the current MenuItem
 					componentItem.containingMenuItem = menuItem
 					componentItem.put()
+					for component in menuItem.components:
+						if (component.dish.price != None):
+							sumprice = sumprice + component.dish.price
+					menuItem.sumprice = sumprice
+					menuItem.put()
 			self.redirect("/menuEdit?day="+str(day))
 			
+			
+class ModifyMenuItem(BaseHandler):
+	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/menuEdit")
+		else:
+			dayStr=""
+			requestDay=self.request.get('formDay')
+			if ((requestDay != None) and (requestDay != "")):
+				dayStr = requestDay
+			menuItemKey=self.request.get('menuItemKey')
+			if ((menuItemKey != None) and (menuItemKey != "")):
+				menuItem=db.get(menuItemKey)
+				if (menuItem != None):
+					#Save new price
+					menuItem.price = int(self.request.get('price'))
+					menuItem.put()
+			self.redirect("/menuEdit?day="+dayStr)
 			
 			
 			

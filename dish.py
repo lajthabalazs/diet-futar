@@ -33,6 +33,8 @@ class DishPage(BaseHandler):
 				dish.title = self.request.get('title')
 				dish.subTitle = self.request.get('subTitle')
 				dish.description = self.request.get('description')
+				if self.request.get('price') != None:
+					dish.price = int(self.request.get('price'))
 				dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
 				if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 					dishCategory = db.get(dishCategoryKey)

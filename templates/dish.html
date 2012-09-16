@@ -13,13 +13,13 @@
 			{% for availableCategory in availableCategories %}
 				<option value="{{ availableCategory.key() }}"
 					{% if ((dish.category != None) and (availableCategory.key()==dish.category.key())) %}
-						selected="true"
+						selected="selected"
 					{% endif %}
 				>{{ availableCategory.name }}</option>
 			{% endfor %}
 	
 		</select><br/>
-		
+		<input style="text-align: right" type="text" name="price" value="{% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %}"/> Ft<br/>
 		<input type="text" name="subTitle" value="{{ dish.subTitle }}"/><br/>
 		<textarea name="description" cols="40">{{ dish.description }}</textarea><br/>
 		<td><input type="submit" value ="Mentés"/></td>

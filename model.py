@@ -47,6 +47,7 @@ class IngredientListItem(db.Model):
 class MenuItem(db.Model):
 	dish=db.ReferenceProperty(Dish, collection_name='occurrences')
 	price = db.IntegerProperty()
+	sumprice = db.IntegerProperty()
 	day=db.DateProperty()
 	containingMenuItem=db.SelfReferenceProperty('Containing menu item', collection_name='components')
 

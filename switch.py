@@ -10,7 +10,8 @@ from dish import DishPage, DeleteDishPage, DishIngredientAddPage, DishIngredient
 from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage
 from main import MainPage
-from menu import MenuEditPage,MenuDeleteDishPage, AddMenuItemComponent
+from menu import MenuEditPage,MenuDeleteDishPage, AddMenuItemComponent,\
+	ModifyMenuItem
 from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage,\
 	ConfirmOrder, PreviousOrders, PreviousOrder
 from ingredientCategory import CategoryIngredientDeletePage,\
@@ -32,6 +33,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										(DISH_CATEGORY_DELETE_URL, DishCategoryDeletePage),
 										('/wish', WishPage),
 										('/menuEdit', MenuEditPage),
+										('/modifyMenuItem', ModifyMenuItem),
 										('/addMenuItemComponent',AddMenuItemComponent),
 										('/deleteMenuItem', MenuDeleteDishPage),
 										('/order', MenuOrderPage),

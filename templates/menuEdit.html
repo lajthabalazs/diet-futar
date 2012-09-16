@@ -14,8 +14,11 @@
 			{% for menuItem in day.menuItems %}
 				{{menuItem.dish.title}}
 				<!-- References of components -->
+				{% if menuItem.dish.price == None%}0{% else %}{{ menuItem.dish.price }}{% endif %} Ft
+				<br/>
 				{% for component in menuItem.components %}
 					{{ component.dish.title }}
+					{% if component.dish.price == None%}0{% else %}{{ component.dish.price }}{% endif %} Ft
 					<form action="/deleteMenuItem" method="post">
 						<input type="hidden" name="menuItemKey" value="{{ component.key() }}"/>
 						<input type="submit" value="Törlés"/>
@@ -29,6 +32,12 @@
 						{% endfor %}
 					</select>
 					<input type="submit" value="Csatol"/>
+				</form>
+				Összesen {% if menuItem.sumprice == None%}0{% else %}{{ menuItem.sumprice }}{% endif %} Ft <br/>
+				<form action="/modifyMenuItem" method="post">
+					<input style="text-align: right" type="text" name="price" value="{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %}"/> Ft<br/>
+					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+					<input type="submit" value="Áraz"/>
 				</form>
 				<form action="/deleteMenuItem" method="post">
 					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>

@@ -31,11 +31,14 @@ class MenuOrderPage(BaseHandler):
 			for userOrder in user.userOrders:
 				for orderedItem in userOrder.items:
 					itemQuantity = 0
-					menuItemKey = orderedItem.orderedItem.key()
-					if (userOrders.has_key(menuItemKey)):
-						itemQuantity = int(userOrders[menuItemKey])
-					if (orderedItem.itemCount != None):
-						userOrders[menuItemKey] = itemQuantity + orderedItem.itemCount
+					try: 
+						menuItemKey = orderedItem.orderedItem.key()
+						if (userOrders.has_key(menuItemKey)):
+							itemQuantity = int(userOrders[menuItemKey])
+						if (orderedItem.itemCount != None):
+							userOrders[menuItemKey] = itemQuantity + orderedItem.itemCount
+					except ReferencePropertyResolveError:
+						itemQuantity=0
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days
@@ -47,6 +50,8 @@ class MenuOrderPage(BaseHandler):
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
 		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
 		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
+		orderedPrice = [0,0,0,0,0]
+		basketPrice = [0,0,0,0,0]
 		for category in dishCategories:
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
@@ -61,13 +66,21 @@ class MenuOrderPage(BaseHandler):
 				actualMenuItems=[]
 				for menuItem in menuItems:
 					try:
-						if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay):
+						if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay) and (menuItem.containingMenuItem == None):
 							if (actualOrder!=None) and (str(menuItem.key()) in actualOrder):
 								menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
+								try:
+									basketPrice[i] = menuItem.price * int(actualOrder[str(menuItem.key())])
+								except:
+									pass
 							else:
 								menuItem.inCurrentOrder=0
 							try:
 								menuItem.orderedQuantity = userOrders[menuItem.key()]
+								try:
+									orderedPrice[i] = menuItem.price * int(userOrders[menuItem.key()])
+								except:
+									pass
 							except KeyError:
 								menuItem.orderedQuantity = 0
 							actualMenuItems.append(menuItem)
@@ -82,6 +95,9 @@ class MenuOrderPage(BaseHandler):
 		days=[]
 		for i in range(0,5):
 			actualDayObject={}
+			actualDayObject["orderedPrice"] = orderedPrice[i]
+			actualDayObject["basketPrice"] = basketPrice[i]
+			actualDayObject["totalPrice"] = orderedPrice[i] + basketPrice[i]
 			actualDayObject["day"]=dayNames[i]
 			actualDayObject["date"]=monday+datetime.timedelta(days=i)
 			days.append(actualDayObject)
@@ -189,6 +205,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			dishCategories=DishCategory.gql("ORDER BY index")
 			monday=day+datetime.timedelta(days=-calendar[2]+1)
 			sunday=day+datetime.timedelta(days=-calendar[2]+7)
+			dayTotal = [0,0,0,0,0]
 			menuItems=sorted(orderedItems, key=lambda item:item.dish.title)
 			for category in dishCategories:
 				actualCategoryObject={}
@@ -208,11 +225,16 @@ class ReviewPendingOrderPage(BaseHandler):
 						except ReferencePropertyResolveError:
 							continue
 						if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay):
-							if (actualOrder!=None) and (str(menuItem.key()) in actualOrder) and int(actualOrder[str(menuItem.key())]) != 0:
-								menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
-								actualMenuItems.append(menuItem)
-								itemsInRows=itemsInRows+1
-							else:
+							try:
+								if (actualOrder!=None) and (str(menuItem.key()) in actualOrder) and int(actualOrder[str(menuItem.key())]) != 0:
+									menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
+									menuItem.basketprice = int(menuItem.inCurrentOrder) * menuItem.price
+									dayTotal[i] = dayTotal[i] + menuItem.basketprice
+									actualMenuItems.append(menuItem)
+									itemsInRows=itemsInRows+1
+								else:
+									menuItem.inCurrentOrder=False
+							except ValueError:
 								menuItem.inCurrentOrder=False
 					actualDayObject["menuItems"]=actualMenuItems
 					items.append(actualDayObject)
@@ -220,10 +242,12 @@ class ReviewPendingOrderPage(BaseHandler):
 				if (itemsInRows > 0):
 					menu.append(actualCategoryObject)
 			days=[]
+			# Adds header information
 			for i in range(0,5):
 				actualDayObject={}
-				actualDayObject["day"]=dayNames[i]
-				actualDayObject["date"]=monday+datetime.timedelta(days=i)
+				actualDayObject["day"] = dayNames[i]
+				actualDayObject["date"] = monday+datetime.timedelta(days=i)
+				actualDayObject["total"] = dayTotal[i]
 				days.append(actualDayObject)
 			# A single dish with editable ingredient list
 			prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
@@ -275,14 +299,17 @@ class ConfirmOrder(BaseHandler):
 				userOrder.user = User.get(userKey)
 			userOrder.put()
 			for orderKey in actualOrder.keys():
-				if (int(actualOrder[orderKey]) != 0):
-					orderItem = UserOrderItem()
-					orderItem.userOrder = userOrder
-					orderItem.orderedItem = MenuItem.get(orderKey)
-					orderItem.itemCount = int(actualOrder[orderKey])
-					orderItem.price = 100 * int(actualOrder[orderKey])
-					userOrder.price = userOrder.price + orderItem.price
-					orderItem.put()
+				try:
+					if (int(actualOrder[orderKey]) != 0):
+						orderItem = UserOrderItem()
+						orderItem.userOrder = userOrder
+						orderItem.orderedItem = MenuItem.get(orderKey)
+						orderItem.itemCount = int(actualOrder[orderKey])
+						orderItem.price = orderItem.orderedItem.price * int(actualOrder[orderKey])
+						userOrder.price = userOrder.price + orderItem.price
+						orderItem.put()
+				except ValueError, ReferencePropertyResolveError:
+					continue
 			userOrder.put()
 			self.session[ACTUAL_ORDER]={}
 			self.redirect("/order")

@@ -18,8 +18,6 @@
 				{{ menuItem.orderedQuantity}} + 
 				{% if menuItem.inCurrentOrder %}
 					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
-				{% elif menuItem.ordered %}
-					Rendleve
 				{% else %}
 					<input style="width: 20px" type="text" name="MIC{{ menuItem.key() }}" value="0"/>
 				{% endif %}
@@ -27,6 +25,7 @@
 				{% for component in menuItem.components %}
 					,{{ component.dish.title }}
 				{% endfor %}
+				{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %} Ft
 				<br/>
 			{% endfor %}
 			</div>
@@ -35,9 +34,11 @@
 	</tr>
 	{% endfor %}
 	<tr>
-		<td>Energia</td>
+		<td>Összesen</td>
 		{% for day in days %}
-			<td><span id="energy">0</span></td>
+			<td>Eddigi rendelés {{ day.orderedPrice }} Ft<br/>
+				Kosárban {{ day.basketPrice }} Ft<br/>
+				Összesen {{ day.totalPrice }} Ft</td>
 		{% endfor%}
 	</tr>
 </table>
