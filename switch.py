@@ -13,7 +13,7 @@ from main import MainPage
 from menu import MenuEditPage,MenuDeleteDishPage, AddMenuItemComponent,\
 	ModifyMenuItem
 from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage,\
-	ConfirmOrder, PreviousOrders, PreviousOrder
+	ConfirmOrder, PreviousOrders, PreviousOrder, ReviewOrderedMenuPage
 from ingredientCategory import CategoryIngredientDeletePage,\
 	IngredientCategoryPage, IngredientCategoryDeletePage
 from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
@@ -39,6 +39,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/order', MenuOrderPage),
 										('/clearOrder', ClearOrderPage),
 										('/pendingOrder', ReviewPendingOrderPage),
+										('/personalMenu', ReviewOrderedMenuPage),
 										('/clearOrder', ClearOrderPage),
 										('/deleteDish', DeleteDishPage),
 										('/deleteWish', DeleteWishPage),

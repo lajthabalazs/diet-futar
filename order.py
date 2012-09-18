@@ -70,7 +70,7 @@ class MenuOrderPage(BaseHandler):
 							if (actualOrder!=None) and (str(menuItem.key()) in actualOrder):
 								menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
 								try:
-									basketPrice[i] = menuItem.price * int(actualOrder[str(menuItem.key())])
+									basketPrice[i] = basketPrice[i] + menuItem.price * int(actualOrder[str(menuItem.key())])
 								except:
 									pass
 							else:
@@ -78,7 +78,7 @@ class MenuOrderPage(BaseHandler):
 							try:
 								menuItem.orderedQuantity = userOrders[menuItem.key()]
 								try:
-									orderedPrice[i] = menuItem.price * int(userOrders[menuItem.key()])
+									orderedPrice[i] = orderedPrice[i] +  menuItem.price * int(userOrders[menuItem.key()])
 								except:
 									pass
 							except KeyError:
@@ -150,34 +150,6 @@ class ClearOrderPage(BaseHandler):
 		self.session[ACTUAL_ORDER]={}
 		self.redirect("/order?day="+str(day))
 		
-class OldReviewPendingOrderPage(BaseHandler):
-	def get(self):
-		actualOrder=self.session.get(ACTUAL_ORDER,{})
-		dayIndex={}
-		days=[]
-		orderedMenuItemKeys=[]
-		for key in actualOrder.keys():
-			orderedMenuItemKeys.append(key)
-		if (len(actualOrder) > 0):
-			menuItems=db.get(orderedMenuItemKeys)
-			for menuItem in menuItems:
-				index=dayIndex.get(menuItem.day,-1)
-				day={}
-				if (index != -1):
-					day=days[index]
-				else:
-					day['name']="Hetfo"
-					day['date']=str(menuItem.day)
-					day['menuItems']=[]
-					days.append(day)
-					dayIndex[menuItem.day]=len(days)-1
-				day['menuItems'].append(menuItem)
-		template_values = {
-			'days':days
-		}
-		template = jinja_environment.get_template('templates/reviewPendingOrder.html')
-		self.printPage("Aktualis rendeles", template.render(template_values), True)
-
 
 class ReviewPendingOrderPage(BaseHandler):
 	def get(self):
@@ -282,6 +254,97 @@ class ReviewPendingOrderPage(BaseHandler):
 				actualOrder[field[3:]]=self.request.get(field)
 		self.session[ACTUAL_ORDER]=actualOrder
 		self.redirect("/pendingOrder?day="+str(day))
+
+class ReviewOrderedMenuPage(BaseHandler):
+	def get(self):
+		day=datetime.date.today()
+		requestDay=self.request.get('day')
+		if ((requestDay != None) and (requestDay != "")):
+			parts=requestDay.rsplit("-")
+			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		#Fetch user's previous orders. User orders is an object associating menu item keys with quantities
+		userOrders={}
+		userKey = self.session.get(USER_KEY,None)
+		if (userKey != None):
+			user = User.get(userKey)
+			for userOrder in user.userOrders:
+				for orderedItem in userOrder.items:
+					itemQuantity = 0
+					try: 
+						menuItemKey = orderedItem.orderedItem.key()
+						if (userOrders.has_key(menuItemKey)):
+							itemQuantity = int(userOrders[menuItemKey])
+						if (orderedItem.itemCount != None):
+							userOrders[menuItemKey] = itemQuantity + orderedItem.itemCount
+					except ReferencePropertyResolveError:
+						itemQuantity=0
+		#Determine the week
+		calendar=day.isocalendar()
+		#Organize into days
+		menu=[] #Contains menu items
+		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
+		dishCategories=DishCategory.gql("ORDER BY index")
+		monday=day+datetime.timedelta(days=-calendar[2]+1)
+		sunday=day+datetime.timedelta(days=-calendar[2]+7)
+		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
+		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
+		orderedPrice = [0,0,0,0,0]
+		for category in dishCategories:
+			actualCategoryObject={}
+			actualCategoryObject['category']=category
+			items=[]
+			itemsInRows=0
+			for i in range(0,5):
+				actualDay=monday+datetime.timedelta(days=i)
+				actualDayObject={}
+				actualDayObject["day"]=dayNames[i]
+				actualDayObject["date"]=actualDay
+				#Filter menu items
+				actualMenuItems=[]
+				for menuItem in menuItems:
+					try:
+						if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay) and (menuItem.containingMenuItem == None):
+							try:
+								menuItem.orderedQuantity = userOrders[menuItem.key()]
+								try:
+									orderedPrice[i] = orderedPrice[i] +  menuItem.price * int(userOrders[menuItem.key()])
+									itemsInRows=itemsInRows+1
+								except:
+									pass
+							except KeyError:
+								menuItem.orderedQuantity = 0
+							actualMenuItems.append(menuItem)
+					except ReferencePropertyResolveError:
+						continue
+				actualDayObject["menuItems"]=actualMenuItems
+				items.append(actualDayObject)
+			actualCategoryObject["days"]=items
+			if (itemsInRows > 0):
+				menu.append(actualCategoryObject)
+		days=[]
+		for i in range(0,5):
+			actualDayObject={}
+			actualDayObject["orderedPrice"] = orderedPrice[i]
+			actualDayObject["day"]=dayNames[i]
+			actualDayObject["date"]=monday+datetime.timedelta(days=i)
+			days.append(actualDayObject)
+		# A single dish with editable ingredient list
+		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
+		nextMonday=day+datetime.timedelta(days=-calendar[2]+1+7)
+		today=datetime.date.today()
+		todayCalendat=today.isocalendar()
+		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
+		template_values = {
+			'days':days,
+			'next':nextMonday,
+			'actual':actualMonday,
+			'menu':menu
+		}
+		if (prevMonday == actualMonday) or (prevMonday > actualMonday):
+			template_values['prev'] = prevMonday
+		# A single dish with editable ingredient list
+		template = jinja_environment.get_template('templates/reviewOrderedMenu.html')
+		self.printPage(str(day), template.render(template_values), True)
 
 class ConfirmOrder(BaseHandler):
 	def get(self):

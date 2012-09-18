@@ -39,9 +39,14 @@ class BaseHandler(webapp2.RequestHandler):
 		menuItems.append(weeklyOrderMenu)
 		if (isUserLoggedIn(self)):
 			profile={}
-			profile["label"]="Szemelyes adatok"
+			profile["label"]="Profil"
 			profile["target"]="/profile"
 			menuItems.append(profile)
+		if (isUserLoggedIn(self)):
+			ownMenu={}
+			ownMenu["label"]="Menum"
+			ownMenu["target"]="/personalMenu"
+			menuItems.append(ownMenu)
 		if (isUserAdmin(self)):
 			weeklyMenu={}
 			weeklyMenu["label"]="Menu osszeallitas"
