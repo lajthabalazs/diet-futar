@@ -200,7 +200,10 @@ class ReviewPendingOrderPage(BaseHandler):
 							try:
 								if (actualOrder!=None) and (str(menuItem.key()) in actualOrder) and int(actualOrder[str(menuItem.key())]) != 0:
 									menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
-									menuItem.basketprice = int(menuItem.inCurrentOrder) * menuItem.price
+									try:
+										menuItem.basketprice = int(menuItem.inCurrentOrder) * menuItem.price
+									except TypeError:
+										menuItem.basketprice = 0
 									dayTotal[i] = dayTotal[i] + menuItem.basketprice
 									actualMenuItems.append(menuItem)
 									itemsInRows=itemsInRows+1
@@ -305,15 +308,13 @@ class ReviewOrderedMenuPage(BaseHandler):
 					try:
 						if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay) and (menuItem.containingMenuItem == None):
 							try:
-								menuItem.orderedQuantity = userOrders[menuItem.key()]
-								try:
-									orderedPrice[i] = orderedPrice[i] +  menuItem.price * int(userOrders[menuItem.key()])
-									itemsInRows=itemsInRows+1
-								except:
-									pass
-							except KeyError:
+								menuItem.orderedQuantity = int(userOrders[menuItem.key()])
+								orderedPrice[i] = orderedPrice[i] +  menuItem.price * int(userOrders[menuItem.key()])
+								itemsInRows=itemsInRows+1
+							except KeyError, ValueError:
 								menuItem.orderedQuantity = 0
-							actualMenuItems.append(menuItem)
+							if menuItem.orderedQuantity > 0:
+								actualMenuItems.append(menuItem)
 					except ReferencePropertyResolveError:
 						continue
 				actualDayObject["menuItems"]=actualMenuItems
@@ -368,7 +369,10 @@ class ConfirmOrder(BaseHandler):
 						orderItem.userOrder = userOrder
 						orderItem.orderedItem = MenuItem.get(orderKey)
 						orderItem.itemCount = int(actualOrder[orderKey])
-						orderItem.price = orderItem.orderedItem.price * int(actualOrder[orderKey])
+						try:
+							orderItem.price = orderItem.orderedItem.price * int(actualOrder[orderKey])
+						except TypeError:
+							orderItem.price = 0
 						userOrder.price = userOrder.price + orderItem.price
 						orderItem.put()
 				except ValueError, ReferencePropertyResolveError:

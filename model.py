@@ -10,9 +10,23 @@ class Role (db.Model):
 	name = db.StringProperty()
 
 class User(db.Model):
-	userName = db.StringProperty()
+	email = db.StringProperty()
 	password = db.StringProperty()
+	familyName = db.StringProperty()
+	givenName = db.StringProperty()
+	activated = db.BooleanProperty()
+	activationCode = db.StringProperty()
 	role = db.ReferenceProperty(Role, collection_name='users')
+
+class Address (db.Model):
+	isBilling = db.BooleanProperty()
+	billingName = db.StringProperty()
+	phoneNumber = db.StringProperty()
+	district = db.StringProperty()
+	zipCode = db.StringProperty()
+	street = db.StringProperty()
+	streetNumber = db.StringProperty()
+	user = db.ReferenceProperty(User, collection_name='addresses')
 
 class DishCategory(db.Model):
 	name = db.StringProperty()

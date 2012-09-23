@@ -1,0 +1,35 @@
+﻿<h1>Profil</h1>
+	<table>
+		<tr><td>Email</td><td>{{ user.email }}</td></tr>
+	</table>
+	<form method="post">
+		<table>
+			<tr><td>Vezetéknév</td><td><input type="text" name="familyName" value="{{user.familyName}}"/></td></tr>
+			<tr><td>Keresztnév</td><td><input type="text" name="givenName" value="{{user.givenName}}"/></td></tr>
+			<tr><td colspan="2" align="right"><input type="submit" value="Mentés"/></td></tr>
+		</table>
+	</form>	
+	<h3>Jelszó</h3>
+	<form action="/changePassword" method="post">
+		<table>
+			<tr><td>Jelszó</td><td><input type="password" name="oldPassword"/></td></tr>
+			<tr><td>Új jelszó</td><td><input type="password" name="newPassword"/></td></tr>
+			<tr><td>Új jelszó mégegyszer</td><td><input type="password" name="passwordCheck"/></td></tr>
+			<tr><td colspan="2" align="right"><input type="submit" value="Jelszó módosítás"/></td></tr>
+		</table>
+	</form>	
+
+	<h3>Címek</h3>
+	<!-- List of addresses here -->
+	<form action="/addAddress" method="post">
+		<table>
+			<tr><td>Számlázási cím</td><td><input type="checkbox" name="isBlling"/></td></tr>
+			<tr><td>Számlázási név</td><td><input type="text" name="billingName"/></td></tr>
+			<tr><td>Telefonszám</td><td><input type="text" name="phoneNumber"/></td></tr>
+			<tr><td>Kerület</td><td><input type="text" name="district"/></td></tr>
+			<tr><td>Irányítószám</td><td><input type="text" name="zipCode"/></td></tr>
+			<tr><td>Utca név</td><td><input type="text" name="street"/></td></tr>
+			<tr><td>Házszám, emelet</td><td><input type="text" name="streetNumber"/></td></tr>
+			<tr><td colspan="2" align="right"><input type="submit" value="Cím hozzáadása"/></td></tr>
+		</table>
+	</form>	

@@ -1,7 +1,7 @@
 ﻿<div id="login_box">
 	{% if user %}
 		Belépve<br/>
-		{{ user.userName }}<br/>
+		{{ user.email }}<br/>
 		
 		<a href="pendingOrder">Kosár</a><br/>
 		<a href="/previousOrders">Korábbi rendelések</a><br/>
@@ -9,7 +9,7 @@
 	{% else %}
 		<form action="/login" method="post">
 			<table>
-				<tr><td>Felhasználónév</td><td><input type="text" name="userName"/></td></tr>
+				<tr><td>Email</td><td><input type="text" name="email"/></td></tr>
 				<tr><td>Jelszó</td><td><input type="password" name="password"/></td></tr>
 				{% if (login_error) %}
 				<tr><td colspan="2"><span style="color: 'RED'">{{ login_error }}</span></td></tr>

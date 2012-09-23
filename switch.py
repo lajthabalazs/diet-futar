@@ -8,7 +8,8 @@ import webapp2
 from ingredient import IngredientDeletePage, IngredientAddPage, IngredientPage
 from dish import DishPage, DeleteDishPage, DishIngredientAddPage, DishIngredientDeletePage
 from wish import WishPage, DeleteWishPage
-from user_forms import LoginPage, RegisterPage, LogoutPage
+from user_forms import LoginPage, RegisterPage, LogoutPage, UserProfilePage,\
+	ActivatePage
 from main import MainPage
 from menu import MenuEditPage,MenuDeleteDishPage, AddMenuItemComponent,\
 	ModifyMenuItem
@@ -28,6 +29,8 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/login', LoginPage),
 										('/logout', LogoutPage),
 										('/registration', RegisterPage),
+										('/activate', ActivatePage),
+										('/profile', UserProfilePage),
 										('/dish', DishPage),
 										(DISH_CATEGORY_URL, DishCategoryPage),
 										(DISH_CATEGORY_DELETE_URL, DishCategoryDeletePage),
