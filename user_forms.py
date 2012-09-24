@@ -10,12 +10,12 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler
-from model import User
+from model import User, Address
 from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
 	LOGIN_ERROR_WRONG_PASSWORD, REGISTRATION_ERROR_KEY, clearRegistrationError,\
-	isUserAdmin
+	isUserAdmin, clearLoginError
 from random import Random
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -133,6 +133,30 @@ class ActivatePage (BaseHandler):
 		template = jinja_environment.get_template('templates/activation.html')
 		self.printPage("Aktivacio", template.render(template_values), True)
 
+class ChangePasswordPage (BaseHandler):
+	def post(self):
+		clearLoginError(self)
+		if(not isUserAdmin(self)):
+			self.redirect("/registration")
+		userKey=self.session.get(USER_KEY,None)
+		user = None
+		if (userKey != None):
+			user = db.get(userKey)
+		if user == None:
+			self.redirect("/registration")
+		else:
+			if user.password == self.request.get("oldPassword"):
+				passwd1 = self.request.get("newPassword")
+				passwd2 = self.request.get("passwordCheck")
+				if passwd1 == passwd2:
+					user.password = passwd1
+					user.put()
+				else:
+					self.session[LOGIN_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
+			else:
+				self.session[LOGIN_ERROR_KEY] = LOGIN_ERROR_WRONG_PASSWORD
+		self.redirect("/profile")
+
 
 class UserProfilePage (BaseHandler):
 	def get(self):
@@ -144,7 +168,8 @@ class UserProfilePage (BaseHandler):
 			user.password = "__________"
 			user.role = None
 			template_values = {
-				'user': user
+				'user': user,
+				LOGIN_ERROR_KEY:self.session.get(LOGIN_ERROR_KEY,0)
 			}
 			template = jinja_environment.get_template('templates/profile.html')
 			self.printPage("Profil", template.render(template_values), False, True)
@@ -170,7 +195,31 @@ class UserProfilePage (BaseHandler):
 		else:
 			self.redirect("/registration")
 
-
+class AddressPage (BaseHandler):
+	def post(self):
+		user = None
+		if(not isUserAdmin(self)):
+			self.redirect("/registration")
+		userKey=self.session.get(USER_KEY,None)
+		if (userKey != None):
+			user = db.get(userKey)
+		else:
+			self.redirect("/profile")
+		addressKey = self.request.get("addressKey")
+		address = None
+		if addressKey != None and addressKey != "":
+			address = Address.get(addressKey)
+		if address == None:
+			address = Address()
+		address.user = user
+		address.billingName = self.request.get("billingName")
+		address.district = self.request.get("district")
+		address.phoneNumber = self.request.get("phoneNumber")
+		address.zipCode = self.request.get("zipCode")
+		address.street = self.request.get("street")
+		address.streetNumber = self.request.get("streetNumber")
+		address.put()
+		self.redirect("/profile")
 
 
 

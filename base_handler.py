@@ -52,6 +52,14 @@ class BaseHandler(webapp2.RequestHandler):
 			weeklyMenu["label"]="Menu osszeallitas"
 			weeklyMenu["target"]="/menuEdit"
 			menuItems.append(weeklyMenu)
+			payingOrders={}
+			payingOrders["label"]="Rendelt"
+			payingOrders["target"]="/chefReviewOrders"
+			menuItems.append(payingOrders)
+			toMake={}
+			toMake["label"]="Keszitendo"
+			toMake["target"]="/chefReviewToMake"
+			menuItems.append(toMake)
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"

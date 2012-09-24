@@ -9,7 +9,7 @@ from ingredient import IngredientDeletePage, IngredientAddPage, IngredientPage
 from dish import DishPage, DeleteDishPage, DishIngredientAddPage, DishIngredientDeletePage
 from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage, UserProfilePage,\
-	ActivatePage
+	ActivatePage, AddressPage, ChangePasswordPage
 from main import MainPage
 from menu import MenuEditPage,MenuDeleteDishPage, AddMenuItemComponent,\
 	ModifyMenuItem
@@ -19,6 +19,7 @@ from ingredientCategory import CategoryIngredientDeletePage,\
 	IngredientCategoryPage, IngredientCategoryDeletePage
 from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
+from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -30,7 +31,9 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/logout', LogoutPage),
 										('/registration', RegisterPage),
 										('/activate', ActivatePage),
+										('/changePassword', ChangePasswordPage),
 										('/profile', UserProfilePage),
+										('/address', AddressPage),
 										('/dish', DishPage),
 										(DISH_CATEGORY_URL, DishCategoryPage),
 										(DISH_CATEGORY_DELETE_URL, DishCategoryDeletePage),
@@ -56,7 +59,9 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/confirmOrder', ConfirmOrder),
 										('/previousOrders', PreviousOrders),
 										('/previousOrder', PreviousOrder),
-										('/ingredientCategory', IngredientCategoryPage)],
+										('/ingredientCategory', IngredientCategoryPage),
+										('/chefReviewToMake', ChefReviewToMakePage),
+										('/chefReviewOrders', ChefReviewOrdersPage)],
 										debug=True, config=config)
 
 
