@@ -28,6 +28,19 @@
 				{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %} Ft
 				<br/>
 			{% endfor %}
+			{% for composit in day.composits %}
+				{{ composit.orderedQuantity}} + 
+				{% if composit.inCurrentOrder %}
+					<input style="width: 20px" type="text" name="MIC{{ composit.key() }}" value="{{ composit.inCurrentOrder}}"/>
+				{% else %}
+					<input style="width: 20px" type="text" name="MIC{{ composit.key() }}" value="0"/>
+				{% endif %}
+				{% for component in composit.components%}
+					{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}
+				{% endfor %}
+				{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %} Ft
+				<br/>
+			{% endfor %}
 			</div>
 		</td>
 		{% endfor %}

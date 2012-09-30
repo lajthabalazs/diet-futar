@@ -3,7 +3,13 @@
 	<tr><th>Nap</th><th>Termék</th><th>Darab</th><th>Ár</th></tr>
 	{% for orderItem in userOrder.items %}
 		<tr>
-			<td>{{ orderItem.orderedItem.day }}</td><td>{{orderItem.orderedItem.dish.title}}</td><td style="text-align: right">{{orderItem.itemCount}}</td><td style="text-align: right">{{orderItem.price}} Ft</td>
+			{% if orderItem.orderedItem == None %}
+			{# Composit #}
+			<td>{{ orderItem.orderedComposit.day }}</td><td>{% for component in orderItem.orderedComposit.components%}{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}{% endfor %} </td><td style="text-align: right">{{orderItem.itemCount}}</td><td style="text-align: right">{{orderItem.price}} Ft</td>
+			{% else %}
+			{# Menu item #}
+			<td>{{ orderItem.orderedItem.day }}</td><td>{{orderItem.orderedItem.dish.title}}</td><td style="text-align: right">{{orderItem.itemCount}}</td><td style="text-align: right">{{orderItem.price}} Ft</td>			
+			{% endif %}
 		</tr>
 	{% endfor %}
 <tr><td colspan="3">Összesen</td><td>{{userOrder.price}} Ft</td></tr>

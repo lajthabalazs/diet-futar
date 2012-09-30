@@ -88,31 +88,27 @@ class UserOrderItem(db.Model):
 	userOrder=db.ReferenceProperty(UserOrder, collection_name='items')
 	itemCount=db.IntegerProperty()
 	orderedItem=db.ReferenceProperty(MenuItem, collection_name='occurrences')
+	orderedComposit=db.ReferenceProperty(Composit, collection_name='occurrences')
 
 class Wish(db.Model):
 	title = db.StringProperty()
 	description=db.StringProperty(multiline=True)
 	ready=db.BooleanProperty()
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

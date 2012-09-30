@@ -7,7 +7,7 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 import datetime
-from model import MenuItem, DishCategory
+from model import MenuItem, DishCategory, UserOrder, UserOrderItem, Composit
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -31,6 +31,7 @@ class ChefReviewOrdersPage(BaseHandler):
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
 		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
+		composits=Composit.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
 		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
 		for category in dishCategories:
 			actualCategoryObject={}
@@ -52,7 +53,17 @@ class ChefReviewOrdersPage(BaseHandler):
 						if menuItem.orderedQuantity > 0:
 							itemsInRows = itemsInRows + 1
 							actualMenuItems.append(menuItem)
+				actualComposits=[]
+				for composit in composits:
+					if composit.category.key()==category.key() and composit.day==actualDay:
+						composit.orderedQuantity = 0
+						for order in composit.occurrences:
+							composit.orderedQuantity = composit.orderedQuantity + order.itemCount
+						if composit.orderedQuantity > 0:
+							itemsInRows = itemsInRows + 1
+							actualComposits.append(composit)
 				actualDayObject["menuItems"]=actualMenuItems
+				actualDayObject["composits"]=actualComposits
 				items.append(actualDayObject)
 			actualCategoryObject["days"]=items
 			if (itemsInRows > 0):
@@ -90,43 +101,98 @@ class ChefReviewToMakePage(BaseHandler):
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days
-		menu=[] #Contains menu items
 		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
-		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
-		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
+		menuItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
+		composits=Composit.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
+		# Build matrix, categories and days in categories
+		menuData={} #Contains menu items
 		for category in dishCategories:
+			# Skip menu categories
+			if category.isMenu:
+				continue
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
-			items=[]
-			dishes={}
-			itemsInRows=0
+			actualCategoryObject["days"] = []
 			for i in range(0,5):
 				actualDay=monday+datetime.timedelta(days=i)
 				actualDayObject={}
 				actualDayObject["day"]=dayNames[i]
 				actualDayObject["date"]=actualDay
-				#Filter menu items
-				actualMenuItems=[]
-				actualDishes={}
-				for menuItem in menuItems:
-					if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay):
-						menuItem.orderedQuantity = 0
-						for order in menuItem.occurrences:
-							menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
-						if menuItem.containingMenuItem != None:
-							for order in menuItem.containingMenuItem.occurrences:
-								menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
-						if menuItem.orderedQuantity > 0:
-							itemsInRows = itemsInRows + 1
-							actualMenuItems.append(menuItem)
-				actualDayObject["menuItems"]=actualMenuItems
-				items.append(actualDayObject)
-			actualCategoryObject["days"]=items
-			if (itemsInRows > 0):
-				menu.append(actualCategoryObject)
+				actualDayObject["dishes"]={}
+				actualCategoryObject["days"].append(actualDayObject)
+			menuData[category.key()] = actualCategoryObject
+		# Goes through orders
+		for menuItem in menuItems:
+			for orderItem in menuItem.occurrences:
+			# Extract order items
+				itemCount = orderItem.itemCount
+				# Check if its a menu item, or a composit
+				if orderItem.orderedItem != None and (itemCount != None):
+					# Ordered menu item, extract dishes
+					orderedItem = orderItem.orderedItem
+					dayIndex = (orderedItem.day - monday).days
+					# Increment for main item
+					slot=menuData[orderedItem.dish.category.key()]["days"][dayIndex]["dishes"]
+					itemKey = orderedItem.dish.key()
+					itemQuantity = 0
+					if slot.has_key(itemKey):
+						itemQuantity = int(slot.get(itemKey)["itemQuantity"])
+					else:
+						slot[itemKey] = {} 
+						slot[itemKey]["dish"]=orderedItem.dish
+					slot[itemKey]["itemQuantity"] = itemQuantity + itemCount
+					# Increment for sub items
+					for subItem in orderedItem.components:
+						slot=menuData[subItem.dish.category.key()]["days"][dayIndex]["dishes"]
+						itemKey = subItem.dish.key()
+						itemQuantity = 0
+						if slot.has_key(itemKey):
+							itemQuantity = int(slot.get(itemKey)["itemQuantity"])
+						else:
+							slot[itemKey] = {} 
+							slot[itemKey]["dish"]=subItem.dish
+						slot[itemKey]["itemQuantity"] = itemQuantity + itemCount
+		for composit in composits:
+			for orderItem in composit.occurrences:
+				itemCount =orderItem.itemCount
+				if orderItem.orderedComposit != None and (itemCount != None):
+					# Ordered menu composit, extract dishes
+					orderedComposit = orderItem.orderedComposit
+					dayIndex = (orderedComposit.day - monday).days
+					for linker in orderedComposit.components:
+						orderedItem = linker.menuItem
+						# Increment for main item
+						slot=menuData[orderedItem.dish.category.key()]["days"][dayIndex]["dishes"]
+						itemKey = orderedItem.dish.key()
+						itemQuantity = 0
+						if slot.has_key(itemKey):
+							itemQuantity = int(slot.get(itemKey)["itemQuantity"])
+						else:
+							slot[itemKey] = {} 
+							slot[itemKey]["dish"]=orderedItem.dish
+						slot[itemKey]["itemQuantity"] = itemQuantity + itemCount
+						# Increment for sub items
+						for subItem in orderedItem.components:
+							slot=menuData[subItem.dish.category.key()]["days"][dayIndex]["dishes"]
+							itemKey = subItem.dish.key()
+							itemQuantity = 0
+							if slot.has_key(itemKey):
+								itemQuantity = int(slot.get(itemKey)["itemQuantity"])
+							else:
+								slot[itemKey] = {} 
+								slot[itemKey]["dish"]=subItem.dish
+							slot[itemKey]["itemQuantity"] = itemQuantity + itemCount
+		# Shape data
+		menu=[]
+		for category in dishCategories:
+			# Skip menu categories
+			if category.isMenu:
+				continue
+			menu.append(menuData[category.key()])
+		
 		days=[]
 		for i in range(0,5):
 			actualDayObject={}
@@ -146,5 +212,5 @@ class ChefReviewToMakePage(BaseHandler):
 		}
 		template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
-		template = jinja_environment.get_template('templates/chefReviewOrders.html')
+		template = jinja_environment.get_template('templates/chefReviewDishes.html')
 		self.printPage(str(day), template.render(template_values), True)

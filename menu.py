@@ -67,8 +67,8 @@ class MenuEditPage(BaseHandler):
 						composit.category
 					except ReferencePropertyResolveError:
 						continue
-					if (composit.category.key()==category.key()):
-						if (composit.day==actualDay):
+					if composit.category.key()==category.key():
+						if composit.day==actualDay:
 							actualComposits.append(composit)
 				#Get every menu item for the day
 				for menuItem in menuItems:
@@ -191,7 +191,7 @@ class ModifyComposit(BaseHandler):
 			requestDay=self.request.get('formDay')
 			if ((requestDay != None) and (requestDay != "")):
 				dayStr = requestDay
-			compositKey=self.request.get('menuItemKey')
+			compositKey=self.request.get('compositKey')
 			if ((compositKey != None) and (compositKey != "")):
 				composit=Composit.get(compositKey)
 				if (composit != None):

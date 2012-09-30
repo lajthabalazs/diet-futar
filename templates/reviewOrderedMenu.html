@@ -20,6 +20,14 @@
 				{{ menuItem.price }} Ft
 				<br/>
 			{% endfor %}
+			{% for composit in day.composits %}
+				{{ composit.orderedQuantity }} adag 
+				{% for component in composit.components%}
+					{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}
+				{% endfor %}
+				{{ composit.price }} Ft
+				<br/>
+			{% endfor %}
 			</div>
 		</td>
 		{% endfor %}
