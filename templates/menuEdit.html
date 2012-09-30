@@ -7,54 +7,98 @@
 		{% endfor%}
 	</tr>
 	{% for category in menu%}
-		<tr><td> {{ category.category.name }} </td>
+		<tr><td> {{ category.category.name }}</td>
 		{% for day in category.days %}
 			<td valign="bottom">
 			<div style="width:100%; text-align:right">
-			{% for menuItem in day.menuItems %}
-				{{menuItem.dish.title}}
-				<!-- References of components -->
-				{% if menuItem.dish.price == None%}0{% else %}{{ menuItem.dish.price }}{% endif %} Ft
-				<br/>
-				{% for component in menuItem.components %}
-					{{ component.dish.title }}
-					{% if component.dish.price == None%}0{% else %}{{ component.dish.price }}{% endif %} Ft
+			{% if category.category.isMenu %}
+				{% for composit in day.composits%}
+					Menu<br/>
+					{% for component in composit.components%}
+					{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %} {{component.menuItem.price}} Ft<br/>
+				<form action="/deleteItemFromComposit" method="post">
+					<input type="hidden" name="componentKey" value="{{ component.key() }}"/>
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<input type="submit" value="Törlés"/>
+				</form>
+				{% endfor %}
+				<form action="/addItemToComposit" method="post">
+					<input type="hidden" name="compositKey" value="{{composit.key()}}" id="compositKey"/>
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<select name="menuItem" id="menuItem">
+						{% for menuItem in day.availableMenuItems %}
+							<option label="{{menuItem.dish.title}}{% for subItem in menuItem.components%},{{subItem.dish.title}}{% endfor %}" value="{{menuItem.key()}}"></option>
+						{% endfor %}
+					</select>
+					<input type="submit" name="submit" value="Csatol" id="submit"/>
+				</form>
+				<form action="/modifyComposit" method="post">
+					<input type="hidden" name="compositKey" value="{{ composit.key() }}"/>
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<input style="text-align: right" type="text" name="price" value="{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %}"/> Ft<br/>
+					<input type="submit" value="Áraz"/>
+				</form>
+				<form action="/deleteComposit" method="post">
+					<input type="hidden" name="compositKey" value="{{ composit.key() }}"/>
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<input type="submit" value="Törlés"/>
+				</form>
+				{% endfor %}
+				<form method="post" action="/createComposit">
+					<input type="hidden" name="dishCategoryKey" value="{{category.category.key()}}" />
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<input type="submit" value="Menü létrehozása"/>
+				</form>
+			{% else %}
+				{% for menuItem in day.menuItems %}
+					{{menuItem.dish.title}}
+					<!-- References of components -->
+					{% if menuItem.dish.price == None%}0{% else %}{{ menuItem.dish.price }}{% endif %} Ft
+					<br/>
+					{% for component in menuItem.components %}
+						{{ component.dish.title }}
+						{% if component.dish.price == None%}0{% else %}{{ component.dish.price }}{% endif %} Ft
+						<form action="/deleteComposit" method="post">
+							<input type="hidden" name="menuItemKey" value="{{ component.key() }}"/>
+							<input type="hidden" name="formDay" value="{{ day.date }}"/>
+							<input type="submit" value="Törlés"/>
+						</form>
+					{% endfor %}
+					<form action="/addMenuItemComponent" method="post">
+						<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+						<input type="hidden" name="formDay" value="{{ day.date }}"/>
+						<select name="componentDishKey">
+							{% for dish in allDishes %}
+								<option value="{{dish.key() }}">{{ dish.title }}</option>
+							{% endfor %}
+						</select>
+						<input type="submit" value="Csatol"/>
+					</form>
+					Összesen {% if menuItem.sumprice == None%}0{% else %}{{ menuItem.sumprice }}{% endif %} Ft <br/>
+					<form action="/modifyMenuItem" method="post">
+						<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+						<input type="hidden" name="formDay" value="{{ day.date }}"/>
+						<input style="text-align: right" type="text" name="price" value="{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %}"/> Ft<br/>
+						<input type="submit" value="Áraz"/>
+					</form>
 					<form action="/deleteMenuItem" method="post">
-						<input type="hidden" name="menuItemKey" value="{{ component.key() }}"/>
+						<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+						<input type="hidden" name="formDay" value="{{ day.date }}"/>
 						<input type="submit" value="Törlés"/>
 					</form>
 				{% endfor %}
-				<form action="/addMenuItemComponent" method="post">
-					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
-					<select name="componentDishKey">
-						{% for dish in allDishes %}
+				</div>
+				<form method="post">
+					<input type="hidden" name="formDay" value="{{ day.date }}"/>
+					<select name="dishKey">
+						{% for dish in category.availableDishes %}
 							<option value="{{dish.key() }}">{{ dish.title }}</option>
 						{% endfor %}
 					</select>
-					<input type="submit" value="Csatol"/>
+					<input type="submit" value="Hozzáadás"/>
 				</form>
-				Összesen {% if menuItem.sumprice == None%}0{% else %}{{ menuItem.sumprice }}{% endif %} Ft <br/>
-				<form action="/modifyMenuItem" method="post">
-					<input style="text-align: right" type="text" name="price" value="{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %}"/> Ft<br/>
-					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
-					<input type="submit" value="Áraz"/>
-				</form>
-				<form action="/deleteMenuItem" method="post">
-					<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
-					<input type="submit" value="Törlés"/>
-				</form>
-			{% endfor %}
-			</div>
-			<form method="post">
-				<input type="hidden" name="formDay" value="{{ day.date }}"/>
-				<select name="dishKey">
-					{% for dish in category.availableDishes %}
-						<option value="{{dish.key() }}">{{ dish.title }}</option>
-					{% endfor %}
-				</select>
-				<input type="submit" value="Hozzáadás"/>
-			</form>
-		</td>
+			{% endif%}
+			</td>
 		{% endfor %}
 	</tr>
 	{% endfor %}

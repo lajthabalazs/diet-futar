@@ -45,7 +45,7 @@ class ChefReviewOrdersPage(BaseHandler):
 				#Filter menu items
 				actualMenuItems=[]
 				for menuItem in menuItems:
-					if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay) and (menuItem.containingMenuItem == None):
+					if menuItem.dish.category.key()==category.key() and menuItem.day==actualDay and menuItem.containingMenuItem == None:
 						menuItem.orderedQuantity = 0
 						for order in menuItem.occurrences:
 							menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount

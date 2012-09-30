@@ -26,6 +26,7 @@ class DishCategoryPage(BaseHandler):
 			dishCategory.name = self.request.get(DISH_CATEGORY_NAME)
 		try:
 			dishCategory.index = int(self.request.get(DISH_CATEGORY_INDEX))
+			dishCategory.isMenu = self.request.get('isMenuCategory', default_value="no")=='yes'
 		except ValueError:
 			dishCategory.index=0
 		dishCategory.put()

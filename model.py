@@ -30,12 +30,12 @@ class Address (db.Model):
 
 class DishCategory(db.Model):
 	name = db.StringProperty()
+	isMenu = db.BooleanProperty()
 	index=db.IntegerProperty()
 
 class Dish(db.Model):
 	title = db.StringProperty()
 	price = db.IntegerProperty()
-	subTitle = db.StringProperty()
 	description = db.StringProperty(multiline=True)
 	category=db.ReferenceProperty(DishCategory, collection_name='dishes')
 
@@ -58,12 +58,24 @@ class IngredientListItem(db.Model):
 	dish = db.ReferenceProperty(Dish, collection_name='ingredients')
 	quantity = db.FloatProperty()
 	
+
+class Composit(db.Model):
+	price = db.IntegerProperty()
+	sumprice = db.IntegerProperty()
+	day=db.DateProperty()
+	category=db.ReferenceProperty(DishCategory, collection_name='composits')
+
+
 class MenuItem(db.Model):
 	dish=db.ReferenceProperty(Dish, collection_name='occurrences')
 	price = db.IntegerProperty()
 	sumprice = db.IntegerProperty()
 	day=db.DateProperty()
 	containingMenuItem=db.SelfReferenceProperty('Containing menu item', collection_name='components')
+
+class CompositMenuItemListItem(db.Model):
+	menuItem=db.ReferenceProperty(MenuItem, collection_name='composits')
+	composit=db.ReferenceProperty(Composit, collection_name='components')
 
 class UserOrder(db.Model):
 	orderDate=db.DateTimeProperty()

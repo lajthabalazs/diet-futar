@@ -6,6 +6,8 @@
 	<td><form method="post">
 		<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key() }}"/>
 		<input type="number" name="dishCategoryIndex" cols="60" value="{{ dishCategory.index }}"/>
+		{{dishCategory.isMenuCategory}}
+		<input type="checkbox" name="isMenuCategory" cols="60" value="yes" {% if(dishCategory.isMenu) %} checked="true"{% endif %}/>
 		<input type="submit" value="Ment">
 	</form></td>
 	<td><form action="{{delete_url}}" method="post">

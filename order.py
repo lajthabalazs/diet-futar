@@ -66,7 +66,7 @@ class MenuOrderPage(BaseHandler):
 				actualMenuItems=[]
 				for menuItem in menuItems:
 					try:
-						if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay) and (menuItem.containingMenuItem == None):
+						if menuItem.dish.category.key()==category.key() and menuItem.day==actualDay and menuItem.containingMenuItem == None:
 							if (actualOrder!=None) and (str(menuItem.key()) in actualOrder):
 								menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
 								try:
@@ -306,7 +306,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 				actualMenuItems=[]
 				for menuItem in menuItems:
 					try:
-						if (menuItem.dish.category.key()==category.key()) and (menuItem.day==actualDay) and (menuItem.containingMenuItem == None):
+						if menuItem.dish.category.key()==category.key() and menuItem.day==actualDay and menuItem.containingMenuItem == None:
 							try:
 								menuItem.orderedQuantity = int(userOrders[menuItem.key()])
 								orderedPrice[i] = orderedPrice[i] +  menuItem.price * int(userOrders[menuItem.key()])
