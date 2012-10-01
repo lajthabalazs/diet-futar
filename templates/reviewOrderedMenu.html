@@ -1,5 +1,6 @@
 ﻿{% if prev %}<a href="/personalMenu?day={{ prev }}">Előző hét</a> {% endif %} <a href="/personalMenu?day={{ actual }}">Adktuális hét</a> <a href="/personalMenu?day={{ next }}">Következő hét</a>
 <table border="1">
+	<form method="post">
 	<tr>
 		<th> </th>
 		{% for day in days %}
@@ -39,7 +40,21 @@
 			<td style="text-align: right">{{ day.orderedPrice }} Ft</td>
 		{% endfor%}
 	</tr>
+	<tr>
+		<td>Szállítási cím</td>
+		{% for day in days %}
+			<td>
+				<select name="address_{{day.date}}" id="address_{{day.date}}">
+					{% for address in addresses %}
+						<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
+					{% endfor %}
+				</select>
+			</td>
+		{% endfor%}
+	</tr>
 </table>
+<input type="submit" name="" value="Címek mentése" id=""/>
+</form>
 
 
 

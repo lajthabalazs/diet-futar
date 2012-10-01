@@ -8,9 +8,9 @@ from google.appengine.ext import db
 from base_handler import BaseHandler
 import datetime
 from model import MenuItem, DishCategory, UserOrder, UserOrderItem, User,\
-	Composit
+	Composit, UserOrderAddress, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
-from user_management import USER_KEY
+from user_management import USER_KEY, getUser
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -268,12 +268,24 @@ class ReviewPendingOrderPage(BaseHandler):
 					menu.append(actualCategoryObject)
 			days=[]
 			# Adds header information
+			user = getUser(self)
+			addresses = user.deliveryAddresses
 			for i in range(0,5):
 				actualDayObject={}
+				actualDate=monday+datetime.timedelta(days=i)
 				actualDayObject["day"] = dayNames[i]
-				actualDayObject["date"] = monday+datetime.timedelta(days=i)
+				actualDayObject["date"] = actualDate
+				if addresses.count() > 0:
+					actualAddress=addresses[0]
+					for address in addresses:
+						if (address.day == actualDate):
+							actualAddress=address
+							break
+					actualDayObject["address"]=actualAddress.address
 				actualDayObject["total"] = dayTotal[i]
 				days.append(actualDayObject)
+			# Add addresses
+			
 			# A single dish with editable ingredient list
 			prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
 			nextMonday=day+datetime.timedelta(days=-calendar[2]+1+7)
@@ -284,6 +296,7 @@ class ReviewPendingOrderPage(BaseHandler):
 				'days':days,
 				'next':nextMonday,
 				'actual':actualMonday,
+				'addresses':user.addresses,
 				'menu':menu
 			}
 			if (prevMonday == actualMonday) or (prevMonday > actualMonday):
@@ -306,6 +319,25 @@ class ReviewPendingOrderPage(BaseHandler):
 			if (field[:3]=="MIC"):
 				actualOrder[field[3:]]=self.request.get(field)
 		self.session[ACTUAL_ORDER]=actualOrder
+		# Get addresses and save them to the proper date
+		for field in self.request.arguments():
+			if (field[:8]=="address_"):
+				date=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
+				user = getUser(self)
+				addresses = user.deliveryAddresses
+				actualAddress=None
+				if addresses.count() > 0:
+					for address in addresses:
+						if (address.day == date):
+							actualAddress=address
+							break
+				if actualAddress==None:
+					actualAddress=UserOrderAddress()
+					actualAddress.user=user
+					actualAddress.day=date
+				address=Address.get(self.request.get(field))
+				actualAddress.address=address
+				actualAddress.put()
 		self.redirect("/pendingOrder?day="+str(day))
 
 class ReviewOrderedMenuPage(BaseHandler):
@@ -397,11 +429,21 @@ class ReviewOrderedMenuPage(BaseHandler):
 			if (itemsInRows > 0):
 				menu.append(actualCategoryObject)
 		days=[]
+		user = getUser(self)
+		addresses = user.deliveryAddresses
 		for i in range(0,5):
 			actualDayObject={}
+			actualDate=monday+datetime.timedelta(days=i)
+			actualDayObject["date"] = actualDate
 			actualDayObject["orderedPrice"] = orderedPrice[i]
 			actualDayObject["day"]=dayNames[i]
-			actualDayObject["date"]=monday+datetime.timedelta(days=i)
+			if addresses.count() > 0:
+				actualAddress=addresses[0]
+				for address in addresses:
+					if (address.day == actualDate):
+						actualAddress=address
+						break
+				actualDayObject["address"]=actualAddress.address
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
@@ -413,6 +455,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 			'days':days,
 			'next':nextMonday,
 			'actual':actualMonday,
+			'addresses':user.addresses,
 			'menu':menu
 		}
 		if (prevMonday == actualMonday) or (prevMonday > actualMonday):
@@ -420,9 +463,31 @@ class ReviewOrderedMenuPage(BaseHandler):
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/reviewOrderedMenu.html')
 		self.printPage(str(day), template.render(template_values), True)
+	def post(self):
+		# Get addresses and save them to the proper date
+		for field in self.request.arguments():
+			if (field[:8]=="address_"):
+				date=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
+				user = getUser(self)
+				addresses = user.deliveryAddresses
+				actualAddress=None
+				if addresses.count() > 0:
+					for address in addresses:
+						if (address.day == date):
+							actualAddress=address
+							break
+				if actualAddress==None:
+					actualAddress=UserOrderAddress()
+					actualAddress.user=user
+					actualAddress.day=date
+				address=Address.get(self.request.get(field))
+				actualAddress.address=address
+				actualAddress.put()
+		self.redirect("/personalMenu")
+
 
 class ConfirmOrder(BaseHandler):
-	def get(self):
+	def post(self):
 		#One step ordering - this is a trial
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
 		orderDate=datetime.datetime.now()

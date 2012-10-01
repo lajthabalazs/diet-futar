@@ -56,6 +56,15 @@ def clearRegistrationError(handler):
 		del handler.session[REGISTRATION_ERROR_KEY]
 	return loginError
 
+def getUser(handler):
+	userKey=handler.session.get(USER_KEY,None)
+	if (userKey != None):
+	#If session has a user key, than return logged in
+		user = db.get(userKey)
+		return user
+	else:
+		return None
+	
 '''
 If user is not logged in, returns a login box with a login and a register button
 Else returns the users personal data box with links

@@ -90,6 +90,11 @@ class UserOrderItem(db.Model):
 	orderedItem=db.ReferenceProperty(MenuItem, collection_name='occurrences')
 	orderedComposit=db.ReferenceProperty(Composit, collection_name='occurrences')
 
+class UserOrderAddress(db.Model):
+	day=db.DateProperty()
+	user=db.ReferenceProperty(User, collection_name='deliveryAddresses')
+	address=db.ReferenceProperty(Address, collection_name='deliveries')
+	
 class Wish(db.Model):
 	title = db.StringProperty()
 	description=db.StringProperty(multiline=True)
