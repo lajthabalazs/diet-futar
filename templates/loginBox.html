@@ -1,23 +1,19 @@
-﻿{% if user %}
-	Belépve<br/>
-	{{ user.email }}<br/>
-	
-	<a href="pendingOrder">Kosár</a><br/>
-	<a href="/previousOrders">Korábbi rendelések</a><br/>
-	<a href="/logout">Kilépés</a>
-{% else %}
-	<form action="/login" method="post">
-		<table>
-			<tr><td>Email</td><td><input type="text" name="email"/></td></tr>
-			<tr><td>Jelszó</td><td><input type="password" name="password"/></td></tr>
-			{% if (login_error) %}
-			<tr><td colspan="2"><span style="color: 'RED'">{{ login_error }}</span></td></tr>
-			{% else %}
-			<tr><td colspan="2"><br/></td></tr>
-			{% endif %}
-			<tr><td colspan="2" align="right"><input type="submit" value="Belépés"/></td></tr>
-		</table>
-	</form>	
-	<a href="pendingOrder">Kosár</a><br/>
-	<a href="registration">Regisztráció</a>
-{% endif %}
+﻿<div class="span-6 login">
+	{% if user %}
+		<h3>{{ user.email }}</h3>
+		<a href="/profile">Profil</a><br/>
+		<a href="/previousOrders">Korábbi rendelések</a><br/>
+		<a href="/logout">Kilépés</a>
+	{% else %}
+		<form action="/login" method="post">
+				<input type="text" name="email"  placeholder="E-mail" />
+				<input type="password" name="password" placeholder="Jelszó"/>
+				{% if (login_error) %}
+				<span style="color: 'RED'">{{ login_error }}</span><br/>
+				{% else %}
+				<br/><br/>
+				{% endif %}
+				<input type="submit" value="Belépés"/>
+		</form> <a href="/registration">Regisztráció</a>
+	{% endif %}
+</div>

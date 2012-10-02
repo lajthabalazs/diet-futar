@@ -14,6 +14,8 @@ from user_management import USER_KEY, getUser
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
+dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
+
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -48,7 +50,6 @@ class MenuOrderPage(BaseHandler):
 		calendar=day.isocalendar()
 		#Organize into days
 		menu=[] #Contains menu items
-		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 		actualOrder=self.session.get(ACTUAL_ORDER,[])
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
@@ -203,7 +204,6 @@ class ReviewPendingOrderPage(BaseHandler):
 			calendar=day.isocalendar()
 			#Organize into days
 			menu=[] #Contains menu items
-			dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 			actualOrder=self.session.get(ACTUAL_ORDER,[])
 			dishCategories=DishCategory.gql("ORDER BY index")
 			monday=day+datetime.timedelta(days=-calendar[2]+1)
@@ -268,19 +268,11 @@ class ReviewPendingOrderPage(BaseHandler):
 			days=[]
 			# Adds header information
 			user = getUser(self)
-			addresses = user.deliveryAddresses
 			for i in range(0,5):
 				actualDayObject={}
 				actualDate=monday+datetime.timedelta(days=i)
 				actualDayObject["day"] = dayNames[i]
 				actualDayObject["date"] = actualDate
-				if addresses.count() > 0:
-					actualAddress=addresses[0]
-					for address in addresses:
-						if (address.day == actualDate):
-							actualAddress=address
-							break
-					actualDayObject["address"]=actualAddress.address
 				actualDayObject["total"] = dayTotal[i]
 				days.append(actualDayObject)
 			# Add addresses
@@ -295,7 +287,7 @@ class ReviewPendingOrderPage(BaseHandler):
 				'days':days,
 				'next':nextMonday,
 				'actual':actualMonday,
-				'addresses':user.addresses,
+				'user':user,
 				'menu':menu
 			}
 			if (prevMonday == actualMonday) or (prevMonday > actualMonday):
@@ -319,24 +311,6 @@ class ReviewPendingOrderPage(BaseHandler):
 				actualOrder[field[3:]]=self.request.get(field)
 		self.session[ACTUAL_ORDER]=actualOrder
 		# Get addresses and save them to the proper date
-		for field in self.request.arguments():
-			if (field[:8]=="address_"):
-				date=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
-				user = getUser(self)
-				addresses = user.deliveryAddresses
-				actualAddress=None
-				if addresses.count() > 0:
-					for address in addresses:
-						if (address.day == date):
-							actualAddress=address
-							break
-				if actualAddress==None:
-					actualAddress=UserOrderAddress()
-					actualAddress.user=user
-					actualAddress.day=date
-				address=Address.get(self.request.get(field))
-				actualAddress.address=address
-				actualAddress.put()
 		self.redirect("/pendingOrder?day="+str(day))
 
 class ReviewOrderedMenuPage(BaseHandler):
@@ -370,7 +344,6 @@ class ReviewOrderedMenuPage(BaseHandler):
 		calendar=day.isocalendar()
 		#Organize into days
 		menu=[] #Contains menu items
-		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
@@ -463,7 +436,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		template = jinja_environment.get_template('templates/reviewOrderedMenu.html')
 		self.printPage(str(day), template.render(template_values), True)
 	def post(self):
-		# Get addresses and save them to the proper date
+		# Get addresses and save them to the proper - only if date has user order
 		for field in self.request.arguments():
 			if (field[:8]=="address_"):
 				date=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
@@ -496,32 +469,51 @@ class ConfirmOrder(BaseHandler):
 			userOrder.orderDate = orderDate
 			userOrder.price = 0
 			userKey = self.session.get(USER_KEY,None)
+			user=None
 			if (userKey != None):
-				userOrder.user = User.get(userKey)
+				user = User.get(userKey)
+				userOrder.user = user
 			userOrder.put()
+			addresses = user.addresses
+			if addresses.count() == 0:
+				print "Rendeléshez a profil-oldalán adjon meg egy címet"
 			for orderKey in actualOrder.keys():
 				try:
 					if (int(actualOrder[orderKey]) != 0):
 						orderItem = UserOrderItem()
 						orderItem.userOrder = userOrder
+						orderItem.user = userOrder.user
 						item = db.get(orderKey)
+						day=None
 						if type(item) == MenuItem:
+							day=item.day
 							orderItem.orderedItem=item
 						else:
+							day=item.day
 							orderItem.orderedComposit=item
 						orderItem.itemCount = int(actualOrder[orderKey])
+						
+						# Address stuff
+						daysAddress = user.deliveryAddresses.filter("day = ", day)
+						# Associate last address to order if none present
+						if daysAddress.count() == 0:
+							daysAddress = UserOrderAddress()
+							daysAddress.day = day
+							daysAddress.user = user
+							daysAddress.address = addresses[addresses.count()-1]
+							daysAddress.put()
 						try:
 							orderItem.price = item.price * int(actualOrder[orderKey])
 						except TypeError:
 							orderItem.price = 0
 						userOrder.price = userOrder.price + orderItem.price
 						orderItem.put()
-						# TODO Update delivery
 				except ValueError, ReferencePropertyResolveError:
 					continue
 			userOrder.put()
+
 			self.session[ACTUAL_ORDER]={}
-			self.redirect("/order")
+			self.redirect("/personalMenu")
 		else:
 			print "Nothing to confirm"
 

@@ -8,7 +8,7 @@ from google.appengine.ext import db
 from base_handler import BaseHandler
 import datetime
 from model import MenuItem, DishCategory, UserOrder, UserOrderItem, Composit,\
-	Delivery
+	UserOrderAddress
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -225,18 +225,32 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		if ((requestDay != None) and (requestDay != "")):
 			parts=requestDay.rsplit("-")
 			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
-		#Determine the week
 		prevDay=day+datetime.timedelta(days=-1)
 		nextDay=day+datetime.timedelta(days=1)
 		today=datetime.date.today()
-		deliveries=Delivery.gql("WHERE day=DATE(:1,:2,:3)", day.year, day.month, day.day)
-		sortedDeliveries=sorted(deliveries, key=lambda item:item.address.address.zipCode)
+		orders=UserOrderAddress.gql("WHERE day=DATE(:1,:2,:3)", day.year, day.month, day.day)
+		sortedDeliveries=sorted(orders, key=lambda item:item.address.zipCode)
 		template_values = {
 			'next':nextDay,
 			'actual':today,
-			'deliveries':sortedDeliveries
+			'orders':sortedDeliveries,
+			'day':day
 		}
 		template_values['prev'] = prevDay
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/deliveryReviewOrders.html')
+		self.printPage(str(day), template.render(template_values), True)
+
+class DeliveryPage(BaseHandler):
+	def get(self):
+		orderAddressKey=self.request.get("orderAddressKey")
+		orderAddress=UserOrderAddress.get(orderAddressKey)
+		day=orderAddress.day
+		filteredSet = orderAddress.user.orderedItems.filter("day = ", day)
+		template_values = {
+			'order':orderAddress,
+			'items':filteredSet
+		}
+		# A single dish with editable ingredient list
+		template = jinja_environment.get_template('templates/delivery.html')
 		self.printPage(str(day), template.render(template_values), True)

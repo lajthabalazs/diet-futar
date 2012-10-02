@@ -30,63 +30,67 @@ class BaseHandler(webapp2.RequestHandler):
 		template_params={
 			"pageTitle":title
 		}
-		ret=jinja_environment.get_template('templates/header.html').render(template_params)
-		#Set menu items
-		menuItems=[]
-		weeklyOrderMenu={}
-		weeklyOrderMenu["label"]="Heti ajanlat"
-		weeklyOrderMenu["target"]="/order"
-		menuItems.append(weeklyOrderMenu)
-		if (isUserLoggedIn(self)):
-			profile={}
-			profile["label"]="Profil"
-			profile["target"]="/profile"
-			menuItems.append(profile)
-		if (isUserLoggedIn(self)):
-			ownMenu={}
-			ownMenu["label"]="Menum"
-			ownMenu["target"]="/personalMenu"
-			menuItems.append(ownMenu)
-		if (isUserAdmin(self)):
+		ret=jinja_environment.get_template('templates/header_part_zero.html').render(template_params)
+		if isUserAdmin(self):
+			adminMenuItems=[]
 			weeklyMenu={}
 			weeklyMenu["label"]="Menu osszeallitas"
 			weeklyMenu["target"]="/menuEdit"
-			menuItems.append(weeklyMenu)
+			adminMenuItems.append(weeklyMenu)
 			payingOrders={}
 			payingOrders["label"]="Rendelt"
 			payingOrders["target"]="/chefReviewOrders"
-			menuItems.append(payingOrders)
+			adminMenuItems.append(payingOrders)
 			toMake={}
-			toMake["label"]="Keszitendo"
+			toMake["label"]="K&#233;sz&#237;tend&#337;"
 			toMake["target"]="/chefReviewToMake"
-			menuItems.append(toMake)
+			adminMenuItems.append(toMake)
+			toDeliver={}
+			toDeliver["label"]="Szallitando"
+			toDeliver["target"]="/deliveryReviewOrders"
+			adminMenuItems.append(toDeliver)			
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"
-			menuItems.append(ingredients)
+			adminMenuItems.append(ingredients)
 			categories={}
 			categories["label"]="Ketegoriak"
 			categories["target"]="/ingredientCategory"
-			menuItems.append(categories)
+			adminMenuItems.append(categories)
 			recepies={}
 			recepies["label"]="Receptek"
 			recepies["target"]="/dish"
-			menuItems.append(recepies)
+			adminMenuItems.append(recepies)
 			dishCategories={}
 			dishCategories["label"]="Fogasok"
 			dishCategories["target"]=DISH_CATEGORY_URL
-			menuItems.append(dishCategories)
+			adminMenuItems.append(dishCategories)
+			template_params={
+				"menuItems":adminMenuItems
+			}
+			ret=ret + jinja_environment.get_template('templates/admin_menu.html').render(template_params)
+		ret=ret + jinja_environment.get_template('templates/header_part_one.html').render()
+		#Set menu items
+		menuItems=[]
+		weeklyOrderMenu={}
+		weeklyOrderMenu["label"]="Heti aj&#225;nlat"
+		weeklyOrderMenu["target"]="/order"
+		menuItems.append(weeklyOrderMenu)
+		if (isUserLoggedIn(self)):
+			ownMenu={}
+			ownMenu["label"]="Men&#252;m"
+			ownMenu["target"]="/personalMenu"
+			menuItems.append(ownMenu)
 		about={}
-		about["label"]="Rolunk"
+		about["label"]="R&#243;lunk"
 		about["target"]="/about"
 		menuItems.append(about)
 		template_params={
-			"pageTitle":title,
 			"menuItems":menuItems
 		}
 		ret=ret+jinja_environment.get_template('templates/menu.html').render(template_params)
 		ret=ret+getUserBox(self)
-		ret=ret+"<span class='clear'></span><div id='content'>"
+		ret=ret+jinja_environment.get_template('templates/header_part_two.html').render()
 		if(forAnonymus or (forLoggedIn and isUserLoggedIn(self)) or isUserAdmin(self)):
 			ret=ret+content
 		else:

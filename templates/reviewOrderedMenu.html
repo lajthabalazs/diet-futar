@@ -1,79 +1,74 @@
-﻿{% if prev %}<a href="/personalMenu?day={{ prev }}">Előző hét</a> {% endif %} <a href="/personalMenu?day={{ actual }}">Adktuális hét</a> <a href="/personalMenu?day={{ next }}">Következő hét</a>
-<table border="1">
-	<form method="post">
-	<tr>
-		<th> </th>
-		{% for day in days %}
-			<th>{{ day.day }}<br/>{{ day.date }}</th>
-		{% endfor%}
-	</tr>
-	{% for category in menu%}
-		<tr><td> {{ category.category.name }} </td>
-		{% for day in category.days %}
-			<td valign="bottom">
-			<div>
-			{% for menuItem in day.menuItems %}
-				{{ menuItem.orderedQuantity }} adag 
-				{{ menuItem.dish.title }}
-				{% for component in menuItem.components %}
-					,{{ component.dish.title }}
-				{% endfor %}				
-				{{ menuItem.price }} Ft
-				<br/>
-			{% endfor %}
-			{% for composit in day.composits %}
-				{{ composit.orderedQuantity }} adag 
-				{% for component in composit.components%}
-					{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}
-				{% endfor %}
-				{{ composit.price }} Ft
-				<br/>
-			{% endfor %}
+﻿<div class="mainBg">
+	<div class="container">
+		<div class="span-24 last calendar">
+			<div class="span-24 last calendarHeader">
+				{% if prev %}<a href="/pendingOrder?day={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
+				{% for day in days %}
+					<div class="span-4"><h3>{{ day.day }}</h3>{{ day.date }}</div>
+				{% endfor%}
+				<a href="/pendingOrder?day={{ next }}" class="span-2 last nextWeek">Következő hét</a>
 			</div>
-		</td>
+		</div>
+
+
+		{% for category in menu%}
+			<div class="span-24 last calendarRow">
+				<h2 class="span-2">{{ category.category.name }}</h2>
+				{% for day in category.days %}
+					<div class="span-4 calendarColumn">
+						&nbsp;
+						{% for menuItem in day.menuItems %}
+							<div class="calendarElement">
+								<h3>{{ menuItem.dish.title }}</h3>
+								<p>{% for component in menuItem.components %}
+									,{{ component.dish.title }}
+								{% endfor %}</p>
+								<strong>{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %} Ft
+								, {{ menuItem.orderedQuantity }} adag</strong> 
+							</div>
+						{% endfor %}
+						{% for composit in day.composits %}
+							<div class="calendarElement">
+								{% for component in composit.components%}
+									<h3>{{component.menuItem.dish.title}}</h3>
+									<p>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}</p>
+								{% endfor %}
+								<strong>{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %} Ft
+								, {{ composit.orderedQuantity }} adag </strong>
+							</div>
+						{% endfor %}
+					</div>
+				{% endfor %}
+			</div>
 		{% endfor %}
-	</tr>
-	{% endfor %}
-	<tr>
-		<td>Összesen</td>
-		{% for day in days %}
-			<td style="text-align: right">{{ day.orderedPrice }} Ft</td>
-		{% endfor%}
-	</tr>
-	<tr>
-		<td>Szállítási cím</td>
-		{% for day in days %}
-			<td>
+		<div class="span-24 last subTotal" style="height: 30px">
+			<h2 class="span-2">Összesen</h2>
+			{% for day in days %}
+				<div class="span-4">
+					<strong>{{ day.orderedPrice }} Ft</strong>
+				</div>
+			{% endfor%}
+		</div>
+	</div>
+</div>
+
+
+<form method="post">
+<div class="mainBg">
+	<div class="container">
+		<div class="span-24">
+			<h2 class="span-2">Szállítási cím</h2>
+			{% for day in days %}
+			<div class="span-4">
 				<select name="address_{{day.date}}" id="address_{{day.date}}">
 					{% for address in addresses %}
 						<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
 					{% endfor %}
 				</select>
-			</td>
-		{% endfor%}
-	</tr>
-</table>
-<input type="submit" name="" value="Címek mentése" id=""/>
+			</div>
+			{% endfor%}
+			<div class="span-2 last nextWeek"><input  type="submit" name="" value="Címek mentése" id=""/></div>
+		</div>
+</div>
+</div>
 </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

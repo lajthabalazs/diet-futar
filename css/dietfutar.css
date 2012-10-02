@@ -234,7 +234,7 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 }
 .login input[type=text], .login input[type=password] {
 	width: 210px;
-	height: 30px;
+	height: 25px;
 	background: none;
 	background-color: none;
 	border: none;
@@ -242,12 +242,12 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	background-repeat: no-repeat;
 	background-position: center top;
 	font-family: FrutigerCn_PFL-Normal;
-	font-size: 20px;
+	font-size: 18px;
 	color: #333333;
 	margin: 0;
 	padding-right: 5px;
 	padding-left: 5px;
-	margin-bottom: 18px;
+	margin-bottom: 5px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 }
 
@@ -261,9 +261,10 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
         color:    #7c7467;
 }
 
-.login input[type=submit], .login input[type=button] {
+
+.login input[type=submit], .login input[type=button], .login a, a.adminMenu {
 	font-family: GillSansMT-Condensed;
-	font-size: 28px;
+	font-size: 20px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	text-transform: uppercase;
 	background: none;
@@ -271,6 +272,12 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	margin: 0;
 	padding: 0;
 	color: #000;
+	cursor: hand;
+	text-decoration: none;
+}
+
+a.adminMenu {
+	margin-right: 20px;
 }
 
 .login input[type=button] {

@@ -21,7 +21,7 @@ from ingredientCategory import CategoryIngredientDeletePage,\
 from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
-	DeliveryReviewOrdersPage
+	DeliveryReviewOrdersPage, DeliveryPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -32,7 +32,7 @@ config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key',
 #										debug=True, config=config)
 
 
-app = webapp2.WSGIApplication([('/', MainPage),
+app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/login', LoginPage),
 										('/logout', LogoutPage),
 										('/registration', RegisterPage),
@@ -73,5 +73,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/ingredientCategory', IngredientCategoryPage),
 										('/chefReviewToMake', ChefReviewToMakePage),
 										('/deliveryReviewOrders', DeliveryReviewOrdersPage),
+										('/deliverable', DeliveryPage),
 										('/chefReviewOrders', ChefReviewOrdersPage)],
 										debug=True, config=config)

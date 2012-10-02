@@ -1,0 +1,9 @@
+<div class="mainBg">
+	<div class="container">
+		<div class="span-24">
+			{% for menuItem in menuItems %}
+				<a href="{{ menuItem.target }}" class="adminMenu">{{ menuItem.label }}</a>
+			{% endfor %}
+		</div>
+	</div>
+</div>

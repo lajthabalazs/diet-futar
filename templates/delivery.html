@@ -1,0 +1,22 @@
+﻿{{order.delivered}}<br/>
+{{order.user.familyName}} {{order.user.givenName}}<br/>
+{{order.address.district}} {{order.address.zipCode}} {{order.address.street}} {{order.address.streetNumber}}<br/>
+<table>
+{% for item in items%}
+<tr>
+<td>{{item.itemCount}}</td><td>
+	{% if item.orderedComposit == None %}
+		<h3>{{ item.orderedItem.dish.title }}</h3>
+		<p>{% for component in item.orderedItem.components %}
+			,{{ component.dish.title }}
+		{% endfor %}</p>
+	{% else %}
+		{% for component in item.orderedComposit.components%}
+			<h3>{{component.menuItem.dish.title}}</h3>
+			<p>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}</p>
+		{% endfor %}
+	{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>

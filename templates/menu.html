@@ -1,5 +1,5 @@
-﻿<div id="menu_bar">
+﻿<ul class="span-5 prepend-2 menu">
 	{% for menuItem in menuItems %}
-	<a href="{{ menuItem.target }}">{{ menuItem.label }}</a>
+	<li><a href="{{ menuItem.target }}">{{ menuItem.label }}</a></li>
 	{% endfor %}
-</div>
+</ul>
