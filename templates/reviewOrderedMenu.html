@@ -60,11 +60,14 @@
 			<h2 class="span-2">Szállítási cím</h2>
 			{% for day in days %}
 			<div class="span-4">
-				<select name="address_{{day.date}}" id="address_{{day.date}}">
-					{% for address in addresses %}
-						<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
-					{% endfor %}
-				</select>
+				&nbsp;
+				{% if day.has_key('address') %}
+					<select name="address_{{day.date}}" id="address_{{day.date}}">
+						{% for address in addresses %}
+							<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
+						{% endfor %}
+					</select>
+				{% endif %}
 			</div>
 			{% endfor%}
 			<div class="span-2 last nextWeek"><input  type="submit" name="" value="Címek mentése" id=""/></div>

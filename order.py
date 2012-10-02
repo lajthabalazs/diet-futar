@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import jinja2
 import os
 
@@ -402,20 +401,15 @@ class ReviewOrderedMenuPage(BaseHandler):
 				menu.append(actualCategoryObject)
 		days=[]
 		user = getUser(self)
-		addresses = user.deliveryAddresses
 		for i in range(0,5):
 			actualDayObject={}
 			actualDate=monday+datetime.timedelta(days=i)
 			actualDayObject["date"] = actualDate
 			actualDayObject["orderedPrice"] = orderedPrice[i]
 			actualDayObject["day"]=dayNames[i]
+			addresses=user.deliveryAddresses.filter("day = ", actualDate)
 			if addresses.count() > 0:
-				actualAddress=addresses[0]
-				for address in addresses:
-					if (address.day == actualDate):
-						actualAddress=address
-						break
-				actualDayObject["address"]=actualAddress.address
+				actualDayObject["address"]=addresses[0].address
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
@@ -436,25 +430,28 @@ class ReviewOrderedMenuPage(BaseHandler):
 		template = jinja_environment.get_template('templates/reviewOrderedMenu.html')
 		self.printPage(str(day), template.render(template_values), True)
 	def post(self):
-		# Get addresses and save them to the proper - only if date has user order
+		# Get addresses and save them to the proper day
 		for field in self.request.arguments():
 			if (field[:8]=="address_"):
-				date=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
+				day=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
 				user = getUser(self)
-				addresses = user.deliveryAddresses
-				actualAddress=None
-				if addresses.count() > 0:
-					for address in addresses:
-						if (address.day == date):
-							actualAddress=address
-							break
-				if actualAddress==None:
-					actualAddress=UserOrderAddress()
-					actualAddress.user=user
-					actualAddress.day=date
-				address=Address.get(self.request.get(field))
-				actualAddress.address=address
-				actualAddress.put()
+				# Check if user has order for the day
+				orders=user.orderedItems.filter("day = ", day)
+				if orders.count() > 0:
+					addresses = user.deliveryAddresses
+					actualAddress=None
+					if addresses.count() > 0:
+						for address in addresses:
+							if (address.day == day):
+								actualAddress=address
+								break
+					if actualAddress==None:
+						actualAddress=UserOrderAddress()
+						actualAddress.user=user
+						actualAddress.day=day
+					address=Address.get(self.request.get(field))
+					actualAddress.address=address
+					actualAddress.put()
 		self.redirect("/personalMenu")
 
 class ConfirmOrder(BaseHandler):
@@ -475,8 +472,9 @@ class ConfirmOrder(BaseHandler):
 				userOrder.user = user
 			userOrder.put()
 			addresses = user.addresses
-			if addresses.count() == 0:
-				print "Rendeléshez a profil-oldalán adjon meg egy címet"
+			if addresses.count()==0:
+				print "Cim nelkul nem lehet."
+				return
 			for orderKey in actualOrder.keys():
 				try:
 					if (int(actualOrder[orderKey]) != 0):
@@ -486,20 +484,19 @@ class ConfirmOrder(BaseHandler):
 						item = db.get(orderKey)
 						day=None
 						if type(item) == MenuItem:
-							day=item.day
+							day = item.day
 							orderItem.orderedItem=item
 						else:
-							day=item.day
+							day = item.day
 							orderItem.orderedComposit=item
+						orderItem.day=day
 						orderItem.itemCount = int(actualOrder[orderKey])
-						
-						# Address stuff
 						daysAddress = user.deliveryAddresses.filter("day = ", day)
-						# Associate last address to order if none present
 						if daysAddress.count() == 0:
-							daysAddress = UserOrderAddress()
-							daysAddress.day = day
-							daysAddress.user = user
+							# Create new order address
+							daysAddress=UserOrderAddress()
+							daysAddress.day=day
+							daysAddress.user=user
 							daysAddress.address = addresses[addresses.count()-1]
 							daysAddress.put()
 						try:
@@ -508,10 +505,10 @@ class ConfirmOrder(BaseHandler):
 							orderItem.price = 0
 						userOrder.price = userOrder.price + orderItem.price
 						orderItem.put()
+
 				except ValueError, ReferencePropertyResolveError:
 					continue
 			userOrder.put()
-
 			self.session[ACTUAL_ORDER]={}
 			self.redirect("/personalMenu")
 		else:

@@ -19,13 +19,3 @@ indexes:
   properties:
   - name: user
   - name: day
-
-- kind: UserOrderItem
-  properties:
-  - name: user
-  - name: day.day
-
-- kind: UserOrderItem
-  properties:
-  - name: user
-  - name: itemCount

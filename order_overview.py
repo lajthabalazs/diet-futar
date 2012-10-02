@@ -9,6 +9,7 @@ from base_handler import BaseHandler
 import datetime
 from model import MenuItem, DishCategory, UserOrder, UserOrderItem, Composit,\
 	UserOrderAddress
+from order import dayNames
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -27,7 +28,6 @@ class ChefReviewOrdersPage(BaseHandler):
 		calendar=day.isocalendar()
 		#Organize into days
 		menu=[] #Contains menu items
-		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
@@ -102,7 +102,6 @@ class ChefReviewToMakePage(BaseHandler):
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days
-		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
@@ -247,9 +246,36 @@ class DeliveryPage(BaseHandler):
 		orderAddress=UserOrderAddress.get(orderAddressKey)
 		day=orderAddress.day
 		filteredSet = orderAddress.user.orderedItems.filter("day = ", day)
+		# Aggregate filtered set
+		menuItemIndexes={}
+		menuItemOrders=[]
+		for orderedItem in filteredSet:
+			if orderedItem.orderedComposit == None:
+				menuItem=orderedItem.orderedItem
+				actualOrder=0
+				if menuItemIndexes.has_key(menuItem.key()):
+					itemIndex=menuItemIndexes.get(menuItem.key())
+					actualOrder=menuItemOrders[itemIndex].itemCount
+					menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
+				else:
+					menuItem.itemCount=orderedItem.itemCount
+					menuItemIndexes[menuItem.key()]=len(menuItemOrders)
+					menuItemOrders.append(menuItem)
+			else:
+				actualOrder=0
+				for menuItem in orderedItem.orderedComposit.components:
+					actualOrder=0
+					if menuItemIndexes.has_key(menuItem.key()):
+						itemIndex=menuItemIndexes.get(menuItem.key())
+						actualOrder=menuItemOrders[itemIndex].itemCount
+						menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
+					else:
+						menuItem.itemCount=orderedItem.itemCount
+						menuItemIndexes[menuItem.key()]=len(menuItemOrders)
+						menuItemOrders.append(menuItem)
 		template_values = {
 			'order':orderAddress,
-			'items':filteredSet
+			'items':menuItemOrders
 		}
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/delivery.html')
