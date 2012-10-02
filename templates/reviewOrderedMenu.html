@@ -16,7 +16,9 @@
 				<h2 class="span-2">{{ category.category.name }}</h2>
 				{% for day in category.days %}
 					<div class="span-4 calendarColumn">
-						&nbsp;
+						{% if day.menuItems|length ==0 %}
+							&nbsp;
+						{% endif %}
 						{% for menuItem in day.menuItems %}
 							<div class="calendarElement">
 								<h3>{{ menuItem.dish.title }}</h3>
@@ -60,13 +62,14 @@
 			<h2 class="span-2">Szállítási cím</h2>
 			{% for day in days %}
 			<div class="span-4">
-				&nbsp;
 				{% if day.has_key('address') %}
 					<select name="address_{{day.date}}" id="address_{{day.date}}">
 						{% for address in addresses %}
 							<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
 						{% endfor %}
 					</select>
+				{% else %}
+					&nbsp;
 				{% endif %}
 			</div>
 			{% endfor%}

@@ -16,7 +16,9 @@
 					<h2 class="span-2">{{ category.category.name }}</h2>
 					{% for day in category.days %}
 						<div class="span-4 calendarColumn">
-							&nbsp;
+							{% if day.menuItems|length ==0 %}
+								&nbsp;
+							{% endif %}
 							{% for menuItem in day.menuItems %}
 								<div class="calendarElement">
 									<h3>{{ menuItem.dish.title }}</h3>

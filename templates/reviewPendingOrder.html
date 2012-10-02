@@ -1,4 +1,14 @@
-﻿<form method="post">
+﻿{% if user == None %}
+<div class="mainBg">
+	<div class="container">
+		<div class="span-24" align="center">
+			<h2>Rendelése elküldéséhez be kell jelentkeznie. Ha még nem felhasználónk, kérjük regisztráljon!</h2>
+		</div>
+	</div>
+</div>
+{% endif %}
+
+<form method="post">
 <div class="mainBg">
 	<div class="container">
 		<div class="span-24 last calendar">
@@ -11,13 +21,14 @@
 			</div>
 		</div>
 
-
 		{% for category in menu%}
 			<div class="span-24 last calendarRow">
 				<h2 class="span-2">{{ category.category.name }}</h2>
 				{% for day in category.days %}
 					<div class="span-4 calendarColumn">
-						&nbsp;
+						{% if day.menuItems|length ==0 %}
+							&nbsp;
+						{% endif %}
 						{% for menuItem in day.menuItems %}
 							<div class="calendarElement">
 								<h3>{{ menuItem.dish.title }}</h3>
@@ -66,15 +77,12 @@
 	</div>
 </div>
 </form>
-
 <div class="mainBg">
 	<div class="container">
 		{% if user != None %}
 			<form action="/confirmOrder" method="post">
 				<input type="submit" value="Megrendel"/>
 			</form>
-		{% else %}
-			<h2>Rendelése elküldéséhez be kell jelentkeznie. Ha még nem felhasználónk, kérjük regisztráljon!</h2>
 		{% endif %}
 	</div>
 </div>

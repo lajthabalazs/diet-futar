@@ -457,6 +457,15 @@ class ReviewOrderedMenuPage(BaseHandler):
 class ConfirmOrder(BaseHandler):
 	def post(self):
 		#One step ordering - this is a trial
+		userKey = self.session.get(USER_KEY,None)
+		user=None
+		if (userKey != None):
+			user = User.get(userKey)
+		addresses = user.addresses
+		if addresses.count()==0:
+			template = jinja_environment.get_template('templates/no_address.html')
+			self.printPage('Rendelesek', template.render(), True)
+			return
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
 		orderDate=datetime.datetime.now()
 		#Save order
@@ -465,16 +474,8 @@ class ConfirmOrder(BaseHandler):
 			userOrder.canceled = False
 			userOrder.orderDate = orderDate
 			userOrder.price = 0
-			userKey = self.session.get(USER_KEY,None)
-			user=None
-			if (userKey != None):
-				user = User.get(userKey)
-				userOrder.user = user
+			userOrder.user = user
 			userOrder.put()
-			addresses = user.addresses
-			if addresses.count()==0:
-				print "Cim nelkul nem lehet."
-				return
 			for orderKey in actualOrder.keys():
 				try:
 					if (int(actualOrder[orderKey]) != 0):
