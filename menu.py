@@ -11,6 +11,7 @@ from model import MenuItem, DishCategory, Dish, Composit,\
 	CompositMenuItemListItem
 from user_management import isUserAdmin
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
+from order import dayNames
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -25,7 +26,6 @@ class MenuEditPage(BaseHandler):
 		calendar=day.isocalendar()
 		#Organize into days
 		menu=[]
-		dayNames=["Hetfo","Kedd","Szerda","Csutortok","Pentek","Szombat","Vasarnap"]
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
