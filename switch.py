@@ -10,7 +10,7 @@ from dish import DishPage, DeleteDishPage, DishIngredientAddPage, DishIngredient
 from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage, UserProfilePage,\
 	ActivatePage, AddressPage, ChangePasswordPage
-from main import MainPage
+from main import MainPage, TmpMainPage
 from menu import MenuEditPage, AddMenuItemComponent,\
 	ModifyMenuItem, CreateComposit, AddItemToComposit, DeleteItemFromComposit,\
 	ModifyComposit, DeleteMenuItem, DeleteComposit
@@ -20,13 +20,18 @@ from ingredientCategory import CategoryIngredientDeletePage,\
 	IngredientCategoryPage, IngredientCategoryDeletePage
 from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
-from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage
+from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
+	DeliveryReviewOrdersPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 config = {}
 config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key',
 												}
+#app = webapp2.WSGIApplication([('/', TmpMainPage)],
+#										debug=True, config=config)
+
+
 app = webapp2.WSGIApplication([('/', MainPage),
 										('/login', LoginPage),
 										('/logout', LogoutPage),
@@ -67,29 +72,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
 										('/previousOrder', PreviousOrder),
 										('/ingredientCategory', IngredientCategoryPage),
 										('/chefReviewToMake', ChefReviewToMakePage),
+										('/deliveryReviewOrders', DeliveryReviewOrdersPage),
 										('/chefReviewOrders', ChefReviewOrdersPage)],
 										debug=True, config=config)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

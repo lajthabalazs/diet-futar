@@ -96,7 +96,6 @@ class MenuOrderPage(BaseHandler):
 						continue
 				for composit in composits:
 					if composit.category.key()==category.key() and composit.day==actualDay:
-						print composit.category.name
 						if (actualOrder!=None) and (str(composit.key()) in actualOrder):
 							composit.inCurrentOrder=actualOrder[str(composit.key())]
 							try:
@@ -485,7 +484,6 @@ class ReviewOrderedMenuPage(BaseHandler):
 				actualAddress.put()
 		self.redirect("/personalMenu")
 
-
 class ConfirmOrder(BaseHandler):
 	def post(self):
 		#One step ordering - this is a trial
@@ -518,6 +516,7 @@ class ConfirmOrder(BaseHandler):
 							orderItem.price = 0
 						userOrder.price = userOrder.price + orderItem.price
 						orderItem.put()
+						# TODO Update delivery
 				except ValueError, ReferencePropertyResolveError:
 					continue
 			userOrder.put()

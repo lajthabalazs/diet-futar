@@ -83,18 +83,26 @@ class UserOrder(db.Model):
 	user=db.ReferenceProperty(User, collection_name='userOrders')
 	canceled=db.BooleanProperty()
 
+class UserOrderAddress(db.Model):
+	day=db.DateProperty()
+	user=db.ReferenceProperty(User, collection_name='deliveryAddresses')
+	address=db.ReferenceProperty(Address, collection_name='deliveries')
+
+class Delivery(db.Model):
+	day=db.DateProperty()
+	delivered=db.BooleanProperty(default=False)
+	address=db.ReferenceProperty(UserOrderAddress, collection_name='deliveries')
+	deliverer=db.ReferenceProperty(User, collection_name='deliveryJobs')
+
 class UserOrderItem(db.Model):
 	price=db.IntegerProperty()
 	userOrder=db.ReferenceProperty(UserOrder, collection_name='items')
 	itemCount=db.IntegerProperty()
 	orderedItem=db.ReferenceProperty(MenuItem, collection_name='occurrences')
 	orderedComposit=db.ReferenceProperty(Composit, collection_name='occurrences')
+	delivery=db.ReferenceProperty(Delivery, collection_name='items')
 
-class UserOrderAddress(db.Model):
-	day=db.DateProperty()
-	user=db.ReferenceProperty(User, collection_name='deliveryAddresses')
-	address=db.ReferenceProperty(Address, collection_name='deliveries')
-	
+
 class Wish(db.Model):
 	title = db.StringProperty()
 	description=db.StringProperty(multiline=True)

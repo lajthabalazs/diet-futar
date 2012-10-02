@@ -7,7 +7,8 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 import datetime
-from model import MenuItem, DishCategory, UserOrder, UserOrderItem, Composit
+from model import MenuItem, DishCategory, UserOrder, UserOrderItem, Composit,\
+	Delivery
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -213,4 +214,29 @@ class ChefReviewToMakePage(BaseHandler):
 		template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/chefReviewDishes.html')
+		self.printPage(str(day), template.render(template_values), True)
+		
+		
+#An accumulated overview of every ordered item
+class DeliveryReviewOrdersPage(BaseHandler):
+	def get(self):
+		day=datetime.date.today()
+		requestDay=self.request.get('day')
+		if ((requestDay != None) and (requestDay != "")):
+			parts=requestDay.rsplit("-")
+			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		#Determine the week
+		prevDay=day+datetime.timedelta(days=-1)
+		nextDay=day+datetime.timedelta(days=1)
+		today=datetime.date.today()
+		deliveries=Delivery.gql("WHERE day=DATE(:1,:2,:3)", day.year, day.month, day.day)
+		sortedDeliveries=sorted(deliveries, key=lambda item:item.address.address.zipCode)
+		template_values = {
+			'next':nextDay,
+			'actual':today,
+			'deliveries':sortedDeliveries
+		}
+		template_values['prev'] = prevDay
+		# A single dish with editable ingredient list
+		template = jinja_environment.get_template('templates/deliveryReviewOrders.html')
 		self.printPage(str(day), template.render(template_values), True)

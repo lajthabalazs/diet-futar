@@ -13,3 +13,7 @@ class MainPage(BaseHandler):
 	def get(self):
 		template = jinja_environment.get_template('templates/main.html')
 		self.printPage(None, template.render(), True, True)
+
+class TmpMainPage(BaseHandler):
+	def get(self):
+		self.response.out.write(jinja_environment.get_template('templates/index.html').render());

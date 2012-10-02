@@ -1,12 +1,18 @@
 application: diet-futar
-version: 15
+version: 17
 runtime: python27
 api_version: 1
 threadsafe: no
 
 handlers:
-- url: /styles
-  static_dir: styles
+- url: /css
+  static_dir: css
+- url: /font
+  static_dir: font
+- url: /img
+  static_dir: img
+- url: /js
+  static_dir: js
 - url: .*
   script: switch.app
 

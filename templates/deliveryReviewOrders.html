@@ -1,0 +1,38 @@
+﻿{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
+<table border="1">
+	<tr>
+		<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th>
+	</tr>
+	{% for delivery in deliveries%}
+		<tr>
+			<td>{{delivery.delivered}}</td>
+			<td>{{delivery.address.address.district}}</td>
+			<td>{{delivery.address.address.zipCode}}</td>
+			<td>{{delivery.address.address.street}} {{delivery.address.address.streetNumber}}</td>
+			<td><a href="#">{{delivery.address.user.familyName}} {{delivery.address.user.givenName}}</a></td>
+			<td>TODO futár lista</td>
+		</tr>
+	{% endfor %}
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
