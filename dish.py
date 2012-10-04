@@ -24,8 +24,9 @@ class DeleteDishPage(BaseHandler):
 	
 class DishPage(BaseHandler):
 	def post(self):
+		print isUserAdmin(self)
 		if(not isUserAdmin(self)):
-			self.redirect("/")	
+			self.redirect("/")
 		else:
 			if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
 			#Modification of basic data

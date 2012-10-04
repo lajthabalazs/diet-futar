@@ -15,7 +15,7 @@ class User(db.Model):
 	activated = db.BooleanProperty()
 	activationCode = db.StringProperty()
 	registrationDate=db.DateProperty()
-	role = db.StringProperty()
+	roleName = db.StringProperty()
 
 class Address (db.Model):
 	isBilling = db.BooleanProperty()

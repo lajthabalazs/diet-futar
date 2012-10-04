@@ -5,10 +5,12 @@ Created on Aug 11, 2012
 '''
 import webapp2
 from webapp2_extras import sessions
-from user_management import getUserBox, isUserLoggedIn, isUserAdmin
+from user_management import getUserBox, isUserLoggedIn, isUserAdmin, USER_KEY
 import jinja2
 import os
 from keys import DISH_CATEGORY_URL
+from model import User
+from google.appengine.ext import db
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 

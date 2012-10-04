@@ -28,9 +28,9 @@ def isUserAdmin(handler):
 	userKey = handler.session.get(USER_KEY,None)
 	if (userKey != None):
 	#If session has a user key, than return logged in
-		user = User(db.get(userKey))
-		if ((user!=None) and (user.role!=None)):
-			return user.role == ROLE_ADMIN
+		user = User.get(userKey)
+		if ((user!=None) and (user.roleName!=None)):
+			return user.roleName == ROLE_ADMIN
 		else:
 			return False
 	else:
@@ -40,7 +40,7 @@ def isUserLoggedIn(handler):
 	userKey = handler.session.get(USER_KEY,None)
 	if (userKey != None):
 	#If session has a user key, than return logged in
-		return User(db.get(userKey))!=None
+		return User.get(userKey)!=None
 	else:
 		return False
 
