@@ -499,8 +499,6 @@ class ConfirmOrder(BaseHandler):
 			return
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
 		now=datetime.datetime.now(timeZone)
-		print now.hour
-		print now.minute
 		orderDate=now
 		today=datetime.date.today()
 		firstOrderableDay=today+datetime.timedelta(days=1)
@@ -523,29 +521,69 @@ class ConfirmOrder(BaseHandler):
 						if day < firstOrderableDay:
 							continue
 						orderItem = UserOrderItem()
-						if type(item) == MenuItem:
-							orderItem.orderedItem=item
+						alreadyOrdered = 0
+						orderItemCount = int(actualOrder[orderKey])
+						if orderItemCount < 0:
+							# Have to go through user's orders to see if current order is a negative order
+							# checks if user goes below zero if posting it
+							placedOrders=user.orderedItems.filter("day = ", day)
+							if type(item) == MenuItem:
+								orderItem.orderedItem=item
+								for placedOrder in placedOrders:
+									if placedOrder.orderedItem != None and placedOrder.orderedItem.key() == item.key():
+										alreadyOrdered = alreadyOrdered + placedOrder.itemCount
+							else:
+								orderItem.orderedComposit=item
+								for placedOrder in placedOrders:
+									if placedOrder.orderedComposit != None and placedOrder.orderedComposit.key() == item.key():
+										alreadyOrdered = alreadyOrdered + placedOrder.itemCount
 						else:
-							orderItem.orderedComposit=item
+							if type(item) == MenuItem:
+								orderItem.orderedItem=item
+							else:
+								orderItem.orderedComposit=item
+						if alreadyOrdered + orderItemCount < 0:
+							orderItemCount = - alreadyOrdered
+						orderItem.itemCount = orderItemCount
+						orderItem.day=day
 						orderItem.userOrder = userOrder
 						orderItem.user = userOrder.user
-						orderItem.day=day
-						orderItem.itemCount = int(actualOrder[orderKey])
 						try:
-							orderItem.price = item.price * int(actualOrder[orderKey])
+							orderItem.price = item.price * orderItemCount
 						except TypeError:
 							orderItem.price = 0
 						userOrder.price = userOrder.price + orderItem.price
-						orderItem.put()
-						daysAddress = user.deliveryAddresses.filter("day = ", day)
-						if daysAddress.count() == 0:
-							# Create new order address
-							daysAddress=UserOrderAddress()
-							daysAddress.day=day
-							daysAddress.user=user
-							daysAddress.address = addresses[addresses.count()-1]
-							daysAddress.put()
-
+						if orderItemCount != 0:
+							orderItem.put()
+							daysAddress = user.deliveryAddresses.filter("day = ", day)
+							if daysAddress.count() == 0:
+								# Create new order address
+								daysAddress=UserOrderAddress()
+								daysAddress.day=day
+								daysAddress.user=user
+								daysAddress.address = addresses[addresses.count()-1]
+								daysAddress.put()
+						# TODO check if there are any orders left for the day
+						placedOrders=user.orderedItems.filter("day = ", day)
+						items = {}
+						for placedOrder in placedOrders:
+							key = None
+							if placedOrder.orderedItem != None:
+								key = placedOrder.orderedItem.key()
+							else:
+								key = placedOrder.orderedComposit.key()
+							if items.has_key(key):
+								items[key]=items[key] + placedOrder.itemCount
+							else:
+								items[key] = placedOrder.itemCount
+						hasItem = False
+						for item in items.values():
+							if item > 0:
+								hasItem = True
+								break
+						if not hasItem:
+							daysAddress=user.deliveryAddresses.filter("day = ", day)[0]
+							daysAddress.delete()
 				except ValueError, ReferencePropertyResolveError:
 					continue
 			userOrder.put()
