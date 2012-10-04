@@ -65,6 +65,10 @@ class BaseHandler(webapp2.RequestHandler):
 			dishCategories["label"]="Fogasok"
 			dishCategories["target"]=DISH_CATEGORY_URL
 			adminMenuItems.append(dishCategories)
+			userList={}
+			userList["label"]="Felhasznalok"
+			userList["target"]="/userList"
+			adminMenuItems.append(userList)
 			template_params={
 				"menuItems":adminMenuItems
 			}

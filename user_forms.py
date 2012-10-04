@@ -15,8 +15,9 @@ from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
 	LOGIN_ERROR_WRONG_PASSWORD, REGISTRATION_ERROR_KEY, clearRegistrationError,\
-	isUserAdmin, clearLoginError
+	isUserAdmin, clearLoginError, LOGIN_ERROR_NOT_ACTIVATED
 from random import Random
+from xmlrpclib import datetime
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -56,6 +57,9 @@ class LoginPage(BaseHandler):
 		elif (users[0].password != password):
 			self.session[LOGIN_ERROR_KEY] = LOGIN_ERROR_WRONG_PASSWORD
 			self.redirect(clearNextPage(self))
+		elif users[0].activated != True:
+			self.session[LOGIN_ERROR_KEY] = LOGIN_ERROR_NOT_ACTIVATED
+			self.redirect(clearNextPage(self))
 		else:
 			#Log the user in
 			self.session[USER_KEY]=str(users[0].key())
@@ -93,6 +97,7 @@ class RegisterPage(BaseHandler):
 			user.email = email
 			user.password = password
 			user.activated = False
+			user.registrationDate=datetime.date.today()
 			word = ''
 			random = Random()
 			for i in range(1,32):
@@ -118,9 +123,10 @@ class ActivatePage (BaseHandler):
 		users = User.gql('WHERE email = :1', email)
 		activationResult = -1
 		if (users.count(1) > 0):
-			if (users[0].activationCode == activationCode):
-				users[0].activated = True
-				users[0].put()
+			user = users[0]
+			if (user.activationCode == activationCode):
+				user.activated = True
+				user.put()
 				self.session[USER_KEY]=str(users[0].key())
 				activationResult = 0
 			else:
@@ -171,7 +177,7 @@ class UserProfilePage (BaseHandler):
 				'user': user,
 				LOGIN_ERROR_KEY:self.session.get(LOGIN_ERROR_KEY,0)
 			}
-			template = jinja_environment.get_template('templates/profile.html')
+			template = jinja_environment.get_template('templates/profile_new.html')
 			self.printPage("Profil", template.render(template_values), False, True)
 	def post(self):
 		if(not isUserAdmin(self)):
@@ -188,7 +194,7 @@ class UserProfilePage (BaseHandler):
 				template_values = {
 					'user': user
 				}
-				template = jinja_environment.get_template('templates/profile.html')
+				template = jinja_environment.get_template('templates/profile_new.html')
 				self.printPage("Profil", template.render(template_values), False, True)
 			else:
 				self.redirect("/registration")

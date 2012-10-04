@@ -16,6 +16,7 @@ class User(db.Model):
 	givenName = db.StringProperty()
 	activated = db.BooleanProperty()
 	activationCode = db.StringProperty()
+	registrationDate=db.DateProperty()
 	role = db.ReferenceProperty(Role, collection_name='users')
 
 class Address (db.Model):

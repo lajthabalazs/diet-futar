@@ -1,0 +1,55 @@
+<div class="mainBg">
+	<div class="container">
+		<div class="span-24 last profile">
+			<div class="span-24 last profileRow">
+				<h2 class="span-2">Profil</h2>
+				<div class="span-9 prepend-1 profileColumn profileElement">
+					<form method="post">
+						<label>E-mail <span>{{ user.email }}</span></label>
+						<label>Vezetéknév<input type="text" name="familyName" value="{{user.familyName}}"/></label>
+						<label>Keresztnév<input type="text" name="givenName" value="{{user.givenName}}"/></label>
+						<label><input type="submit" value="Mentés" /></label>
+					</form>
+				</div>
+				<div class="span-9 prepend-1 profileColumn profileElement">
+					<form action="/changePassword" method="post">
+						<label>Jelszó<input type="password" name="oldPassword"/></label>
+						{% if (login_error) %}
+						<span style="color: 'RED'; font-size: 20px">{{ login_error }}</span>
+						{% endif %}
+						<label>Új jelszó <input type="password" name="newPassword"/></label>
+						<label>Új jelszó mégegyszer <input type="password" name="passwordCheck"/></label>
+						<label><input type="submit" value="Jelszó módosítás"/></label>
+					</form>
+				</div>
+			</div>
+			<div class="span-24 profileRow">
+			<h2 class="span-2">Címek</h2>
+			<div class="span-22">
+				<div class="span-9 prepend-1 profileColumn profileElement">
+					<form action="/address" method="post">
+						<label>Telefonszám<input type="text" name="phoneNumber"/></label>
+						<label>Kerület<input type="text" name="district"/></label>
+						<label>Irányítószám<input type="text" name="zipCode"/></label>
+						<label>Utca név<input type="text" name="street"/></label>
+						<label>Házszám, emelet<input type="text" name="streetNumber"/></label>
+						<label><input type="submit" value="Cím Hozzáadása"/></label>
+					</form>
+				</div>
+				{% for address in user.addresses%}
+					<div class="span-9 prepend-1 profileColumn profileElement">
+						<form action="/address" method="post">
+							<input type="hidden" name="addressKey" value="{{address.key()}}"/>
+							<label>Telefonszám<input type="text" name="phoneNumber" value="{{address.phoneNumber}}"/></label>
+							<label>Kerület<input type="text" name="district" value="{{address.district}}"/></label>
+							<label>Irányítószám<input type="text" name="zipCode" value="{{address.zipCode}}"/></label>
+							<label>Utca név<input type="text" name="street" value="{{address.street}}"/></label>
+							<label>Házszám, emelet<input type="text" name="streetNumber" value="{{address.streetNumber}}"/></label>
+							<label><input type="submit" value="Cím módosítása"/></label>
+						</form>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>

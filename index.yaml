@@ -15,6 +15,16 @@ indexes:
   - name: day
   - name: menuItemIndex
 
+- kind: User
+  properties:
+  - name: email
+  - name: familyName
+
+- kind: User
+  properties:
+  - name: email
+  - name: registrationDate
+
 - kind: UserOrderItem
   properties:
   - name: user

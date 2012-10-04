@@ -27,10 +27,8 @@
 	<form action="/address" method="post">
 		<input type="hidden" name="addressKey" value="{{address.key()}}"/>
 		<table>
-			<tr><td>Számlázási cím</td><td><input type="checkbox" name="isBlling" value="{{address.isBilling}}"/></td></tr>
-			<tr><td>Számlázási név</td><td><input type="text" name="billingName" value="{{address.billingName}}"/></td></tr>
 			<tr><td>Telefonszám</td><td><input type="text" name="phoneNumber"value="{{address.phoneNumber}}"/></td></tr>
-			<tr><td>Kerület</td><td><input type="text" name="district"value="{{address.district}}"/></td></tr>
+			<tr><td>Kerület</td><td><input type="text" name="district" value="{{address.district}}"/></td></tr>
 			<tr><td>Irányítószám</td><td><input type="text" name="zipCode" value="{{address.zipCode}}"/></td></tr>
 			<tr><td>Utca név</td><td><input type="text" name="street" value="{{address.street}}"/></td></tr>
 			<tr><td>Házszám, emelet</td><td><input type="text" name="streetNumber" value="{{address.streetNumber}}"/></td></tr>
@@ -41,8 +39,6 @@
 <!-- List of addresses here -->
 <form action="/address" method="post">
 	<table>
-		<tr><td>Számlázási cím</td><td><input type="checkbox" name="isBlling"/></td></tr>
-		<tr><td>Számlázási név</td><td><input type="text" name="billingName"/></td></tr>
 		<tr><td>Telefonszám</td><td><input type="text" name="phoneNumber"/></td></tr>
 		<tr><td>Kerület</td><td><input type="text" name="district"/></td></tr>
 		<tr><td>Irányítószám</td><td><input type="text" name="zipCode"/></td></tr>
