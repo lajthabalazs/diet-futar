@@ -15,11 +15,15 @@ from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
 	LOGIN_ERROR_WRONG_PASSWORD, REGISTRATION_ERROR_KEY, clearRegistrationError,\
-	isUserAdmin, clearLoginError, LOGIN_ERROR_NOT_ACTIVATED
+	isUserAdmin, clearLoginError, LOGIN_ERROR_NOT_ACTIVATED, USER,\
+	REGISTRATION_ERROR_USER_NAME_NOT_FILLED
 from random import Random
 from xmlrpclib import datetime
+from google.appengine.api import mail
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+
+districts=["I","II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII","XXIII", "XXIV"]
 
 def clearNextPage(handler):
 	nextPage="/"
@@ -74,7 +78,8 @@ class LogoutPage(BaseHandler):
 class RegisterPage(BaseHandler):
 	def get(self):
 		template_params={
-			REGISTRATION_ERROR_KEY:self.session.get(REGISTRATION_ERROR_KEY,None)
+			REGISTRATION_ERROR_KEY:self.session.get(REGISTRATION_ERROR_KEY,None),
+			USER:self.session.get(USER, None)
 		}
 		clearRegistrationError(self)
 		template = jinja_environment.get_template('templates/register.html')
@@ -84,17 +89,29 @@ class RegisterPage(BaseHandler):
 		email = self.request.get('email')
 		password = self.request.get('password')
 		passwordCheck = self.request.get('passwordCheck')
+		familyName= self.request.get('familyName')
+		givenName= self.request.get('givenName')
+		user = {}
+		user["email"]= email
+		user["familyName"]=familyName
+		user["givenName"]=givenName
 		users = User.gql('WHERE email = :1', email)
+		self.session[USER]=user
 		if (users.count(1)>0):
 			self.session[REGISTRATION_ERROR_KEY]=REGISTRATION_ERROR_EXISTING_USER
 			self.redirect('/registration')
 		elif (passwordCheck != password):
 			self.session[REGISTRATION_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
 			self.redirect('/registration')
+		elif familyName==None or familyName=="" or givenName==None or givenName=="":
+			self.session[REGISTRATION_ERROR_KEY] = REGISTRATION_ERROR_USER_NAME_NOT_FILLED
+			self.redirect('/registration')
 		else:
 			#Everything went ok, create the user and log him in
 			user = User()
 			user.email = email
+			user.familyName=familyName
+			user.givenName=givenName
 			user.password = password
 			user.activated = False
 			user.registrationDate=datetime.date.today()
@@ -104,17 +121,23 @@ class RegisterPage(BaseHandler):
 				word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
 			user.activationCode = word
 			user.put()
-			#TODO Send activation mail
 			template_values = {
 				'email':email,
 				'activationCode':word
 			}
-			template = jinja_environment.get_template('templates/activation_code.html')
-			self.printPage("Aktivacio", template.render(template_values), True)
-			
-			#self.session[USER_KEY]=str(user.key())
-			#self.redirect(clearNextPage(self))
+			messageTemplate = jinja_environment.get_template('templates/activation_code.html')
+			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
+			message.subject="Sikeres regisztracio"
+			message.to = email
+			message.body = messageTemplate.render(template_values)
+			message.send()
+			self.redirect("/activationPending")
 
+class ActivationPendingPage (BaseHandler):
+	def get(self):
+			template = jinja_environment.get_template('templates/activation_pending.html')
+			self.printPage("Aktivacio", template.render(), True)
+	
 class ActivatePage (BaseHandler):
 	def get(self):
 		# Finds user with given email and activation code and activates it
@@ -175,6 +198,7 @@ class UserProfilePage (BaseHandler):
 			user.role = None
 			template_values = {
 				'user': user,
+				'districts':districts,
 				LOGIN_ERROR_KEY:self.session.get(LOGIN_ERROR_KEY,0)
 			}
 			template = jinja_environment.get_template('templates/profile_new.html')
@@ -192,7 +216,8 @@ class UserProfilePage (BaseHandler):
 				user.password = "__________"
 				user.role = None
 				template_values = {
-					'user': user
+					'user': user,
+					'districts':districts
 				}
 				template = jinja_environment.get_template('templates/profile_new.html')
 				self.printPage("Profil", template.render(template_values), False, True)

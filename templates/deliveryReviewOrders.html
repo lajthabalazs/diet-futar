@@ -1,4 +1,7 @@
-﻿{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
+﻿<div class="mainBg">
+	<div class="container">
+
+{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
 <br/>
 {{day}}
 <table border="1">
@@ -16,7 +19,8 @@
 		</tr>
 	{% endfor %}
 </table>
-
+</div>
+</div>
 
 
 

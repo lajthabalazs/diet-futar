@@ -20,33 +20,39 @@
 								&nbsp;
 							{% endif %}
 							{% for menuItem in day.menuItems %}
-								<div class="calendarElement">
+								<div class="calendarElement {% if (not menuItem.orderable ) and menuItem.orderedQuantity == 0 %}  inactive {% endif%}">
 									<h3>{{ menuItem.dish.title }}</h3>
 									<p>{% for component in menuItem.components %}
 										,{{ component.dish.title }}
 									{% endfor %}</p>
 									<strong>{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %} Ft</strong>
-									{% if menuItem.inCurrentOrder %}
-										<input type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
-									{% else %}
-										<input type="text" name="MIC{{ menuItem.key() }}" value="0"/>
+									{% if menuItem.orderable %}
+										{% if menuItem.inCurrentOrder %}
+											<input type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
+										{% else %}
+											<input type="text" name="MIC{{ menuItem.key() }}" value="0"/>
+										{% endif %}
 									{% endif %}
-									<small>{{ menuItem.orderedQuantity}} + </small>
+									{% if menuItem.orderedQuantity > 0 %}
+										<small>{{ menuItem.orderedQuantity}} {% if menuItem.orderable %}+{% else %}adag{% endif %} </small>
+									{% endif %}
 								</div>
 							{% endfor %}
 							{% for composit in day.composits %}
-								<div class="calendarElement">
+								<div class="calendarElement {% if (not composit.orderable ) and composit.orderedQuantity == 0 %}  inactive {% endif%}">
 									{% for component in composit.components%}
 										<h3>{{component.menuItem.dish.title}}</h3>
 										<p>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}</p>
 									{% endfor %}
 									<strong>{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %} Ft</strong>
-									{% if composit.inCurrentOrder %}
-										<input type="text" name="MIC{{ composit.key() }}" value="{{ composit.inCurrentOrder}}"/>
-									{% else %}
-										<input type="text" name="MIC{{ composit.key() }}" value="0"/>
+									{% if composit.orderable %}
+										{% if composit.inCurrentOrder %}
+											<input type="text" name="MIC{{ composit.key() }}" value="{{ composit.inCurrentOrder}}"/>
+										{% else %}
+											<input type="text" name="MIC{{ composit.key() }}" value="0"/>
+										{% endif %}
 									{% endif %}
-									<small>{{ composit.orderedQuantity}} +</small> 
+									<small>{{ composit.orderedQuantity}} {% if composit.orderable %}+{% else %}adag{% endif %}</small> 
 								</div>
 							{% endfor %}
 						</div>

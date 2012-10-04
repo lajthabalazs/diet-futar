@@ -1,16 +1,28 @@
-﻿<h1>Rendelés - {{userOrder.orderDate.strftime('%Y-%m-%d %H:%M')}}</h1>
-<table border="1">
-	<tr><th>Nap</th><th>Termék</th><th>Darab</th><th>Ár</th></tr>
-	{% for orderItem in userOrder.items %}
-		<tr>
-			{% if orderItem.orderedItem == None %}
-			{# Composit #}
-			<td>{{ orderItem.orderedComposit.day }}</td><td>{% for component in orderItem.orderedComposit.components%}{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}{% endfor %} </td><td style="text-align: right">{{orderItem.itemCount}}</td><td style="text-align: right">{{orderItem.price}} Ft</td>
-			{% else %}
-			{# Menu item #}
-			<td>{{ orderItem.orderedItem.day }}</td><td>{{orderItem.orderedItem.dish.title}}</td><td style="text-align: right">{{orderItem.itemCount}}</td><td style="text-align: right">{{orderItem.price}} Ft</td>			
-			{% endif %}
-		</tr>
-	{% endfor %}
-<tr><td colspan="3">Összesen</td><td>{{userOrder.price}} Ft</td></tr>
-</table>
+﻿<div class="mainBg">
+	<div class="container">
+		<h2>Rendelés - {{userOrder.orderDate.strftime('%Y-%m-%d %H:%M')}}</h2>
+		<table border="1">
+			<tr><th>Nap</th><th>Termék</th><th style="text-align: right">Darab</th><th style="text-align: right">Egységár</th><th style="text-align: right">Ár</th></tr>
+			{% for orderItem in userOrder.items %}
+				<tr>
+					{% if orderItem.orderedItem == None %}
+					{# Composit #}
+					<td>{{ orderItem.orderedComposit.day }}</td>
+					<td>{% for component in orderItem.orderedComposit.components%}{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}{% endfor %} </td>
+					<td style="text-align: right">{{orderItem.itemCount}}</td>
+					<td style="text-align: right">{{orderItem.orderedComposit.price}}</td>
+					<td style="text-align: right">{{orderItem.price}} Ft</td>
+					{% else %}
+					{# Menu item #}
+					<td>{{ orderItem.orderedItem.day }}</td>
+					<td>{{orderItem.orderedItem.dish.title}}</td>
+					<td style="text-align: right">{{orderItem.itemCount}}</td>
+					<td style="text-align: right">{{orderItem.orderedItem.price}}</td>
+					<td style="text-align: right">{{orderItem.price}} Ft</td>
+					{% endif %}
+				</tr>
+			{% endfor %}
+		<tr><td colspan="4">Összesen</td><td style="text-align: right">{{userOrder.price}} Ft</td></tr>
+		</table>
+	</div>
+</div>

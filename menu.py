@@ -60,7 +60,11 @@ class MenuEditPage(BaseHandler):
 						except ReferencePropertyResolveError:
 							menuItem.delete()
 							continue
-						if menuItem.day==actualDay and menuItem.containingMenuItem == None:
+						if menuItem.day==actualDay and menuItem.containingMenuItem == None and  menuItem.active:
+							if menuItem.occurrences.count() > 0:
+								menuItem.alterable = False
+							else:
+								menuItem.alterable = True
 							actualMenuItems.append(menuItem)
 				for composit in composits:
 					try:
@@ -68,7 +72,11 @@ class MenuEditPage(BaseHandler):
 					except ReferencePropertyResolveError:
 						continue
 					if composit.category.key()==category.key():
-						if composit.day==actualDay:
+						if composit.day==actualDay and composit.active:
+							if composit.occurrences.count() > 0:
+								composit.alterable = False
+							else:
+								composit.alterable = True
 							actualComposits.append(composit)
 				#Get every menu item for the day
 				for menuItem in menuItems:
@@ -78,7 +86,7 @@ class MenuEditPage(BaseHandler):
 					except ReferencePropertyResolveError:
 						menuItem.delete()
 						continue
-					if menuItem.day==actualDay and menuItem.containingMenuItem==None:
+					if menuItem.day==actualDay and menuItem.containingMenuItem == None and menuItem.active:
 						availableMenuItems.append(menuItem)
 				actualDayObject['availableMenuItems']=availableMenuItems
 				actualDayObject["menuItems"]=actualMenuItems
@@ -105,7 +113,7 @@ class MenuEditPage(BaseHandler):
 			'next':nextMonday,
 			'actual':actualMonday,
 			'menu':menu,
-			'allDishes':allDishes			
+			'allDishes':allDishes
 		}
 		template = jinja_environment.get_template('templates/menuEdit.html')
 		self.printPage(str(day), template.render(template_values), False, False)
@@ -160,11 +168,12 @@ class AddItemToComposit(BaseHandler):
 				parts=requestDay.rsplit("-")
 				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
 			composit = Composit.get(self.request.get("compositKey"))
-			menuItem = MenuItem.get(self.request.get("menuItem"))
-			compositItem = CompositMenuItemListItem()
-			compositItem.menuItem = menuItem
-			compositItem.composit = composit
-			compositItem.put()
+			if composit.occurrences.count()==0:
+				menuItem = MenuItem.get(self.request.get("menuItem"))
+				compositItem = CompositMenuItemListItem()
+				compositItem.menuItem = menuItem
+				compositItem.composit = composit
+				compositItem.put()
 			self.redirect("/menuEdit?day="+str(day))
 
 class DeleteItemFromComposit(BaseHandler):
@@ -179,7 +188,8 @@ class DeleteItemFromComposit(BaseHandler):
 				parts=requestDay.rsplit("-")
 				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
 			compositItem = CompositMenuItemListItem.get(self.request.get("componentKey"))
-			compositItem.delete()
+			if compositItem.composit.occurrences.count()==0:
+				compositItem.delete()
 			self.redirect("/menuEdit?day="+str(day))
 			
 class ModifyComposit(BaseHandler):
@@ -195,9 +205,10 @@ class ModifyComposit(BaseHandler):
 			if ((compositKey != None) and (compositKey != "")):
 				composit=Composit.get(compositKey)
 				if (composit != None):
-					#Save new price
-					composit.price = int(self.request.get('price'))
-					composit.put()
+					if composit.occurrences.count()==0:
+						#Save new price
+						composit.price = int(self.request.get('price'))
+						composit.put()
 			self.redirect("/menuEdit?day="+dayStr)
 			
 class DeleteComposit(BaseHandler):
@@ -214,8 +225,11 @@ class DeleteComposit(BaseHandler):
 			compositKey=self.request.get('compositKey')
 			if ((compositKey != None) and (compositKey != "")):
 				composit=Composit.get(compositKey)
-				if (composit != None):
+				if composit != None and composit.occurrences.count() == 0:
 					composit.delete()
+				else:
+					composit.active = False
+					composit.put()
 			self.redirect("/menuEdit?day="+str(day))
 
 class ModifyMenuItem(BaseHandler):
@@ -230,7 +244,7 @@ class ModifyMenuItem(BaseHandler):
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
-				if (menuItem != None):
+				if (menuItem != None) and menuItem.occurrences.count()==0:
 					#Save new price
 					menuItem.price = int(self.request.get('price'))
 					menuItem.put()
@@ -251,7 +265,7 @@ class AddMenuItemComponent(BaseHandler):
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
-				if (menuItem != None):
+				if (menuItem != None) and menuItem.occurrences.count()==0:
 					sumprice = menuItem.dish.price
 					#Get the dish
 					dishKey = self.request.get('componentDishKey')
@@ -284,7 +298,7 @@ class DeleteMenuItem(BaseHandler):
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
-				if (menuItem != None):
+				if menuItem != None and menuItem.occurrences.count() == 0 and menuItem.composits.count() == 0:
 					if menuItem.containingMenuItem != None:
 						sumprice = menuItem.containingMenuItem.dish.price
 						for component in menuItem.containingMenuItem.components:
@@ -295,6 +309,9 @@ class DeleteMenuItem(BaseHandler):
 						menuItem.containingMenuItem.sumprice = sumprice
 						menuItem.containingMenuItem.put()
 					menuItem.delete()
+				else:
+					menuItem.active = False
+					menuItem.put()
 			self.redirect("/menuEdit?day="+str(day))
 
 

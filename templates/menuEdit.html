@@ -20,28 +20,36 @@
 									<div class="calendarElement">
 										{% for component in composit.components%}
 											<h3>{{component.menuItem.dish.title}}</h3>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %} {{component.menuItem.price}} Ft<br/>
-											<form action="/deleteItemFromComposit" method="post">
-												<input type="hidden" name="componentKey" value="{{ component.key() }}"/>
-												<input type="hidden" name="formDay" value="{{ day.date }}"/>
-												<input type="submit" value="Törlés"/>
-											</form>
+											{% if composit.alterable %}
+												<form action="/deleteItemFromComposit" method="post">
+													<input type="hidden" name="componentKey" value="{{ component.key() }}"/>
+													<input type="hidden" name="formDay" value="{{ day.date }}"/>
+													<input type="submit" value="Törlés"/>
+												</form>
+											{% endif %}
 										{% endfor %}
-										<form action="/addItemToComposit" method="post">
-											<input type="hidden" name="compositKey" value="{{composit.key()}}" id="compositKey"/>
-											<input type="hidden" name="formDay" value="{{ day.date }}"/>
-											<select name="menuItem" id="menuItem">
-												{% for menuItem in day.availableMenuItems %}
-													<option label="{{menuItem.dish.title}}{% for subItem in menuItem.components%},{{subItem.dish.title}}{% endfor %}" value="{{menuItem.key()}}"></option>
-												{% endfor %}
-											</select><br/>
-											<input type="submit" name="submit" value="Csatol" id="submit"/>
-										</form>
-										<form action="/modifyComposit" method="post">
-											<input type="hidden" name="compositKey" value="{{ composit.key() }}"/>
-											<input type="hidden" name="formDay" value="{{ day.date }}"/>
-											<input style="text-align: right" type="text" name="price" value="{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %}"/> Ft<br/>
-											<input type="submit" value="Áraz"/>
-										</form>
+										{% if composit.alterable %}
+											<form action="/addItemToComposit" method="post">
+												<input type="hidden" name="compositKey" value="{{composit.key()}}" id="compositKey"/>
+												<input type="hidden" name="formDay" value="{{ day.date }}"/>
+												<select name="menuItem" id="menuItem" class="menuEditSelect">
+													{% for menuItem in day.availableMenuItems %}
+														<option label="{{menuItem.dish.title}}{% for subItem in menuItem.components%},{{subItem.dish.title}}{% endfor %}" value="{{menuItem.key()}}"></option>
+													{% endfor %}
+												</select><br/>
+												<input type="submit" name="submit" value="Csatol" id="submit"/>
+											</form>
+										{% endif %}
+										{% if composit.alterable %}
+											<form action="/modifyComposit" method="post">
+												<input type="hidden" name="compositKey" value="{{ composit.key() }}"/>
+												<input type="hidden" name="formDay" value="{{ day.date }}"/>
+												<input style="text-align: right" type="text" name="price" value="{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %}"/> Ft<br/>
+												<input type="submit" value="Áraz"/>
+											</form>
+										{% else %}
+											<strong>{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %} Ft</strong>
+										{% endif %}
 										<form action="/deleteComposit" method="post">
 											<input type="hidden" name="compositKey" value="{{ composit.key() }}"/>
 											<input type="hidden" name="formDay" value="{{ day.date }}"/>
@@ -66,29 +74,37 @@
 										{% for component in menuItem.components %}
 											{{ component.dish.title }}
 											{% if component.dish.price == None%}0{% else %}{{ component.dish.price }}{% endif %} Ft
-											<form action="/deleteComposit" method="post">
-												<input type="hidden" name="menuItemKey" value="{{ component.key() }}"/>
-												<input type="hidden" name="formDay" value="{{ day.date }}"/>
-												<input type="submit" value="Törlés"/>
-											</form>
+											{% if menuItem.alterable %}
+												<form action="/deleteComposit" method="post">
+													<input type="hidden" name="menuItemKey" value="{{ component.key() }}"/>
+													<input type="hidden" name="formDay" value="{{ day.date }}"/>
+													<input type="submit" value="Törlés"/>
+												</form>
+											{% endif %}
 										{% endfor %}
-										<form action="/addMenuItemComponent" method="post">
-											<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
-											<input type="hidden" name="formDay" value="{{ day.date }}"/>
-											<select name="componentDishKey">
-												{% for dish in allDishes %}
-													<option value="{{dish.key() }}">{{ dish.title }}</option>
-												{% endfor %}
-											</select>
-											<input type="submit" value="Csatol"/>
-										</form>
+										{% if menuItem.alterable %}
+											<form action="/addMenuItemComponent" method="post">
+												<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
+												<input type="hidden" name="formDay" value="{{ day.date }}"/>
+												<select name="componentDishKey" class="menuEditSelect">
+													{% for dish in allDishes %}
+														<option value="{{dish.key() }}">{{ dish.title }}</option>
+													{% endfor %}
+												</select>
+												<input type="submit" value="Csatol"/>
+											</form>
+										{% endif %}
 										Összesen {% if menuItem.sumprice == None%}0{% else %}{{ menuItem.sumprice }}{% endif %} Ft <br/>
+										{% if menuItem.alterable %}
 										<form action="/modifyMenuItem" method="post">
 											<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
 											<input type="hidden" name="formDay" value="{{ day.date }}"/>
 											<input style="text-align: right" type="text" name="price" value="{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %}"/> Ft<br/>
 											<input type="submit" value="Áraz"/>
 										</form>
+										{% else %}
+											<strong>{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %} Ft</strong>
+										{% endif %}
 										<form action="/deleteMenuItem" method="post">
 											<input type="hidden" name="menuItemKey" value="{{ menuItem.key() }}"/>
 											<input type="hidden" name="formDay" value="{{ day.date }}"/>

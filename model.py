@@ -65,6 +65,7 @@ class Composit(db.Model):
 	sumprice = db.IntegerProperty()
 	day=db.DateProperty()
 	category=db.ReferenceProperty(DishCategory, collection_name='composits')
+	active=db.BooleanProperty(default=True)
 
 
 class MenuItem(db.Model):
@@ -73,6 +74,7 @@ class MenuItem(db.Model):
 	sumprice = db.IntegerProperty()
 	day=db.DateProperty()
 	containingMenuItem=db.SelfReferenceProperty('Containing menu item', collection_name='components')
+	active=db.BooleanProperty(default=True)
 
 class CompositMenuItemListItem(db.Model):
 	menuItem=db.ReferenceProperty(MenuItem, collection_name='composits')

@@ -29,7 +29,11 @@
 				<div class="span-9 prepend-1 profileColumn profileElement">
 					<form action="/address" method="post">
 						<label>Telefonszám<input type="text" name="phoneNumber"/></label>
-						<label>Kerület<input type="text" name="district"/></label>
+						<label>Kerület <select name="district">
+							{% for district in districts %}
+								<option value="{{district}}" label="{{district}}. kerület"></option>
+							{% endfor %}
+						</select></label>
 						<label>Irányítószám<input type="text" name="zipCode"/></label>
 						<label>Utca név<input type="text" name="street"/></label>
 						<label>Házszám, emelet<input type="text" name="streetNumber"/></label>
@@ -41,7 +45,11 @@
 						<form action="/address" method="post">
 							<input type="hidden" name="addressKey" value="{{address.key()}}"/>
 							<label>Telefonszám<input type="text" name="phoneNumber" value="{{address.phoneNumber}}"/></label>
-							<label>Kerület<input type="text" name="district" value="{{address.district}}"/></label>
+							<label>Kerület <select name="district">
+								{% for district in districts %}
+									<option value="{{district}}" label="{{district}}. kerület" {% if district==address.district%}selected{% endif %}></option>
+								{% endfor %}
+							</select></label>
 							<label>Irányítószám<input type="text" name="zipCode" value="{{address.zipCode}}"/></label>
 							<label>Utca név<input type="text" name="street" value="{{address.street}}"/></label>
 							<label>Házszám, emelet<input type="text" name="streetNumber" value="{{address.streetNumber}}"/></label>

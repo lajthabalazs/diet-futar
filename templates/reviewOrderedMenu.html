@@ -2,11 +2,11 @@
 	<div class="container">
 		<div class="span-24 last calendar">
 			<div class="span-24 last calendarHeader">
-				{% if prev %}<a href="/pendingOrder?day={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
+				{% if prev %}<a href="/personalMenu?day={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
 				{% for day in days %}
 					<div class="span-4"><h3>{{ day.day }}</h3>{{ day.date }}</div>
 				{% endfor%}
-				<a href="/pendingOrder?day={{ next }}" class="span-2 last nextWeek">Következő hét</a>
+				<a href="/personalMenu?day={{ next }}" class="span-2 last nextWeek">Következő hét</a>
 			</div>
 		</div>
 
@@ -63,7 +63,7 @@
 			{% for day in days %}
 			<div class="span-4">
 				{% if day.has_key('address') %}
-					<select name="address_{{day.date}}" id="address_{{day.date}}">
+					<select name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%}>
 						{% for address in addresses %}
 							<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
 						{% endfor %}

@@ -1,12 +1,16 @@
-{% if activationResult == 0%}
-<h2>Sikeres aktiválás</h2>
-<a href="/order">Rendelek valami finomat</a>
-<a href="/profile">Személyes oldal áttekintése</a>
-{% else %}
-{% if activationResult == 1 %}
-<h2>Ismeretlen felhasználó</h2>
-{% else %}
-<h2>Hibás aktivációs kód</h2>
-{% endif %}
-<a href="/registration">Regisztráció</a>
-{% endif %}
+<div class="mainBg">
+	<div class="container">
+		{% if activationResult == 0%}
+		<h2>Sikeres aktiválás</h2>
+		<a href="/order">Rendelek valami finomat</a>
+		<a href="/profile">Személyes oldal áttekintése</a>
+		{% else %}
+		{% if activationResult == 1 %}
+		<h2>Ismeretlen felhasználó</h2>
+		{% else %}
+		<h2>Hibás aktivációs kód</h2>
+		{% endif %}
+		<a href="/registration">Regisztráció</a>
+		{% endif %}
+	</div>
+</div>

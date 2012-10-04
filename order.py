@@ -10,22 +10,28 @@ from model import MenuItem, DishCategory, UserOrder, UserOrderItem, User,\
 	Composit, UserOrderAddress, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import USER_KEY, getUser
+from timezone import USTimeZone
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
+LAST_ORDER_HOUR=12
 dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
-
+timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class MenuOrderPage(BaseHandler):
 	def get(self):
 		day=datetime.date.today()
+		now=datetime.datetime.now(timeZone)
+		firstOrderableDay=day+datetime.timedelta(days=1)
+		if now.hour > LAST_ORDER_HOUR:
+			firstOrderableDay=day+datetime.timedelta(days=2)
 		requestDay=self.request.get('day')
 		if ((requestDay != None) and (requestDay != "")):
 			parts=requestDay.rsplit("-")
 			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
-		#Fetch user's previous orders. User orders is an object associating menu item keys with quantities
+		#Fetch user's previous orders. User orders is an object associating menu item keys with quantities		
 		userOrders={}
 		userKey = self.session.get(USER_KEY,None)
 		if (userKey != None):
@@ -90,6 +96,11 @@ class MenuOrderPage(BaseHandler):
 									pass
 							except KeyError:
 								menuItem.orderedQuantity = 0
+							if menuItem.day < firstOrderableDay or (menuItem.active == False):
+								menuItem.orderable=False
+							else:
+								menuItem.orderable=True
+							#if (menuItem.orderable or menuItem.orderedQuantity > 0):
 							actualMenuItems.append(menuItem)
 							itemsInRows=itemsInRows+1
 					except ReferencePropertyResolveError:
@@ -112,6 +123,10 @@ class MenuOrderPage(BaseHandler):
 								pass
 						except KeyError:
 							composit.orderedQuantity = 0
+						if composit.day < firstOrderableDay or (composit.active == False):
+							composit.orderable=False
+						else:
+							composit.orderable=True
 						actualComposits.append(composit)
 						itemsInRows=itemsInRows+1
 				actualDayObject["menuItems"]=actualMenuItems
@@ -319,6 +334,11 @@ class ReviewOrderedMenuPage(BaseHandler):
 		if ((requestDay != None) and (requestDay != "")):
 			parts=requestDay.rsplit("-")
 			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		now=datetime.datetime.now(timeZone)
+		today=datetime.date.today()
+		firstOrderableDay=today+datetime.timedelta(days=1)
+		if now.hour > LAST_ORDER_HOUR:
+			firstOrderableDay=today+datetime.timedelta(days=2)
 		#Fetch user's previous orders. User orders is an object associating menu item keys with quantities
 		userOrders={}
 		userKey = self.session.get(USER_KEY,None)
@@ -404,6 +424,10 @@ class ReviewOrderedMenuPage(BaseHandler):
 		for i in range(0,5):
 			actualDayObject={}
 			actualDate=monday+datetime.timedelta(days=i)
+			if actualDate < firstOrderableDay:
+				actualDayObject["changable"] = False
+			else:
+				actualDayObject["changable"] = True
 			actualDayObject["date"] = actualDate
 			actualDayObject["orderedPrice"] = orderedPrice[i]
 			actualDayObject["day"]=dayNames[i]
@@ -431,9 +455,16 @@ class ReviewOrderedMenuPage(BaseHandler):
 		self.printPage(str(day), template.render(template_values), True)
 	def post(self):
 		# Get addresses and save them to the proper day
+		now=datetime.datetime.now(timeZone)
+		today=datetime.date.today()
+		firstOrderableDay=today+datetime.timedelta(days=1)
+		if now.hour > LAST_ORDER_HOUR:
+			firstOrderableDay=today+datetime.timedelta(days=2)
 		for field in self.request.arguments():
 			if (field[:8]=="address_"):
 				day=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
+				if day < firstOrderableDay:
+					continue
 				user = getUser(self)
 				# Check if user has order for the day
 				orders=user.orderedItems.filter("day = ", day)
@@ -467,7 +498,14 @@ class ConfirmOrder(BaseHandler):
 			self.printPage('Rendelesek', template.render(), True)
 			return
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
-		orderDate=datetime.datetime.now()
+		now=datetime.datetime.now(timeZone)
+		print now.hour
+		print now.minute
+		orderDate=now
+		today=datetime.date.today()
+		firstOrderableDay=today+datetime.timedelta(days=1)
+		if now.hour > LAST_ORDER_HOUR:
+			firstOrderableDay=today+datetime.timedelta(days=2)
 		#Save order
 		if (len(actualOrder) > 0):
 			userOrder = UserOrder()
@@ -479,19 +517,26 @@ class ConfirmOrder(BaseHandler):
 			for orderKey in actualOrder.keys():
 				try:
 					if (int(actualOrder[orderKey]) != 0):
-						orderItem = UserOrderItem()
-						orderItem.userOrder = userOrder
-						orderItem.user = userOrder.user
 						item = db.get(orderKey)
 						day=None
+						day = item.day
+						if day < firstOrderableDay:
+							continue
+						orderItem = UserOrderItem()
 						if type(item) == MenuItem:
-							day = item.day
 							orderItem.orderedItem=item
 						else:
-							day = item.day
 							orderItem.orderedComposit=item
+						orderItem.userOrder = userOrder
+						orderItem.user = userOrder.user
 						orderItem.day=day
 						orderItem.itemCount = int(actualOrder[orderKey])
+						try:
+							orderItem.price = item.price * int(actualOrder[orderKey])
+						except TypeError:
+							orderItem.price = 0
+						userOrder.price = userOrder.price + orderItem.price
+						orderItem.put()
 						daysAddress = user.deliveryAddresses.filter("day = ", day)
 						if daysAddress.count() == 0:
 							# Create new order address
@@ -500,12 +545,6 @@ class ConfirmOrder(BaseHandler):
 							daysAddress.user=user
 							daysAddress.address = addresses[addresses.count()-1]
 							daysAddress.put()
-						try:
-							orderItem.price = item.price * int(actualOrder[orderKey])
-						except TypeError:
-							orderItem.price = 0
-						userOrder.price = userOrder.price + orderItem.price
-						orderItem.put()
 
 				except ValueError, ReferencePropertyResolveError:
 					continue
@@ -519,9 +558,13 @@ class PreviousOrders(BaseHandler):
 	def get(self):
 		userKey = self.session.get(USER_KEY,None)
 		if (userKey != None):
+			userOrders=[]
 			user = User.get(userKey)
+			for order in user.userOrders:
+				order.orderDate = order.orderDate + datetime.timedelta(hours=2)
+				userOrders.append(order)
 			template_values = {
-				'userOrders':user.userOrders
+				'userOrders':userOrders
 			}
 			template = jinja_environment.get_template('templates/previousOrders.html')
 			self.printPage('Rendelesek', template.render(template_values), True)

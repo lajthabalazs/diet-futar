@@ -1,12 +1,24 @@
-﻿<h1>Regisztráció</h1>
-<form method="post">
-	<table>
-		<tr><td>Email cím</td><td><input type="text" name="email"/></td></tr>
-		<tr><td>Jelszó</td><td><input type="password" name="password"/></td></tr>
-		<tr><td>Jelszó mégegyszer</td><td><input type="password" name="passwordCheck"/></td></tr>
-		{% if (registration_error) %}
-		<tr><td colspan="2"><span style="color: 'RED'">{{ registration_error }}</span></td></tr>
-		{% endif %}
-		<tr><td colspan="2" align="right"><input type="submit" value="Belépés"/></td></tr>
-	</table>
-</form>	
+﻿<div class="mainBg">
+	<div class="container">
+		<div class="span-24 last profile">
+			<div class="span-24 last profileRow">
+				<h2 class="span-4">Regisztráció</h2>
+				<div class="span-9 prepend-1 profileColumn profileElement">
+					<form method="post">
+							<label>E-mail cím<input type="text" name="email" value="{% if user != None%}{{user.email}}{% endif %}"/></label>
+							<label>Jelszó<input type="password" name="password"/></label>
+							<label>Jelszó mégegyszer<input type="password" name="passwordCheck"/></label>
+							<label>Vezetéknév<input type="text" name="familyName" value="{% if user != None%}{{user.familyName}}{% endif %}"/></label>
+							<label>Keresztnév<input type="text" name="givenName" value="{% if user != None%}{{user.givenName}}{% endif %}"/></label>
+							{% if (registration_error) %}
+							<span style="color: 'RED'">{{registration_error}}</span><br/>
+							{% else %}
+							<span>Minden mező kitöltése kötelező</span><br/>
+							{% endif %}
+							<input type="submit" value="Regisztráció"/>
+					</form>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -102,6 +102,10 @@ body {
 	padding-bottom: 23px;
 }
 
+.menuEditSelect {
+	width: 120px;
+}
+
 .calendarHeader div {
 	text-align: center;
 	text-shadow: #FFFFFF 0px 1px 0px;
@@ -144,6 +148,10 @@ body {
 	font-family: "Arial Narrow", Arial, sans-serif;
 	line-height: normal;
 	color: #F60;
+}
+
+p {
+	font-size: 16px;
 }
 
 .calendarElement p {
@@ -195,7 +203,7 @@ body {
 	border: solid 1px #F60;
 	}
 
-.calendar .inactive {
+.calendar, .inactive {
 opacity:0.3;
 filter:alpha(opacity=30); /* For IE8 and earlier */
 }
@@ -476,7 +484,7 @@ a.lastWeek {
 }
 
 
-.profileColumn input[type=text], .profileColumn input[type=password], .profileColumn label span {
+.profileColumn input[type=text], .profileColumn select, .profileColumn input[type=password], .profileColumn label span {
 	float: right;
 	width: 210px;
 	height: 30px;
@@ -495,6 +503,11 @@ a.lastWeek {
 	margin-bottom: 5px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	font-weight: normal;
+}
+
+.profileColumn select {
+	width:220px;
+	padding-left: 8px;
 }
 
 .profileColumn input[type=checkbox] {
