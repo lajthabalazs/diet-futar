@@ -7,6 +7,7 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 from model import User
+from user_management import isUserAdmin
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -16,6 +17,8 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 #An accumulated overview of every ordered item
 class UserListPage(BaseHandler):
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		pageText=self.request.get("page")
 		pageSize=10
 		actualPage=0
@@ -44,7 +47,7 @@ class UserListPage(BaseHandler):
 		if actualPage > 0:
 			template_values["nextPage"]=actualPage
 		template = jinja_environment.get_template('templates/userList.html')
-		self.printPage("Felhasznalok", template.render(template_values), True)
+		self.printPage("Felhasznalok", template.render(template_values), False, False)
 
 		
 #An accumulated overview of every ordered item

@@ -6,8 +6,6 @@ Created on Aug 11, 2012
 from google.appengine.ext import db
 
 ROLE_ADMIN="admin"
-class Role (db.Model):
-	name = db.StringProperty()
 
 class User(db.Model):
 	email = db.StringProperty()
@@ -17,7 +15,7 @@ class User(db.Model):
 	activated = db.BooleanProperty()
 	activationCode = db.StringProperty()
 	registrationDate=db.DateProperty()
-	role = db.ReferenceProperty(Role, collection_name='users')
+	role = db.StringProperty()
 
 class Address (db.Model):
 	isBilling = db.BooleanProperty()

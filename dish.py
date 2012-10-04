@@ -16,16 +16,16 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 class DeleteDishPage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/dish")	
+		if(not isUserAdmin(self)):
+			self.redirect("/")
 		dish = db.get(self.request.get('dishKey'))
 		dish.delete()
 		self.redirect('/dish')
 	
 class DishPage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/dish")	
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		else:
 			if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
 			#Modification of basic data
@@ -53,6 +53,8 @@ class DishPage(BaseHandler):
 				dish.put()
 				self.redirect('/dish?dishKey=%s' % dish.key())
 	def get(self):
+		if(not isUserAdmin):
+			self.redirect("/")	
 		dishKey=self.request.get('dishKey')
 		if ((dishKey != None) and (dishKey != "")):
 		# A single dish with editable ingredient list
@@ -98,7 +100,7 @@ class DishPage(BaseHandler):
 class DishIngredientDeletePage(BaseHandler):
 	def post(self):
 		if(not isUserAdmin):
-			self.redirect("/dish")	
+			self.redirect("/")	
 		# Retrieve the dish
 		dish = db.get(self.request.get('dishKey'))
 		ingredientToDish = db.get(self.request.get('dishIngredientKey'))
@@ -108,7 +110,7 @@ class DishIngredientDeletePage(BaseHandler):
 class DishIngredientAddPage(BaseHandler):
 	def post(self):
 		if(not isUserAdmin):
-			self.redirect("/dish")	
+			self.redirect("/")	
 		# Retrieve the dish
 		dish = db.get(self.request.get('dishKey'))
 		if ((self.request.get('dishIngredientKey') != None) and (self.request.get('dishIngredientKey') != "")):

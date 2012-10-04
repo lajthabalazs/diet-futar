@@ -9,7 +9,7 @@ import datetime
 from model import MenuItem, DishCategory, UserOrder, UserOrderItem, User,\
 	Composit, UserOrderAddress, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
-from user_management import USER_KEY, getUser
+from user_management import USER_KEY, getUser, isUserAdmin, isUserLoggedIn
 from timezone import USTimeZone
 #from user_management import getUserBox
 
@@ -329,6 +329,8 @@ class ReviewPendingOrderPage(BaseHandler):
 
 class ReviewOrderedMenuPage(BaseHandler):
 	def get(self):
+		if(not isUserLoggedIn(self)):
+			self.redirect("/")	
 		day=datetime.date.today()
 		requestDay=self.request.get('day')
 		if ((requestDay != None) and (requestDay != "")):
@@ -452,9 +454,11 @@ class ReviewOrderedMenuPage(BaseHandler):
 			template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/reviewOrderedMenu.html')
-		self.printPage(str(day), template.render(template_values), True)
+		self.printPage(str(day), template.render(template_values), False, True)
 	def post(self):
 		# Get addresses and save them to the proper day
+		if(not isUserLoggedIn(self)):
+			self.redirect("/")	
 		now=datetime.datetime.now(timeZone)
 		today=datetime.date.today()
 		firstOrderableDay=today+datetime.timedelta(days=1)
@@ -488,6 +492,8 @@ class ReviewOrderedMenuPage(BaseHandler):
 class ConfirmOrder(BaseHandler):
 	def post(self):
 		#One step ordering - this is a trial
+		if(not isUserLoggedIn(self)):
+			self.redirect("/registration")	
 		userKey = self.session.get(USER_KEY,None)
 		user=None
 		if (userKey != None):
@@ -594,6 +600,8 @@ class ConfirmOrder(BaseHandler):
 
 class PreviousOrders(BaseHandler):
 	def get(self):
+		if(not isUserLoggedIn(self)):
+			self.redirect("/registration")	
 		userKey = self.session.get(USER_KEY,None)
 		if (userKey != None):
 			userOrders=[]
@@ -605,11 +613,13 @@ class PreviousOrders(BaseHandler):
 				'userOrders':userOrders
 			}
 			template = jinja_environment.get_template('templates/previousOrders.html')
-			self.printPage('Rendelesek', template.render(template_values), True)
+			self.printPage('Rendelesek', template.render(template_values), False, True)
 			
 
 class PreviousOrder(BaseHandler):
 	def get(self):
+		if(not isUserLoggedIn(self)):
+			self.redirect("/registration")	
 		orderKey = self.request.get("orderKey")
 		userOrder = UserOrder.get(orderKey)
 		if (userOrder != None):
@@ -617,7 +627,7 @@ class PreviousOrder(BaseHandler):
 				'userOrder':userOrder
 			}
 			template = jinja_environment.get_template('templates/previousOrder.html')
-			self.printPage('Rendeles', template.render(template_values), True)
+			self.printPage('Rendeles', template.render(template_values), False, True)
 
 
 

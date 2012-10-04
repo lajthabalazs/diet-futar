@@ -6,7 +6,7 @@ Created on Aug 11, 2012
 from google.appengine.ext import db
 import os
 import jinja2
-from model import User, Role, ROLE_ADMIN
+from model import User, ROLE_ADMIN
 
 USER_KEY="dietUserKey"
 USER="user"
@@ -25,13 +25,12 @@ LOGIN_NEXT_PAGE_KEY="next_page"
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 def isUserAdmin(handler):
-	return isUserLoggedIn(handler)
 	userKey = handler.session.get(USER_KEY,None)
 	if (userKey != None):
 	#If session has a user key, than return logged in
 		user = User(db.get(userKey))
 		if ((user!=None) and (user.role!=None)):
-			return Role(user.role).name == ROLE_ADMIN
+			return user.role == ROLE_ADMIN
 		else:
 			return False
 	else:

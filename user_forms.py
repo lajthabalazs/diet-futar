@@ -16,7 +16,7 @@ from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
 	LOGIN_ERROR_WRONG_PASSWORD, REGISTRATION_ERROR_KEY, clearRegistrationError,\
 	isUserAdmin, clearLoginError, LOGIN_ERROR_NOT_ACTIVATED, USER,\
-	REGISTRATION_ERROR_USER_NAME_NOT_FILLED
+	REGISTRATION_ERROR_USER_NAME_NOT_FILLED, isUserLoggedIn
 from random import Random
 from xmlrpclib import datetime
 from google.appengine.api import mail
@@ -123,7 +123,8 @@ class RegisterPage(BaseHandler):
 			user.put()
 			template_values = {
 				'email':email,
-				'activationCode':word
+				'activationCode':word,
+				'user':user
 			}
 			messageTemplate = jinja_environment.get_template('templates/activation_code.html')
 			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
@@ -164,9 +165,9 @@ class ActivatePage (BaseHandler):
 
 class ChangePasswordPage (BaseHandler):
 	def post(self):
-		clearLoginError(self)
-		if(not isUserAdmin(self)):
+		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
+		clearLoginError(self)
 		userKey=self.session.get(USER_KEY,None)
 		user = None
 		if (userKey != None):
@@ -189,7 +190,7 @@ class ChangePasswordPage (BaseHandler):
 
 class UserProfilePage (BaseHandler):
 	def get(self):
-		if(not isUserAdmin(self)):
+		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
 		userKey=self.session.get(USER_KEY,None)
 		if (userKey != None):
@@ -204,7 +205,7 @@ class UserProfilePage (BaseHandler):
 			template = jinja_environment.get_template('templates/profile_new.html')
 			self.printPage("Profil", template.render(template_values), False, True)
 	def post(self):
-		if(not isUserAdmin(self)):
+		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
 		userKey=self.session.get(USER_KEY,None)
 		if (userKey != None):
@@ -228,9 +229,9 @@ class UserProfilePage (BaseHandler):
 
 class AddressPage (BaseHandler):
 	def post(self):
+		if(not isUserLoggedIn(self)):
+			self.redirect("/registration")	
 		user = None
-		if(not isUserAdmin(self)):
-			self.redirect("/registration")
 		userKey=self.session.get(USER_KEY,None)
 		if (userKey != None):
 			user = db.get(userKey)

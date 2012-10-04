@@ -17,6 +17,8 @@ from order import dayNames
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 class MenuEditPage(BaseHandler):
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		day=datetime.date.today()
 		requestDay=self.request.get('day')
 		if ((requestDay != None) and (requestDay != "")):
@@ -118,8 +120,8 @@ class MenuEditPage(BaseHandler):
 		template = jinja_environment.get_template('templates/menuEdit.html')
 		self.printPage(str(day), template.render(template_values), False, False)
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/menuEdit")	
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		else:
 			#Adds a dish to current days menu
 			day=datetime.date.today()
@@ -140,8 +142,8 @@ class MenuEditPage(BaseHandler):
 			
 class CreateComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/menuEdit")	
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		else:
 			#Adds a composit to current days menu
 			day=datetime.date.today()
@@ -158,8 +160,8 @@ class CreateComposit(BaseHandler):
 
 class AddItemToComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/menuEdit")	
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		else:
 			#Adds an item to composit
 			day=datetime.date.today()
@@ -178,8 +180,8 @@ class AddItemToComposit(BaseHandler):
 
 class DeleteItemFromComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/menuEdit")	
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		else:
 			#Adds an item to composit
 			day=datetime.date.today()
@@ -195,7 +197,7 @@ class DeleteItemFromComposit(BaseHandler):
 class ModifyComposit(BaseHandler):
 	def post(self):
 		if(not isUserAdmin(self)):
-			self.redirect("/menuEdit")
+			self.redirect("/")	
 		else:
 			dayStr=""
 			requestDay=self.request.get('formDay')
@@ -214,7 +216,7 @@ class ModifyComposit(BaseHandler):
 class DeleteComposit(BaseHandler):
 	def post(self):
 		if(not isUserAdmin(self)):
-			self.redirect("/menuEdit")
+			self.redirect("/")	
 		else:
 			day=datetime.date.today()
 			requestDay=self.request.get('formDay')
@@ -235,7 +237,7 @@ class DeleteComposit(BaseHandler):
 class ModifyMenuItem(BaseHandler):
 	def post(self):
 		if(not isUserAdmin(self)):
-			self.redirect("/menuEdit")
+			self.redirect("/")	
 		else:
 			dayStr=""
 			requestDay=self.request.get('formDay')
@@ -253,7 +255,7 @@ class ModifyMenuItem(BaseHandler):
 class AddMenuItemComponent(BaseHandler):
 	def post(self):
 		if(not isUserAdmin(self)):
-			self.redirect("/menuEdit")
+			self.redirect("/")	
 		else:
 			sumprice = 0
 			day=datetime.date.today()
@@ -287,7 +289,7 @@ class AddMenuItemComponent(BaseHandler):
 class DeleteMenuItem(BaseHandler):
 	def post(self):
 		if(not isUserAdmin(self)):
-			self.redirect("/menuEdit")
+			self.redirect("/")	
 		else:
 			day=datetime.date.today()
 			requestDay=self.request.get('formDay')

@@ -3,11 +3,14 @@ from model import IngredientCategory
 import jinja2
 import os
 from base_handler import BaseHandler
+from user_management import isUserAdmin
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class CategoryIngredientDeletePage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		category = db.get(self.request.get('ingredientCategoryKey'))
 		ingredient = db.get(self.request.get('ingredientKey'))
 		ingredient.category=None
@@ -16,11 +19,15 @@ class CategoryIngredientDeletePage(BaseHandler):
 
 class IngredientCategoryPage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		ingredientCategory = IngredientCategory()
 		ingredientCategory.name = self.request.get('ingredient_category_name')
 		ingredientCategory.put()
 		self.redirect('/ingredientCategory')
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		if ((self.request.get('ingredientCategoryKey') != None) and (self.request.get('ingredientCategoryKey') != "")):
 		# List every ingredient in the category
 			ingredientCategory = db.get(self.request.get('ingredientCategoryKey'))
@@ -43,6 +50,8 @@ class IngredientCategoryPage(BaseHandler):
 
 class IngredientCategoryDeletePage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		ingredientCategory = db.get(self.request.get('ingredientCategoryKey'))	  
 		ingredientCategory.delete()
 		self.redirect('/ingredientCategory')

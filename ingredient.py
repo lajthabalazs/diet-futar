@@ -4,11 +4,14 @@ import jinja2
 import os
 from base_handler import BaseHandler
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
+from user_management import isUserAdmin
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class IngredientPage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		#Check if ingredient exists
 		ingredientKey=self.request.get('ingredientKey')
 		if ((ingredientKey != None) and (ingredientKey != "")):
@@ -47,6 +50,8 @@ class IngredientPage(BaseHandler):
 			ingredient.put()
 			self.redirect('/ingredient?ingredientKey=%s' % ingredient.key())
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		ingredientKey=self.request.get('ingredientKey')
 		sourceKey=self.request.get('source')
 		if ((ingredientKey != None) and (ingredientKey != "")):
@@ -77,6 +82,8 @@ class IngredientPage(BaseHandler):
 
 class IngredientDeletePage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		ingredient = db.get(self.request.get('ingredientKey'))
 		#Delete all instances of the ingredient association
 		for dishIngredient in ingredient.dishes:
@@ -86,6 +93,8 @@ class IngredientDeletePage(BaseHandler):
 
 class IngredientAddPage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		category = db.get(self.request.get('ingredientCategoryKey'))
 		ingredient = Ingredient()
 		ingredient.name = self.request.get('ingredient_name')

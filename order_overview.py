@@ -7,9 +7,9 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 import datetime
-from model import MenuItem, DishCategory, UserOrder, UserOrderItem, Composit,\
-	UserOrderAddress
+from model import MenuItem, DishCategory, Composit, UserOrderAddress
 from order import dayNames
+from user_management import isUserAdmin
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -19,6 +19,8 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 #An accumulated overview of every ordered item
 class ChefReviewOrdersPage(BaseHandler):
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		day=datetime.date.today()
 		requestDay=self.request.get('day')
 		if ((requestDay != None) and (requestDay != "")):
@@ -89,11 +91,13 @@ class ChefReviewOrdersPage(BaseHandler):
 		template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/chefReviewOrders.html')
-		self.printPage(str(day), template.render(template_values), True)
+		self.printPage(str(day), template.render(template_values), False, False)
 		
 #An accumulated overview of every ordered item
 class ChefReviewToMakePage(BaseHandler):
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		day=datetime.date.today()
 		requestDay=self.request.get('day')
 		if ((requestDay != None) and (requestDay != "")):
@@ -213,12 +217,14 @@ class ChefReviewToMakePage(BaseHandler):
 		template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/chefReviewDishes.html')
-		self.printPage(str(day), template.render(template_values), True)
+		self.printPage(str(day), template.render(template_values), False, False)
 		
 		
 #An accumulated overview of every ordered item
 class DeliveryReviewOrdersPage(BaseHandler):
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		day=datetime.date.today()
 		requestDay=self.request.get('day')
 		if ((requestDay != None) and (requestDay != "")):
@@ -238,10 +244,12 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		template_values['prev'] = prevDay
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/deliveryReviewOrders.html')
-		self.printPage(str(day), template.render(template_values), True)
+		self.printPage(str(day), template.render(template_values), False, False)
 
 class DeliveryPage(BaseHandler):
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		orderAddressKey=self.request.get("orderAddressKey")
 		orderAddress=UserOrderAddress.get(orderAddressKey)
 		day=orderAddress.day
@@ -279,4 +287,4 @@ class DeliveryPage(BaseHandler):
 		}
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/delivery.html')
-		self.printPage(str(day), template.render(template_values), True)
+		self.printPage(str(day), template.render(template_values), False, False)

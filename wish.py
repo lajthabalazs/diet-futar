@@ -7,11 +7,14 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 from model import Wish
+from user_management import isUserAdmin
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class WishPage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")
 		if ((self.request.get('wishKey') != None) and (self.request.get('wishKey') != "")):
 		#Modification of basic data
 			wish = db.get(self.request.get('wishKey'))
@@ -26,6 +29,8 @@ class WishPage(BaseHandler):
 			wish.put()
 			self.redirect('/wish?wishKey=%s' % wish.key())
 	def get(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")
 		if ((self.request.get('wishKey') != None) and (self.request.get('wishKey') != "")):
 		# A single wish with editable ingredient list
 			wish = db.get(self.request.get('wishKey'))
@@ -45,6 +50,8 @@ class WishPage(BaseHandler):
 
 class DeleteWishPage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")
 		wish = db.get(self.request.get('wishKey'))
 		wish.delete()
 		self.redirect('/wish')

@@ -5,11 +5,14 @@ import os
 from base_handler import BaseHandler
 from keys import DISH_CATEGORY_KEY, DISH_KEY, DISH_CATEGORY_URL, DISH_CATEGORY_NAME,\
 	DISH_CATEGORY_DELETE_URL, DISH_CATEGORY_ADD_URL, DISH_CATEGORY_INDEX
+from user_management import isUserAdmin
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class CategoryDishDeletePage(BaseHandler):
 	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")	
 		category = db.get(self.request.get(DISH_CATEGORY_KEY))
 		dish = db.get(self.request.get(DISH_KEY))
 		dish.category=None
