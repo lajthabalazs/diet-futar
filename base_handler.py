@@ -20,7 +20,7 @@ def getBaseDate(handler):
 	if ((requestDay != None) and (requestDay != "")):
 		parts=requestDay.rsplit("-")
 		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
-	return day + datetime.timedelta(days=3)
+	return day
 
 # Returns the day indicated by the posted form if any otherwise the current day
 def getFormDate(handler):

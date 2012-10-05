@@ -28,42 +28,40 @@ class MenuOrderPage(BaseHandler):
 		if now.hour > LAST_ORDER_HOUR:
 			firstOrderableDay=today+datetime.timedelta(days=2)
 		day=getBaseDate(self)
+		calendar=day.isocalendar()
+		monday=day+datetime.timedelta(days=-calendar[2]+1)
+		sunday=day+datetime.timedelta(days=-calendar[2]+7)
 		#Fetch user's previous orders. User orders is an object associating menu item keys with quantities		
 		userOrders={}
 		userKey = self.session.get(USER_KEY,None)
 		if (userKey != None):
 			user = User.get(userKey)
-			for userOrder in user.userOrders:
-				for orderedItem in userOrder.items:
-					itemQuantity = 0
-					try:
-						orderedItemKey=""
-						if orderedItem.orderedItem == None:
-							orderedItemKey = orderedItem.orderedComposit.key()
-						else:
-							orderedItemKey = orderedItem.orderedItem.key()
-						if (userOrders.has_key(orderedItemKey)):
-							itemQuantity = int(userOrders[orderedItemKey])
-						if (orderedItem.itemCount != None):
-							userOrders[orderedItemKey] = itemQuantity + orderedItem.itemCount
-					except ReferencePropertyResolveError:
-						itemQuantity=0
+			weekOrderItems=user.orderedItems.filter("day <= ", sunday).filter("day >= ", monday)
+			for orderedItem in weekOrderItems:
+				itemQuantity = 0
+				try:
+					orderedItemKey=""
+					if orderedItem.orderedItem == None:
+						orderedItemKey = orderedItem.orderedComposit.key()
+					else:
+						orderedItemKey = orderedItem.orderedItem.key()
+					if (userOrders.has_key(orderedItemKey)):
+						itemQuantity = int(userOrders[orderedItemKey])
+					if (orderedItem.itemCount != None):
+						userOrders[orderedItemKey] = itemQuantity + orderedItem.itemCount
+				except ReferencePropertyResolveError:
+					itemQuantity=0
 		#Determine the week
-		calendar=day.isocalendar()
 		#Organize into days
 		menu=[] #Contains menu items
 		actualOrder=self.session.get(ACTUAL_ORDER,[])
-		dishCategories=DishCategory.gql("ORDER BY index")
-		monday=day+datetime.timedelta(days=-calendar[2]+1)
-		sunday=day+datetime.timedelta(days=-calendar[2]+7)
-		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
-		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
-		composits=Composit.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
+		dishCategories=DishCategory.all().order("index")
 		orderedPrice = [0,0,0,0,0]
 		basketPrice = [0,0,0,0,0]
 		for category in dishCategories:
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
+			categoryKey=str(category.key())
 			items=[]
 			itemsInRows=0
 			for i in range(0,5):
@@ -71,61 +69,65 @@ class MenuOrderPage(BaseHandler):
 				actualDayObject={}
 				actualDayObject["day"]=dayNames[i]
 				actualDayObject["date"]=actualDay
+				menuItems = MenuItem.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay).filter("containingMenuItem = ", None)
+				composits=Composit.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay)
 				#Filter menu items
 				actualMenuItems=[]
 				actualComposits=[]
 				for menuItem in menuItems:
+					itemKey=menuItem.key()
+					itemKeyStr=str(itemKey)
 					try:
-						if menuItem.dish.category.key()==category.key() and menuItem.day==actualDay and menuItem.containingMenuItem == None:
-							if (actualOrder!=None) and (str(menuItem.key()) in actualOrder):
-								menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
-								try:
-									basketPrice[i] = basketPrice[i] + menuItem.price * int(actualOrder[str(menuItem.key())])
-								except:
-									pass
-							else:
-								menuItem.inCurrentOrder=0
+						if (actualOrder!=None) and (itemKeyStr in actualOrder):
+							menuItem.inCurrentOrder=actualOrder[itemKeyStr]
 							try:
-								menuItem.orderedQuantity = userOrders[menuItem.key()]
-								try:
-									orderedPrice[i] = orderedPrice[i] + menuItem.price * int(userOrders[menuItem.key()])
-								except:
-									pass
-							except KeyError:
-								menuItem.orderedQuantity = 0
-							if menuItem.day < firstOrderableDay or (menuItem.active == False):
-								menuItem.orderable=False
-							else:
-								menuItem.orderable=True
-							#if (menuItem.orderable or menuItem.orderedQuantity > 0):
-							actualMenuItems.append(menuItem)
-							itemsInRows=itemsInRows+1
-					except ReferencePropertyResolveError:
-						continue
-				for composit in composits:
-					if composit.category.key()==category.key() and composit.day==actualDay:
-						if (actualOrder!=None) and (str(composit.key()) in actualOrder):
-							composit.inCurrentOrder=actualOrder[str(composit.key())]
-							try:
-								basketPrice[i] = basketPrice[i] + composit.price * int(actualOrder[str(composit.key())])
+								basketPrice[i] = basketPrice[i] + menuItem.price * int(actualOrder[itemKeyStr])
 							except:
 								pass
 						else:
-							composit.inCurrentOrder=0
+							menuItem.inCurrentOrder=0
 						try:
-							composit.orderedQuantity = userOrders[composit.key()]
+							menuItem.orderedQuantity = userOrders[itemKey]
 							try:
-								orderedPrice[i] = orderedPrice[i] +  composit.price * int(userOrders[composit.key()])
+								orderedPrice[i] = orderedPrice[i] + menuItem.price * int(userOrders[itemKey])
 							except:
 								pass
 						except KeyError:
-							composit.orderedQuantity = 0
-						if composit.day < firstOrderableDay or (composit.active == False):
-							composit.orderable=False
+							menuItem.orderedQuantity = 0
+						if menuItem.day < firstOrderableDay or (menuItem.active == False):
+							menuItem.orderable=False
 						else:
-							composit.orderable=True
-						actualComposits.append(composit)
+							menuItem.orderable=True
+						#if (menuItem.orderable or menuItem.orderedQuantity > 0):
+						actualMenuItems.append(menuItem)
 						itemsInRows=itemsInRows+1
+					except ReferencePropertyResolveError:
+						continue
+				for composit in composits:
+					compositKey=composit.key()
+					compositKeyStr=str(compositKey)
+					if (actualOrder!=None) and (compositKeyStr in actualOrder):
+						composit.inCurrentOrder=actualOrder[compositKeyStr]
+						try:
+							basketPrice[i] = basketPrice[i] + composit.price * int(actualOrder[compositKeyStr])
+						except:
+							pass
+					else:
+						composit.inCurrentOrder=0
+					try:
+						composit.orderedQuantity = userOrders[compositKey]
+						try:
+							orderedPrice[i] = orderedPrice[i] +  composit.price * int(userOrders[compositKey])
+						except:
+							pass
+					except KeyError:
+						composit.orderedQuantity = 0
+					if composit.day < firstOrderableDay or (composit.active == False):
+						composit.orderable=False
+					else:
+						composit.orderable=True
+					actualComposits.append(composit)
+					itemsInRows=itemsInRows+1
 				actualDayObject["menuItems"]=actualMenuItems
 				actualDayObject["composits"]=actualComposits
 				items.append(actualDayObject)

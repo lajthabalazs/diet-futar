@@ -10,12 +10,17 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-- kind: User
+- kind: Composit
   properties:
-  - name: email
-  - name: familyName
+  - name: categoryKey
+  - name: day
 
-- kind: User
+- kind: DishCategory
   properties:
-  - name: email
-  - name: registrationDate
+  - name: isMenu
+  - name: index
+
+- kind: UserOrderItem
+  properties:
+  - name: user
+  - name: day

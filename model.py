@@ -8,6 +8,7 @@ from google.appengine.ext import db
 ROLE_ADMIN="admin"
 ROLE_DELIVERY_GUY="fut&#225;r"
 ROLE_COOK="szak&#225;cs"
+
 class Role(db.Model):
 	name = db.StringProperty()
 
@@ -63,14 +64,15 @@ class IngredientListItem(db.Model):
 	
 
 class Composit(db.Model):
+	categoryKey=db.StringProperty()
 	price = db.IntegerProperty()
 	sumprice = db.IntegerProperty()
 	day=db.DateProperty()
 	category=db.ReferenceProperty(DishCategory, collection_name='composits')
 	active=db.BooleanProperty(default=True)
 
-
 class MenuItem(db.Model):
+	categoryKey=db.StringProperty()
 	dish=db.ReferenceProperty(Dish, collection_name='occurrences')
 	price = db.IntegerProperty()
 	sumprice = db.IntegerProperty()
@@ -98,6 +100,7 @@ class UserOrderAddress(db.Model):
 class UserOrderItem(db.Model):
 	day=db.DateProperty()
 	price=db.IntegerProperty()
+	isComposit=db.BooleanProperty()
 	user=db.ReferenceProperty(User, collection_name='orderedItems')
 	userOrder=db.ReferenceProperty(UserOrder, collection_name='items')
 	itemCount=db.IntegerProperty()

@@ -132,6 +132,7 @@ class MenuEditPage(BaseHandler):
 				menuItem.dish=dish
 				menuItem.price = dish.price
 				menuItem.sumprice = dish.price
+				menuItem.categoryKey=str(dish.category.key())
 				menuItem.put()
 			self.redirect("/menuEdit?day="+str(day))
 			
@@ -147,6 +148,7 @@ class CreateComposit(BaseHandler):
 			composit = Composit()
 			composit.day=day
 			composit.category=DishCategory.get(categoryKey)
+			composit.categoryKey=str(categoryKey)
 			composit.put()
 			self.redirect("/menuEdit?day="+str(day))
 
