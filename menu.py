@@ -29,12 +29,19 @@ class MenuEditPage(BaseHandler):
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
-		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
-		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
-		composits=Composit.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
+		days=[]
+		for i in range(0,5):
+			actualDay=monday+datetime.timedelta(days=i)
+			actualDayObject={}
+			actualDayObject["day"]=dayNames[i]
+			actualDayObject["date"]=monday+datetime.timedelta(days=i)
+			menuItems = MenuItem.all().filter("day = ", actualDay).filter("containingMenuItem = ", None).filter("active = ", True)
+			actualDayObject["availableMenuItems"]=menuItems
+			days.append(actualDayObject)
 		for category in dishCategories:
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
+			categoryKey=str(category.key())
 			availableDishes=sorted(category.dishes, key=lambda dish: dish.title)
 			actualCategoryObject['availableDishes']=availableDishes
 			menu.append(actualCategoryObject)
@@ -44,62 +51,31 @@ class MenuEditPage(BaseHandler):
 				actualDayObject={}
 				actualDayObject["day"]=dayNames[i]
 				actualDayObject["date"]=actualDay
+				menuItems = MenuItem.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay).filter("containingMenuItem = ", None)
+				composits=Composit.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay)
 				#Filter menu items
 				actualMenuItems=[]
 				actualComposits=[]
-				availableMenuItems=[]
+				availableMenuItems=days[i]["availableMenuItems"]
 				for menuItem in menuItems:
 					try:
-						menuItem.dish.category
-					except ReferencePropertyResolveError:
-						continue
-					if (menuItem.dish.category.key()==category.key()):
-						try:
-							menuItem.containingMenuItem
-						# If menu item's parent is deleted, delete the menu item too
-						except ReferencePropertyResolveError:
-							menuItem.delete()
-							continue
-						if menuItem.day==actualDay and menuItem.containingMenuItem == None and  menuItem.active:
-							if menuItem.occurrences.count() > 0:
-								menuItem.alterable = False
-							else:
-								menuItem.alterable = True
-							actualMenuItems.append(menuItem)
+						menuItem.occurrences[0]
+						menuItem.alterable = False
+					except IndexError:
+						menuItem.alterable = True
+					actualMenuItems.append(menuItem)
 				for composit in composits:
-					try:
-						composit.category
-					except ReferencePropertyResolveError:
-						continue
-					if composit.category.key()==category.key():
-						if composit.day==actualDay and composit.active:
-							if composit.occurrences.count() > 0:
-								composit.alterable = False
-							else:
-								composit.alterable = True
-							actualComposits.append(composit)
+					if composit.occurrences.count() > 0:
+						composit.alterable = False
+					else:
+						composit.alterable = True
+					actualComposits.append(composit)
 				#Get every menu item for the day
-				for menuItem in menuItems:
-					try:
-						menuItem.containingMenuItem
-					# If menu item's parent is deleted, delete the menu item too
-					except ReferencePropertyResolveError:
-						menuItem.delete()
-						continue
-					if menuItem.day==actualDay and menuItem.containingMenuItem == None and menuItem.active:
-						availableMenuItems.append(menuItem)
-				actualDayObject['availableMenuItems']=availableMenuItems
 				actualDayObject["menuItems"]=actualMenuItems
 				actualDayObject["composits"]=actualComposits
+				actualDayObject["availableMenuItems"]=availableMenuItems
 				items.append(actualDayObject)
 			actualCategoryObject["days"]=items
-		days=[]
-		for i in range(0,5):
-			actualDay=monday+datetime.timedelta(days=i)
-			actualDayObject={}
-			actualDayObject["day"]=dayNames[i]
-			actualDayObject["date"]=monday+datetime.timedelta(days=i)
-			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
 		nextMonday=day+datetime.timedelta(days=-calendar[2]+1+7)
