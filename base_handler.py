@@ -52,11 +52,15 @@ class BaseHandler(webapp2.RequestHandler):
 		ret=jinja_environment.get_template('templates/header_part_zero.html').render(template_params)
 		topMenu=[]
 		if isUserAdmin(self):
+			dailyMenu={}
+			dailyMenu["label"]="Menu osszeallitas"
+			dailyMenu["target"]="/menuEdit"
+			topMenu.append(dailyMenu)
 			weeklyMenu={}
-			weeklyMenu["label"]="Menu osszeallitas"
-			weeklyMenu["target"]="/menuEdit"
+			weeklyMenu["label"]="Menu attekintes"
+			weeklyMenu["target"]="/menuWeekEdit"
 			topMenu.append(weeklyMenu)
-			payingOrders={}
+			payingOrders={}			
 			payingOrders["label"]="Rendelt"
 			payingOrders["target"]="/chefReviewOrders"
 			topMenu.append(payingOrders)
@@ -89,9 +93,13 @@ class BaseHandler(webapp2.RequestHandler):
 			userList["target"]="/userList"
 			topMenu.append(userList)
 		elif isUserCook(self):
+			dailyMenu={}
+			dailyMenu["label"]="Menu osszeallitas"
+			dailyMenu["target"]="/menuEdit"
+			topMenu.append(dailyMenu)
 			weeklyMenu={}
-			weeklyMenu["label"]="Menu osszeallitas"
-			weeklyMenu["target"]="/menuEdit"
+			weeklyMenu["label"]="Menu attekintes"
+			weeklyMenu["target"]="/menuWeekEdit"
 			topMenu.append(weeklyMenu)
 			payingOrders={}
 			payingOrders["label"]="Rendelt"

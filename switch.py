@@ -12,7 +12,7 @@ from user_forms import LoginPage, RegisterPage, LogoutPage, UserProfilePage,\
 	ActivatePage, AddressPage, ChangePasswordPage, ActivationPendingPage
 from menu import MenuEditPage, AddMenuItemComponent,\
 	ModifyMenuItem, CreateComposit, AddItemToComposit, DeleteItemFromComposit,\
-	ModifyComposit, DeleteMenuItem, DeleteComposit
+	ModifyComposit, DeleteMenuItem, DeleteComposit, MenuWeekEditPage
 from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage,\
 	ConfirmOrder, PreviousOrders, PreviousOrder, ReviewOrderedMenuPage
 from ingredientCategory import CategoryIngredientDeletePage,\
@@ -46,6 +46,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										(DISH_CATEGORY_DELETE_URL, DishCategoryDeletePage),
 										('/wish', WishPage),
 										('/menuEdit', MenuEditPage),
+										('/menuWeekEdit', MenuWeekEditPage),
 										('/modifyMenuItem', ModifyMenuItem),
 										('/addMenuItemComponent',AddMenuItemComponent),
 										('/deleteMenuItem', DeleteMenuItem),

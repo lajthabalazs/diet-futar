@@ -151,11 +151,11 @@ class MenuOrderPage(BaseHandler):
 		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
 		template_values = {
 			'days':days,
-			'next':nextMonday,
-			'actual':actualMonday,
 			'menu':menu
 		}
-		if (prevMonday == actualMonday) or (prevMonday > actualMonday):
+		if nextMonday <= actualMonday + datetime.timedelta(days=7):
+			template_values['next'] = nextMonday
+		if prevMonday >= actualMonday:
 			template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/menuOrder.html')
@@ -282,12 +282,12 @@ class ReviewPendingOrderPage(BaseHandler):
 			actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
 			template_values = {
 				'days':days,
-				'next':nextMonday,
-				'actual':actualMonday,
 				'user':user,
 				'menu':menu
 			}
-			if (prevMonday == actualMonday) or (prevMonday > actualMonday):
+			if nextMonday <= actualMonday + datetime.timedelta(days=7):
+				template_values['next'] = nextMonday
+			if prevMonday >= actualMonday:
 				template_values['prev'] = prevMonday
 			# A single dish with editable ingredient list
 			template = jinja_environment.get_template('templates/reviewPendingOrder.html')
@@ -421,12 +421,12 @@ class ReviewOrderedMenuPage(BaseHandler):
 		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
 		template_values = {
 			'days':days,
-			'next':nextMonday,
-			'actual':actualMonday,
 			'addresses':user.addresses,
 			'menu':menu
 		}
-		if (prevMonday == actualMonday) or (prevMonday > actualMonday):
+		if nextMonday <= actualMonday + datetime.timedelta(days=7):
+			template_values['next'] = nextMonday
+		if prevMonday >= actualMonday:
 			template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/reviewOrderedMenu.html')

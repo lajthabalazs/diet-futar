@@ -9,14 +9,13 @@ from base_handler import BaseHandler, getBaseDate, getFormDate
 import datetime
 from model import MenuItem, DishCategory, Dish, Composit,\
 	CompositMenuItemListItem
-from user_management import isUserAdmin, isUserCook
-from google.appengine.api.datastore_errors import ReferencePropertyResolveError
+from user_management import isUserCook
 from order import dayNames
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
-class MenuEditPage(BaseHandler):
+class MenuWeekEditPage(BaseHandler):
 	def get(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -88,6 +87,107 @@ class MenuEditPage(BaseHandler):
 			'prev':prevMonday,
 			'next':nextMonday,
 			'actual':actualMonday,
+			'menu':menu,
+			'allDishes':allDishes
+		}
+		template = jinja_environment.get_template('templates/menuEdit.html')
+		self.printPage(str(day), template.render(template_values), False, False)
+	def post(self):
+		if not isUserCook(self):
+			self.redirect("/")
+			return
+		else:
+			#Adds a dish to current days menu
+			day=getFormDate(self)
+			dishKey=self.request.get('dishKey')
+			if ((dishKey != None) and (dishKey != "")):
+				dish=db.get(dishKey)
+				menuItem=MenuItem()
+				menuItem.day=day
+				menuItem.dish=dish
+				menuItem.price = dish.price
+				menuItem.sumprice = dish.price
+				menuItem.categoryKey=str(dish.category.key())
+				menuItem.put()
+			self.redirect("/menuWeekEdit?day="+str(day))
+
+class MenuEditPage(BaseHandler):
+	def get(self):
+		if not isUserCook(self):
+			self.redirect("/")
+			return
+		day = getBaseDate(self)
+		#Determine the week
+		nextCalendar=day.isocalendar()
+		#Organize into days
+		menu=[]
+		dishCategories=DishCategory.gql("ORDER BY index")
+		dayIndex=nextCalendar[2]-1
+		days=[]
+		actualDay=day
+		actualDayObject={}
+		actualDayObject["day"]=dayNames[dayIndex]
+		actualDayObject["date"]=day
+		menuItems = MenuItem.all().filter("day = ", actualDay).filter("containingMenuItem = ", None)
+		actualDayObject["availableMenuItems"]=menuItems
+		days.append(actualDayObject)
+		for category in dishCategories:
+			actualCategoryObject={}
+			actualCategoryObject['category']=category
+			categoryKey=str(category.key())
+			availableDishes=sorted(category.dishes, key=lambda dish: dish.title)
+			actualCategoryObject['availableDishes']=availableDishes
+			menu.append(actualCategoryObject)
+			items=[]
+			actualDay=day
+			actualDayObject={}
+			actualDayObject["day"]=dayNames[dayIndex]
+			actualDayObject["date"]=actualDay
+			menuItems = MenuItem.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay).filter("containingMenuItem = ", None)
+			composits=Composit.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay)
+			#Filter menu items
+			actualMenuItems=[]
+			actualComposits=[]
+			availableMenuItems=days[0]["availableMenuItems"]
+			for menuItem in menuItems:
+				try:
+					menuItem.occurrences[0]
+					menuItem.alterable = False
+				except IndexError:
+					menuItem.alterable = True
+				actualMenuItems.append(menuItem)
+			for composit in composits:
+				if composit.occurrences.count() > 0:
+					composit.alterable = False
+				else:
+					composit.alterable = True
+				actualComposits.append(composit)
+			#Get every menu item for the day
+			actualDayObject["menuItems"]=actualMenuItems
+			actualDayObject["composits"]=actualComposits
+			actualDayObject["availableMenuItems"]=availableMenuItems
+			items.append(actualDayObject)
+			actualCategoryObject["days"]=items
+		# A single dish with editable ingredient list
+		prevDay=day+datetime.timedelta(days=-1)
+		nextDay=day+datetime.timedelta(days=1)
+		nextCalendar=nextDay.isocalendar()
+		#Organize into days
+		if nextCalendar[2]==6:
+			nextDay=nextDay+datetime.timedelta(days=2)
+		elif nextCalendar[2]==7:
+			nextDay=nextDay+datetime.timedelta(days=1)
+		prevCalendar=prevDay.isocalendar()
+		#Organize into days
+		if prevCalendar[2]==6:
+			prevDay=prevDay+datetime.timedelta(days=-1)
+		elif prevCalendar[2]==7:
+			prevDay=prevDay+datetime.timedelta(days=-2)
+		allDishes=Dish.gql("ORDER BY title")
+		template_values = {
+			'days':days,
+			'prev':prevDay,
+			'next':nextDay,
 			'menu':menu,
 			'allDishes':allDishes
 		}

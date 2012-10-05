@@ -7,7 +7,7 @@
 				{% for day in days %}
 					<div class="span-4"><h3>{{ day.day }}</h3>{{ day.date }}</div>
 				{% endfor%}
-				<a href="/order?day={{ next }}" class="span-2 last nextWeek">Következő hét</a>
+				{% if next %}<a href="/order?day={{ next }}" class="span-2 last nextWeek">Következő hét</a>{% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
 				</div>
 			</div>
 			
@@ -23,7 +23,7 @@
 								<div class="calendarElement {% if (not menuItem.orderable ) and menuItem.orderedQuantity == 0 %}  inactive {% endif%}">
 									<h3>{{ menuItem.dish.title }}</h3>
 									<p>{% for component in menuItem.components %}
-										,{{ component.dish.title }}
+										{{ component.dish.title }} 
 									{% endfor %}</p>
 									<strong>{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %} Ft</strong>
 									{% if menuItem.orderable %}

@@ -203,7 +203,7 @@ p {
 	border: solid 1px #F60;
 	}
 
-.calendar, .inactive {
+.inactive {
 opacity:0.3;
 filter:alpha(opacity=30); /* For IE8 and earlier */
 }

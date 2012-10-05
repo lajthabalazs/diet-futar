@@ -16,7 +16,7 @@
 				{% for day in days %}
 					<div class="span-4"><h3>{{ day.day }}</h3>{{ day.date }}</div>
 				{% endfor%}
-				<a href="/pendingOrder?day={{ next }}" class="span-2 last nextWeek">Következő hét</a>
+				{% if next %}<a href="/pendingOrder?day={{ next }}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
 			</div>
 		</div>
 
