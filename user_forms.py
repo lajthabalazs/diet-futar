@@ -10,7 +10,7 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler
-from model import User, Address
+from model import User, Address, Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK
 from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
@@ -95,6 +95,18 @@ class RegisterPage(BaseHandler):
 		user["familyName"]=familyName
 		user["givenName"]=givenName
 		users = User.gql('WHERE email = :1', email)
+		# Check if roles are set up properly
+#		roles=Role.all()
+#		if roles.count() == 0:
+#			role = Role()
+#			role.name=ROLE_ADMIN
+#			role.put()
+#			role = Role()
+#			role.name=ROLE_DELIVERY_GUY
+#			role.put()
+#			role = Role()
+#			role.name=ROLE_COOK
+#			role.put()
 		self.session[USER]=user
 		if (users.count(1)>0):
 			self.session[REGISTRATION_ERROR_KEY]=REGISTRATION_ERROR_EXISTING_USER
@@ -166,6 +178,7 @@ class ChangePasswordPage (BaseHandler):
 	def post(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
+			return
 		clearLoginError(self)
 		userKey=self.session.get(USER_KEY,None)
 		user = None
@@ -173,6 +186,7 @@ class ChangePasswordPage (BaseHandler):
 			user = db.get(userKey)
 		if user == None:
 			self.redirect("/registration")
+			return
 		else:
 			if user.password == self.request.get("oldPassword"):
 				passwd1 = self.request.get("newPassword")
@@ -191,6 +205,7 @@ class UserProfilePage (BaseHandler):
 	def get(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
+			return
 		userKey=self.session.get(USER_KEY,None)
 		if (userKey != None):
 			user = db.get(userKey)
@@ -206,6 +221,7 @@ class UserProfilePage (BaseHandler):
 	def post(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
+			return
 		userKey=self.session.get(USER_KEY,None)
 		if (userKey != None):
 			user = db.get(userKey)
@@ -229,13 +245,15 @@ class UserProfilePage (BaseHandler):
 class AddressPage (BaseHandler):
 	def post(self):
 		if(not isUserLoggedIn(self)):
-			self.redirect("/registration")	
+			self.redirect("/registration")
+			return
 		user = None
 		userKey=self.session.get(USER_KEY,None)
 		if (userKey != None):
 			user = db.get(userKey)
 		else:
 			self.redirect("/profile")
+			return
 		addressKey = self.request.get("addressKey")
 		address = None
 		if addressKey != None and addressKey != "":

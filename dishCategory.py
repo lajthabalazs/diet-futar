@@ -5,14 +5,15 @@ import os
 from base_handler import BaseHandler
 from keys import DISH_CATEGORY_KEY, DISH_KEY, DISH_CATEGORY_URL, DISH_CATEGORY_NAME,\
 	DISH_CATEGORY_DELETE_URL, DISH_CATEGORY_ADD_URL, DISH_CATEGORY_INDEX
-from user_management import isUserAdmin
+from user_management import isUserAdmin, isUserCook
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class CategoryDishDeletePage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		category = db.get(self.request.get(DISH_CATEGORY_KEY))
 		dish = db.get(self.request.get(DISH_KEY))
 		dish.category=None
@@ -21,6 +22,9 @@ class CategoryDishDeletePage(BaseHandler):
 
 class DishCategoryPage(BaseHandler):
 	def post(self):
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
 		if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 			dishCategory=db.get(self.request.get(DISH_CATEGORY_KEY))
@@ -35,6 +39,9 @@ class DishCategoryPage(BaseHandler):
 		dishCategory.put()
 		self.redirect(DISH_CATEGORY_URL)
 	def get(self):
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
 		if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 		# List every ingredient in the category
@@ -58,6 +65,9 @@ class DishCategoryPage(BaseHandler):
 
 class DishCategoryDeletePage(BaseHandler):
 	def post(self):
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		dishCategory = db.get(self.request.get('dishCategoryKey'))	  
 		dishCategory.delete()
 		self.redirect(DISH_CATEGORY_URL+'?'+DISH_CATEGORY_KEY+'=%s' % self.request.get('ingredientCategoryKey'))

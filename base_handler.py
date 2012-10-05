@@ -5,14 +5,31 @@ Created on Aug 11, 2012
 '''
 import webapp2
 from webapp2_extras import sessions
-from user_management import getUserBox, isUserLoggedIn, isUserAdmin, USER_KEY
+from user_management import getUserBox, isUserLoggedIn, isUserAdmin, isUserCook, isUserDelivery
 import jinja2
 import os
 from keys import DISH_CATEGORY_URL
-from model import User
-from google.appengine.ext import db
+import datetime
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+
+# Returns the first date user can order or the date indicated by the request
+def getBaseDate(handler):
+	day=datetime.date.today()	
+	requestDay=handler.request.get('day')
+	if ((requestDay != None) and (requestDay != "")):
+		parts=requestDay.rsplit("-")
+		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+	return day + datetime.timedelta(days=3)
+
+# Returns the day indicated by the posted form if any otherwise the current day
+def getFormDate(handler):
+	day=datetime.date.today()
+	requestDay=handler.request.get('formDay')
+	if ((requestDay != None) and (requestDay != "")):
+		parts=requestDay.rsplit("-")
+		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+	return day
 
 class BaseHandler(webapp2.RequestHandler):
 	def dispatch(self):
@@ -33,46 +50,82 @@ class BaseHandler(webapp2.RequestHandler):
 			"pageTitle":title
 		}
 		ret=jinja_environment.get_template('templates/header_part_zero.html').render(template_params)
+		topMenu=[]
 		if isUserAdmin(self):
-			adminMenuItems=[]
 			weeklyMenu={}
 			weeklyMenu["label"]="Menu osszeallitas"
 			weeklyMenu["target"]="/menuEdit"
-			adminMenuItems.append(weeklyMenu)
+			topMenu.append(weeklyMenu)
 			payingOrders={}
 			payingOrders["label"]="Rendelt"
 			payingOrders["target"]="/chefReviewOrders"
-			adminMenuItems.append(payingOrders)
+			topMenu.append(payingOrders)
 			toMake={}
 			toMake["label"]="K&#233;sz&#237;tend&#337;"
 			toMake["target"]="/chefReviewToMake"
-			adminMenuItems.append(toMake)
+			topMenu.append(toMake)
 			toDeliver={}
 			toDeliver["label"]="Szallitando"
 			toDeliver["target"]="/deliveryReviewOrders"
-			adminMenuItems.append(toDeliver)			
+			topMenu.append(toDeliver)			
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"
-			adminMenuItems.append(ingredients)
+			topMenu.append(ingredients)
 			categories={}
 			categories["label"]="Ketegoriak"
 			categories["target"]="/ingredientCategory"
-			adminMenuItems.append(categories)
+			topMenu.append(categories)
 			recepies={}
 			recepies["label"]="Receptek"
 			recepies["target"]="/dish"
-			adminMenuItems.append(recepies)
+			topMenu.append(recepies)
 			dishCategories={}
 			dishCategories["label"]="Fogasok"
 			dishCategories["target"]=DISH_CATEGORY_URL
-			adminMenuItems.append(dishCategories)
+			topMenu.append(dishCategories)
 			userList={}
 			userList["label"]="Felhasznalok"
 			userList["target"]="/userList"
-			adminMenuItems.append(userList)
+			topMenu.append(userList)
+		elif isUserCook(self):
+			weeklyMenu={}
+			weeklyMenu["label"]="Menu osszeallitas"
+			weeklyMenu["target"]="/menuEdit"
+			topMenu.append(weeklyMenu)
+			payingOrders={}
+			payingOrders["label"]="Rendelt"
+			payingOrders["target"]="/chefReviewOrders"
+			topMenu.append(payingOrders)
+			toMake={}
+			toMake["label"]="K&#233;sz&#237;tend&#337;"
+			toMake["target"]="/chefReviewToMake"
+			topMenu.append(toMake)
+			ingredients={}
+			ingredients["label"]="Alapanyagok"
+			ingredients["target"]="/ingredient"
+			topMenu.append(ingredients)
+			categories={}
+			categories["label"]="Ketegoriak"
+			categories["target"]="/ingredientCategory"
+			topMenu.append(categories)
+			recepies={}
+			recepies["label"]="Receptek"
+			recepies["target"]="/dish"
+			topMenu.append(recepies)
+			dishCategories={}
+			dishCategories["label"]="Fogasok"
+			dishCategories["target"]=DISH_CATEGORY_URL
+			topMenu.append(dishCategories)
+		elif isUserDelivery(self):
+			toDeliver={}
+			toDeliver["label"]="Szallitando"
+			toDeliver["target"]="/deliveryReviewOrders"
+			topMenu.append(toDeliver)			
+			
+		if len(topMenu) > 0:
 			template_params={
-				"menuItems":adminMenuItems
+				"menuItems":topMenu
 			}
 			ret=ret + jinja_environment.get_template('templates/admin_menu.html').render(template_params)
 		ret=ret + jinja_environment.get_template('templates/header_part_one.html').render()
@@ -97,7 +150,7 @@ class BaseHandler(webapp2.RequestHandler):
 		ret=ret+jinja_environment.get_template('templates/menu.html').render(template_params)
 		ret=ret+getUserBox(self)
 		ret=ret+jinja_environment.get_template('templates/header_part_two.html').render()
-		if(forAnonymus or (forLoggedIn and isUserLoggedIn(self)) or isUserAdmin(self)):
+		if forAnonymus or isUserLoggedIn(self):
 			ret=ret+content
 		else:
 			ret=ret + "A tartalom nem jelenitheto meg"

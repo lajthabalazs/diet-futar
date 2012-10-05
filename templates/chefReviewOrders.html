@@ -1,37 +1,41 @@
-﻿{% if prev %}<a href="/chefReviewOrders?day={{ prev }}">Előző hét</a> {% endif %} <a href="/chefReviewOrders?day={{ actual }}">Adktuális hét</a> <a href="/chefReviewOrders?day={{ next }}">Következő hét</a>
-<table border="1">
-	<tr>
-		<th> </th>
-		{% for day in days %}
-			<th>{{ day.day }}<br/>{{ day.date }}</th>
-		{% endfor%}
-	</tr>
-	{% for category in menu%}
-		<tr><td> {{ category.category.name }} </td>
-		{% for day in category.days %}
-			<td valign="bottom">
-			<div>
-			{% for menuItem in day.menuItems %}
-				{{ menuItem.orderedQuantity }} adag 
-				{{ menuItem.dish.title }}
-				{% for component in menuItem.components %}
-					,{{ component.dish.title }}
-				{% endfor %}				
-				<br/>
-			{% endfor %}
-			{% for composit in day.composits %}
-				{{ composit.orderedQuantity }} adag 
-				{% for component in composit.components%}
-					{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}
+﻿<div class="mainBg">
+	<div class="container">
+		{% if prev %}<a href="/chefReviewOrders?day={{ prev }}">Előző hét</a> {% endif %} <a href="/chefReviewOrders?day={{ actual }}">Adktuális hét</a> <a href="/chefReviewOrders?day={{ next }}">Következő hét</a>
+		<table border="1">
+			<tr>
+				<th> </th>
+				{% for day in days %}
+					<th>{{ day.day }}<br/>{{ day.date }}</th>
+				{% endfor%}
+			</tr>
+			{% for category in menu%}
+				<tr><td> {{ category.category.name }} </td>
+				{% for day in category.days %}
+					<td valign="bottom">
+					<div>
+					{% for menuItem in day.menuItems %}
+						{{ menuItem.orderedQuantity }} adag 
+						{{ menuItem.dish.title }}
+						{% for component in menuItem.components %}
+							,{{ component.dish.title }}
+						{% endfor %}				
+						<br/>
+					{% endfor %}
+					{% for composit in day.composits %}
+						{{ composit.orderedQuantity }} adag 
+						{% for component in composit.components%}
+							{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}
+						{% endfor %}
+						<br/>
+					{% endfor %}
+					</div>
+				</td>
 				{% endfor %}
-				<br/>
+			</tr>
 			{% endfor %}
-			</div>
-		</td>
-		{% endfor %}
-	</tr>
-	{% endfor %}
-</table>
+		</table>
+	</div>
+</div>
 
 
 

@@ -5,25 +5,23 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler
+from base_handler import BaseHandler, getBaseDate, getFormDate
 import datetime
 from model import MenuItem, DishCategory, Dish, Composit,\
 	CompositMenuItemListItem
-from user_management import isUserAdmin
+from user_management import isUserAdmin, isUserCook
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from order import dayNames
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+
 class MenuEditPage(BaseHandler):
 	def get(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
-		day=datetime.date.today()
-		requestDay=self.request.get('day')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		if not isUserCook(self):
+			self.redirect("/")
+			return
+		day = getBaseDate(self)
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days
@@ -120,15 +118,12 @@ class MenuEditPage(BaseHandler):
 		template = jinja_environment.get_template('templates/menuEdit.html')
 		self.printPage(str(day), template.render(template_values), False, False)
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
 			#Adds a dish to current days menu
-			day=datetime.date.today()
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day=getFormDate(self)
 			dishKey=self.request.get('dishKey')
 			if ((dishKey != None) and (dishKey != "")):
 				dish=db.get(dishKey)
@@ -142,15 +137,12 @@ class MenuEditPage(BaseHandler):
 			
 class CreateComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
 			#Adds a composit to current days menu
-			day=datetime.date.today()
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day = getFormDate(self)
 			categoryKey = self.request.get('dishCategoryKey')
 			composit = Composit()
 			composit.day=day
@@ -160,15 +152,12 @@ class CreateComposit(BaseHandler):
 
 class AddItemToComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
 			#Adds an item to composit
-			day=datetime.date.today()
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day = getFormDate(self)
 			composit = Composit.get(self.request.get("compositKey"))
 			if composit.occurrences.count()==0:
 				menuItem = MenuItem.get(self.request.get("menuItem"))
@@ -180,15 +169,12 @@ class AddItemToComposit(BaseHandler):
 
 class DeleteItemFromComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
 			#Adds an item to composit
-			day=datetime.date.today()
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day = getFormDate(self)
 			compositItem = CompositMenuItemListItem.get(self.request.get("componentKey"))
 			if compositItem.composit.occurrences.count()==0:
 				compositItem.delete()
@@ -196,13 +182,11 @@ class DeleteItemFromComposit(BaseHandler):
 			
 class ModifyComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
-			dayStr=""
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				dayStr = requestDay
+			day = getFormDate(self)
 			compositKey=self.request.get('compositKey')
 			if ((compositKey != None) and (compositKey != "")):
 				composit=Composit.get(compositKey)
@@ -211,18 +195,15 @@ class ModifyComposit(BaseHandler):
 						#Save new price
 						composit.price = int(self.request.get('price'))
 						composit.put()
-			self.redirect("/menuEdit?day="+dayStr)
+			self.redirect("/menuEdit?day="+str(day))
 			
 class DeleteComposit(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
-			day=datetime.date.today()
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day = getFormDate(self)
 			#Deletes a dish from current days menu
 			compositKey=self.request.get('compositKey')
 			if ((compositKey != None) and (compositKey != "")):
@@ -236,13 +217,11 @@ class DeleteComposit(BaseHandler):
 
 class ModifyMenuItem(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
-			dayStr=""
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				dayStr = requestDay
+			day = getFormDate(self)
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
@@ -250,19 +229,16 @@ class ModifyMenuItem(BaseHandler):
 					#Save new price
 					menuItem.price = int(self.request.get('price'))
 					menuItem.put()
-			self.redirect("/menuEdit?day="+dayStr)
+			self.redirect("/menuEdit?day="+str(day))
 
 class AddMenuItemComponent(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
 			sumprice = 0
-			day=datetime.date.today()
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day = getFormDate(self)
 			#Adds a dish to menu item
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
@@ -288,14 +264,11 @@ class AddMenuItemComponent(BaseHandler):
 			
 class DeleteMenuItem(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		else:
-			day=datetime.date.today()
-			requestDay=self.request.get('formDay')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day = getFormDate(self)
 			#Deletes a dish from current days menu
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):

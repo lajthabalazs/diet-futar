@@ -1,18 +1,22 @@
-﻿<h1>Kategóriák</h1>
-<table>
-{% for ingredientCategory in ingredientCategories %}
-<tr>
-	<td><a href="/ingredientCategory?ingredientCategoryKey={{ ingredientCategory.key() }}">{{ ingredientCategory.name }}</a></td>
-	<td><form action="{{delete_url}}" method="post">
-		<input type="hidden" name="ingredientCategoryKey" value="{{ ingredientCategory.key() }}"/>
-		<input type="submit" value="Töröl">
-	</form></td>
-</tr>
-{% endfor %}
-<tr>
-	<form method="post">
-		<td><input type="text" name="ingredient_category_name" cols="60"/></td>
-		<td colspan="2"><input type="submit" value="Add category"></td>
-	</form>
-</tr>
-</table>
+﻿<div class="mainBg">
+	<div class="container">
+		<h3>Kategóriák</h3>
+		<table>
+		{% for ingredientCategory in ingredientCategories %}
+		<tr>
+			<td><a href="/ingredientCategory?ingredientCategoryKey={{ ingredientCategory.key() }}">{{ ingredientCategory.name }}</a></td>
+			<td><form action="{{delete_url}}" method="post">
+				<input type="hidden" name="ingredientCategoryKey" value="{{ ingredientCategory.key() }}"/>
+				<input type="submit" value="Töröl">
+			</form></td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<form method="post">
+				<td><input type="text" name="ingredient_category_name" cols="60"/></td>
+				<td colspan="2"><input type="submit" value="Add category"></td>
+			</form>
+		</tr>
+		</table>
+	</div>
+</div>

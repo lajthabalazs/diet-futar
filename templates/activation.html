@@ -1,9 +1,10 @@
 <div class="mainBg">
 	<div class="container">
 		{% if activationResult == 0%}
-		<h2>Sikeres aktiválás</h2>
-		<a href="/order">Rendelek valami finomat</a>
-		<a href="/profile">Személyes oldal áttekintése</a>
+		<h3>Sikeres aktiváláció</h3>
+		<p>
+			Üdvözöljük oldalunkon! Válogasson egészséges <a href="/order">ajánlatunkból</a>. Első rendelése előtt kérjük tekintse át <a href="/profile">profilját</a>, ellenőrizze, hogy kitöltötte-e a név mezőt, és ne feledjen rendelés előtt felvinni profiljára legalább egy szállítási címet.
+		</p>
 		{% else %}
 		{% if activationResult == 1 %}
 		<h2>Ismeretlen felhasználó</h2>

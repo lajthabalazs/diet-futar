@@ -7,7 +7,7 @@ from google.appengine.ext import db
 from model import Dish, Ingredient, IngredientListItem, DishCategory
 
 from base_handler import BaseHandler
-from user_management import isUserAdmin
+from user_management import isUserAdmin, isUserCook
 from keys import DISH_CATEGORY_KEY
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 #from user_management import getUserBox
@@ -16,17 +16,18 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 class DeleteDishPage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
+		if not isUserCook(self):
 			self.redirect("/")
+			return
 		dish = db.get(self.request.get('dishKey'))
 		dish.delete()
 		self.redirect('/dish')
 	
 class DishPage(BaseHandler):
 	def post(self):
-		print isUserAdmin(self)
-		if(not isUserAdmin(self)):
+		if not isUserCook(self):
 			self.redirect("/")
+			return
 		else:
 			if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
 			#Modification of basic data
@@ -44,7 +45,7 @@ class DishPage(BaseHandler):
 					dish.category = None
 				dish.put()
 				self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
-
+				return
 			else:
 				dish = Dish()
 				dish.title = self.request.get('title')
@@ -54,8 +55,9 @@ class DishPage(BaseHandler):
 				dish.put()
 				self.redirect('/dish?dishKey=%s' % dish.key())
 	def get(self):
-		if(not isUserAdmin):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		dishKey=self.request.get('dishKey')
 		if ((dishKey != None) and (dishKey != "")):
 		# A single dish with editable ingredient list
@@ -69,8 +71,8 @@ class DishPage(BaseHandler):
 			dish.energy = 0
 			for ingredient in ingredients:
 				dish.energy = dish.energy + ingredient.quantity * ingredient.ingredient.energy / 100.0
-			availableIngredients = Ingredient.gql("ORDER BY name")
-			availableCategories = DishCategory.gql("ORDER BY index")
+			availableIngredients = Ingredient.gql(" ORDER BY name")
+			availableCategories = DishCategory.gql("WHERE isMenu = False ORDER BY index")
 			template_values = {
 				'dish': dish,
 				'availableCategories':availableCategories,
@@ -90,18 +92,19 @@ class DishPage(BaseHandler):
 				except ReferencePropertyResolveError:
 					dish.category = None
 				dishes.append(dish)
-			ingredientCategories =DishCategory.gql("ORDER BY index")
+			availableCategories = DishCategory.gql("WHERE isMenu = False ORDER BY index")
 			template_values = {
 			  'dishes': dishes,
-			  'availableCategories': ingredientCategories
+			  'availableCategories': availableCategories
 			}
 			template = jinja_environment.get_template('templates/dish_list.html')
 			self.printPage("Receptek", template.render(template_values), False, False)
 
 class DishIngredientDeletePage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		# Retrieve the dish
 		dish = db.get(self.request.get('dishKey'))
 		ingredientToDish = db.get(self.request.get('dishIngredientKey'))
@@ -110,8 +113,9 @@ class DishIngredientDeletePage(BaseHandler):
 
 class DishIngredientAddPage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		# Retrieve the dish
 		dish = db.get(self.request.get('dishKey'))
 		if ((self.request.get('dishIngredientKey') != None) and (self.request.get('dishIngredientKey') != "")):

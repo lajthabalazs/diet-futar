@@ -6,7 +6,7 @@ Created on Aug 11, 2012
 from google.appengine.ext import db
 import os
 import jinja2
-from model import User, ROLE_ADMIN
+from model import User, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK
 
 USER_KEY="dietUserKey"
 USER="user"
@@ -29,13 +29,37 @@ def isUserAdmin(handler):
 	if (userKey != None):
 	#If session has a user key, than return logged in
 		user = User.get(userKey)
-		if ((user!=None) and (user.roleName!=None)):
-			return user.roleName == ROLE_ADMIN
+		if ((user!=None) and (user.role!=None)):
+			return user.role.name == ROLE_ADMIN
 		else:
 			return False
 	else:
 		return False
 
+def isUserDelivery(handler):
+	userKey = handler.session.get(USER_KEY,None)
+	if (userKey != None):
+	#If session has a user key, than return logged in
+		user = User.get(userKey)
+		if ((user!=None) and (user.role!=None)):
+			return user.role.name == ROLE_DELIVERY_GUY or user.role.name == ROLE_ADMIN
+		else:
+			return False
+	else:
+		return False
+
+def isUserCook(handler):
+	userKey = handler.session.get(USER_KEY,None)
+	if (userKey != None):
+	#If session has a user key, than return logged in
+		user = User.get(userKey)
+		if ((user!=None) and (user.role!=None)):
+			return user.role.name == ROLE_COOK or user.role.name == ROLE_ADMIN
+		else:
+			return False
+	else:
+		return False
+	
 def isUserLoggedIn(handler):
 	userKey = handler.session.get(USER_KEY,None)
 	if (userKey != None):

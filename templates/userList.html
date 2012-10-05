@@ -2,7 +2,7 @@
 	<div class="container" align="center">	
 		{% for i in pages%}
 			{% if i==page%}
-			<span style="font-size: 20px">{{i}}</span>
+			<span style="margin-right: 5px">{{i}}</span>
 			{% else %}
 			<a href="?page={{i}}&order={{order}}" style="font-size: 20px">{{i}}</a>
 			{% endif %}
@@ -12,21 +12,35 @@
 
 <div class="mainBg">
 	<div class="container" align="center">	
-		
 		<table>
 		<tr>
-			<th><a href="?order=registrationDate" style="font-size: 20px">Regisztráció</a></th>
-			<th><a href="?order=familyName" style="font-size: 20px">Név</a></th>
-			<th><a href="?order=email" style="font-size: 20px">E-mail cím</a></th>
-			<th style="font-size: 20px">Aktivált</th>
+			<th><a href="?order=registrationDate">Regisztráció</a></th>
+			<th><a href="?order=familyName">Név</a></th>
+			<th><a href="?order=email">E-mail cím</a></th>
+			<th>Aktivált</th>
+			<th>Szerep</th>
+			<th></th>
 		{% for user in userList%}
-		<tr>
-		<td><h3>{{ user.registrationDate}}</h3></td>
-		<td><h3>{{ user.familyName }} {{user.givenName}}</h3></td>
-		<td><h3>{{ user.email }}</h3></td>
-		<td><h3>{{ user.activated }}</h3></td>
-		</tr>
+		<form method="post">
+			<input type="hidden" name="userKey" value="{{user.key()}}"/>
+			<tr>
+			<td>{{ user.registrationDate}}</td>
+			<td>{{ user.familyName }} {{user.givenName}}</td>
+			<td>{{ user.email }}</td>
+			<td><input type="checkbox" name="activated" {% if user.activated%} checked="checked" {% endif %}/></td>
+			<td>
+				<select name="role">
+					<option value="" label="Felhasználó"></option>
+					{% for role in roles %}
+						<option value="{{ role.key() }}" label="{{ role.name }}" {% if user.role != None and role.key() == user.role.key()%} selected="selected" {% endif %}></option>
+					{% endfor %}
+				</select>
+			</td>
+			<td><input type="submit" value="Mentés"/></td>
+			</tr>
+		</form>
 		{% endfor %}
 		</table>
 	</div>
 </div>
+

@@ -1,27 +1,31 @@
-﻿	<table>
-	<form method="post">
-		<tr><td>Név</td><td><input type="text" name="title" cols="60"/></td>
-			<td align="right">
-			<select name="dishCategoryKey">
-				{% for availableCategory in availableCategories %}
-					<option value="{{ availableCategory.key() }}"
-					>{{ availableCategory.name }}</option>
-				{% endfor %}
-		
-			</select>
-		</td></tr>
-		<tr><td>Rövid leírás</td><td colspan="2"><textarea name="subTitle" cols="60"></textarea></td></tr>
-		<tr><td>Hosszú leírás</td><td colspan="2"><textarea name="description" cols="60"></textarea></td></tr>
-		<tr><td colspan="3" align="right"><input type="submit" value="Add dish"></td></tr>
-	</form>
-	</table>
-	<table width="400px">
-	{% for dish in dishes %}
-		<tr><td><a href="?dishKey={{ dish.key() }}">{{ dish.title }}</a></td>
-		<td>{{ dish.category.name }}</td>
-		<td align="right"><form action="deleteDish" method="post">
-			<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
-			<input type="submit" value="Törlés">
-		</form></td></tr>
-	{% endfor %}
-	</table>
+﻿<div class="mainBg">
+	<div class="container">
+		<table>
+		<form method="post">
+			<tr><td>Név</td><td><input type="text" name="title" cols="60"/></td>
+				<td align="right">
+				<select name="dishCategoryKey">
+					{% for availableCategory in availableCategories %}
+						<option value="{{ availableCategory.key() }}"
+						>{{ availableCategory.name }}</option>
+					{% endfor %}
+			
+				</select>
+			</td></tr>
+			<tr><td>Rövid leírás</td><td colspan="2"><textarea name="subTitle" cols="60"></textarea></td></tr>
+			<tr><td>Hosszú leírás</td><td colspan="2"><textarea name="description" cols="60"></textarea></td></tr>
+			<tr><td colspan="3" align="right"><input type="submit" value="Add dish"></td></tr>
+		</form>
+		</table>
+		<table width="400px">
+		{% for dish in dishes %}
+			<tr><td><a href="?dishKey={{ dish.key() }}">{{ dish.title }}</a></td>
+			<td>{{ dish.category.name }}</td>
+			<td align="right"><form action="deleteDish" method="post">
+				<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
+				<input type="submit" value="Törlés">
+			</form></td></tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

@@ -4,14 +4,15 @@ import jinja2
 import os
 from base_handler import BaseHandler
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
-from user_management import isUserAdmin
+from user_management import isUserAdmin, isUserCook
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class IngredientPage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return	
 		#Check if ingredient exists
 		ingredientKey=self.request.get('ingredientKey')
 		if ((ingredientKey != None) and (ingredientKey != "")):
@@ -42,16 +43,19 @@ class IngredientPage(BaseHandler):
 			sourceKey=self.request.get('source')
 			if ((sourceKey == ingredientCategoryKey) and (sourceKey!=None) and (sourceKey != "")):
 				self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
+				return
 			else:
 				self.redirect('/ingredient')
+				return
 		else:
 			ingredient = Ingredient()
 			ingredient.name = self.request.get('ingredient_name')
 			ingredient.put()
 			self.redirect('/ingredient?ingredientKey=%s' % ingredient.key())
 	def get(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return	
 		ingredientKey=self.request.get('ingredientKey')
 		sourceKey=self.request.get('source')
 		if ((ingredientKey != None) and (ingredientKey != "")):
@@ -82,8 +86,9 @@ class IngredientPage(BaseHandler):
 
 class IngredientDeletePage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return	
 		ingredient = db.get(self.request.get('ingredientKey'))
 		#Delete all instances of the ingredient association
 		for dishIngredient in ingredient.dishes:
@@ -93,8 +98,9 @@ class IngredientDeletePage(BaseHandler):
 
 class IngredientAddPage(BaseHandler):
 	def post(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserCook(self):
+			self.redirect("/")
+			return
 		category = db.get(self.request.get('ingredientCategoryKey'))
 		ingredient = Ingredient()
 		ingredient.name = self.request.get('ingredient_name')

@@ -1,26 +1,30 @@
-﻿<h1>Fogások</h1>
-<table>
-{% for dishCategory in dishCategories %}
-<tr>
-	<td><a href="/dishCategory?dishCategoryKey={{ dishCategory.key() }}">{{ dishCategory.name }}</a> ({{ dishCategory.dishes.count() }})</td>
-	<td><form method="post">
-		<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key() }}"/>
-		<input type="number" name="dishCategoryIndex" cols="60" value="{{ dishCategory.index }}"/>
-		{{dishCategory.isMenuCategory}}
-		<input type="checkbox" name="isMenuCategory" cols="60" value="yes" {% if(dishCategory.isMenu) %} checked="true"{% endif %}/>
-		<input type="submit" value="Ment">
-	</form></td>
-	<td><form action="{{delete_url}}" method="post">
-		<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key() }}"/>
-		<input type="submit" value="Töröl">
-	</form></td>
-</tr>
-{% endfor %}
-<tr>
-	<form method="post">
-		<td><input type="text" name="dishCategoryName" cols="60"/></td>
-		<td><input type="number" name="dishCategoryIndex" cols="60"/></td>
-		<td colspan="2"><input type="submit" value="Fogás hozzáadása"></td>
-	</form>
-</tr>
-</table>
+﻿<div class="mainBg">
+	<div class="container">
+		<h3>Fogások</h3>
+		<table>
+		{% for dishCategory in dishCategories %}
+		<tr>
+			<td><a href="/dishCategory?dishCategoryKey={{ dishCategory.key() }}">{{ dishCategory.name }}</a> ({{ dishCategory.dishes.count() }})</td>
+			<td><form method="post">
+				<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key() }}"/>
+				<input type="number" name="dishCategoryIndex" cols="60" value="{{ dishCategory.index }}"/>
+				{{dishCategory.isMenuCategory}}
+				<input type="checkbox" name="isMenuCategory" cols="60" value="yes" {% if(dishCategory.isMenu) %} checked="true"{% endif %}/>
+				<input type="submit" value="Ment">
+			</form></td>
+			<td><form action="{{delete_url}}" method="post">
+				<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key() }}"/>
+				<input type="submit" value="Töröl">
+			</form></td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<form method="post">
+				<td><input type="text" name="dishCategoryName" cols="60"/></td>
+				<td><input type="number" name="dishCategoryIndex" cols="60"/></td>
+				<td colspan="2"><input type="submit" value="Fogás hozzáadása"></td>
+			</form>
+		</tr>
+		</table>
+	</div>
+</div>

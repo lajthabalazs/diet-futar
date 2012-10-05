@@ -5,11 +5,12 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler
+from base_handler import BaseHandler, getBaseDate
 import datetime
-from model import MenuItem, DishCategory, Composit, UserOrderAddress
+from model import MenuItem, DishCategory, Composit, UserOrderAddress, User,\
+	ROLE_ADMIN, Role, ROLE_DELIVERY_GUY
 from order import dayNames
-from user_management import isUserAdmin
+from user_management import isUserAdmin, isUserCook, isUserDelivery
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -19,13 +20,10 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 #An accumulated overview of every ordered item
 class ChefReviewOrdersPage(BaseHandler):
 	def get(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
-		day=datetime.date.today()
-		requestDay=self.request.get('day')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		if not isUserCook(self):
+			self.redirect("/")
+			return
+		day=getBaseDate(self)
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days
@@ -96,13 +94,10 @@ class ChefReviewOrdersPage(BaseHandler):
 #An accumulated overview of every ordered item
 class ChefReviewToMakePage(BaseHandler):
 	def get(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
-		day=datetime.date.today()
-		requestDay=self.request.get('day')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		if not isUserCook(self):
+			self.redirect("/")
+			return
+		day=getBaseDate(self)
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days
@@ -223,33 +218,56 @@ class ChefReviewToMakePage(BaseHandler):
 #An accumulated overview of every ordered item
 class DeliveryReviewOrdersPage(BaseHandler):
 	def get(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
-		day=datetime.date.today()
-		requestDay=self.request.get('day')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		if not isUserDelivery(self):
+			self.redirect("/")
+			return
+		day=getBaseDate(self)
 		prevDay=day+datetime.timedelta(days=-1)
 		nextDay=day+datetime.timedelta(days=1)
 		today=datetime.date.today()
 		orders=UserOrderAddress.gql("WHERE day=DATE(:1,:2,:3)", day.year, day.month, day.day)
 		sortedDeliveries=sorted(orders, key=lambda item:item.address.zipCode)
+		admins=Role.all().filter("name = ", ROLE_ADMIN)[0].users
+		delivereryGuys=Role.all().filter("name = ", ROLE_DELIVERY_GUY)[0].users
+		deliverers=[]
+		for admin in admins:
+			deliverers.append(admin)
+		for guy in delivereryGuys:
+			deliverers.append(guy)
 		template_values = {
 			'next':nextDay,
 			'actual':today,
 			'orders':sortedDeliveries,
-			'day':day
+			'day':day,
+			'deliverers':deliverers
 		}
 		template_values['prev'] = prevDay
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/deliveryReviewOrders.html')
 		self.printPage(str(day), template.render(template_values), False, False)
-
+	def post(self):
+		if not isUserDelivery(self):
+			self.redirect("/")
+			return
+		# Save row
+		deliveryKey = self.request.get("odrerKey")
+		if deliveryKey!=None and deliveryKey != "":
+			delivery = UserOrderAddress.get(deliveryKey)
+			if delivery!=None:
+				delivery.delivered = self.request.get("delivered")=="on"
+				delivererKey=self.request.get("deliverer")
+				if delivererKey!=None and delivererKey != "":
+					delivery.deliverer=User.get(delivererKey)
+				else:
+					delivery.deliverer=None
+				delivery.put()
+		self.redirect('/deliveryReviewOrders')
+		
 class DeliveryPage(BaseHandler):
 	def get(self):
-		if(not isUserAdmin(self)):
-			self.redirect("/")	
+		if not isUserDelivery(self):
+			self.redirect("/")
+			return	
 		orderAddressKey=self.request.get("orderAddressKey")
 		orderAddress=UserOrderAddress.get(orderAddressKey)
 		day=orderAddress.day

@@ -4,7 +4,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler
+from base_handler import BaseHandler, getBaseDate, getFormDate
 import datetime
 from model import MenuItem, DishCategory, UserOrder, UserOrderItem, User,\
 	Composit, UserOrderAddress, Address
@@ -22,15 +22,12 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 class MenuOrderPage(BaseHandler):
 	def get(self):
-		day=datetime.date.today()
+		today=datetime.date.today()
 		now=datetime.datetime.now(timeZone)
-		firstOrderableDay=day+datetime.timedelta(days=1)
+		firstOrderableDay=today+datetime.timedelta(days=1)
 		if now.hour > LAST_ORDER_HOUR:
-			firstOrderableDay=day+datetime.timedelta(days=2)
-		requestDay=self.request.get('day')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			firstOrderableDay=today+datetime.timedelta(days=2)
+		day=getBaseDate(self)
 		#Fetch user's previous orders. User orders is an object associating menu item keys with quantities		
 		userOrders={}
 		userKey = self.session.get(USER_KEY,None)
@@ -163,11 +160,7 @@ class MenuOrderPage(BaseHandler):
 		self.printPage(str(day), template.render(template_values), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
-		day=datetime.date.today()
-		requestDay=self.request.get('formDay')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		day=getFormDate(self)
 		# Add order
 		for field in self.request.arguments():
 			if (field[:3]=="MIC"):
@@ -177,19 +170,11 @@ class MenuOrderPage(BaseHandler):
 
 class ClearOrderPage(BaseHandler):
 	def get(self):
-		day=datetime.date.today()
-		requestDay=self.request.get('formDay')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		day=getFormDate(self)
 		self.session[ACTUAL_ORDER]={}
 		self.redirect("/order?day="+str(day))
 	def post(self):
-		day=datetime.date.today()
-		requestDay=self.request.get('formDay')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		day=getFormDate(self)
 		self.session[ACTUAL_ORDER]={}
 		self.redirect("/order?day="+str(day))
 
@@ -209,11 +194,7 @@ class ReviewPendingOrderPage(BaseHandler):
 						orderedItems.append(item)
 					else:
 						composits.append(item)
-			day=datetime.date.today()
-			requestDay=self.request.get('day')
-			if ((requestDay != None) and (requestDay != "")):
-				parts=requestDay.rsplit("-")
-				day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			day=getBaseDate(self)
 			#Determine the week
 			calendar=day.isocalendar()
 			#Organize into days
@@ -314,11 +295,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			self.printPage(None, template.render(), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
-		day=datetime.date.today()
-		requestDay=self.request.get('formDay')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		day=getFormDate(self)
 		# Add order
 		for field in self.request.arguments():
 			if (field[:3]=="MIC"):
@@ -330,12 +307,9 @@ class ReviewPendingOrderPage(BaseHandler):
 class ReviewOrderedMenuPage(BaseHandler):
 	def get(self):
 		if(not isUserLoggedIn(self)):
-			self.redirect("/")	
-		day=datetime.date.today()
-		requestDay=self.request.get('day')
-		if ((requestDay != None) and (requestDay != "")):
-			parts=requestDay.rsplit("-")
-			day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+			self.redirect("/")
+			return
+		day=getBaseDate(self)
 		now=datetime.datetime.now(timeZone)
 		today=datetime.date.today()
 		firstOrderableDay=today+datetime.timedelta(days=1)
@@ -458,7 +432,8 @@ class ReviewOrderedMenuPage(BaseHandler):
 	def post(self):
 		# Get addresses and save them to the proper day
 		if(not isUserLoggedIn(self)):
-			self.redirect("/")	
+			self.redirect("/")
+			return
 		now=datetime.datetime.now(timeZone)
 		today=datetime.date.today()
 		firstOrderableDay=today+datetime.timedelta(days=1)
@@ -493,7 +468,8 @@ class ConfirmOrder(BaseHandler):
 	def post(self):
 		#One step ordering - this is a trial
 		if(not isUserLoggedIn(self)):
-			self.redirect("/registration")	
+			self.redirect("/registration")
+			return
 		userKey = self.session.get(USER_KEY,None)
 		user=None
 		if (userKey != None):
@@ -601,7 +577,8 @@ class ConfirmOrder(BaseHandler):
 class PreviousOrders(BaseHandler):
 	def get(self):
 		if(not isUserLoggedIn(self)):
-			self.redirect("/registration")	
+			self.redirect("/registration")
+			return
 		userKey = self.session.get(USER_KEY,None)
 		if (userKey != None):
 			userOrders=[]
@@ -619,7 +596,8 @@ class PreviousOrders(BaseHandler):
 class PreviousOrder(BaseHandler):
 	def get(self):
 		if(not isUserLoggedIn(self)):
-			self.redirect("/registration")	
+			self.redirect("/registration")
+			return
 		orderKey = self.request.get("orderKey")
 		userOrder = UserOrder.get(orderKey)
 		if (userOrder != None):

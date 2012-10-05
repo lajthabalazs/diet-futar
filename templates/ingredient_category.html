@@ -1,20 +1,25 @@
-﻿<h1>{{ ingredientCategory.name }}</h1>
-<table>
-{% for ingredient in ingredientCategory.ingredients %}
-<tr>
-	<td><a href="/ingredient?ingredientKey={{ ingredient.key() }}">{{ ingredient.name }}</a></td>
-	<td><form action="{{delete_url}}" method="post">
-		<input type="hidden" name="ingredientCategoryKey" value="{{ ingredientCategory.key() }}"/>
-		<input type="hidden" name="ingredientKey" value="{{ ingredient.key() }}"/>
-		<input type="submit" value="Töröl">
-	</form></td>
-</tr>
-{% endfor %}
-<tr>
-	<form action="{{add_url}}" method="post">
-		<input type="hidden" name="ingredientCategoryKey" value="{{ ingredientCategory.key() }}"/>
-		<td><input type="text" name="ingredient_name" cols="60"/></td>
-		<td colspan="2"><input type="submit" value="Add ingredient"></td>
-	</form>
-</tr>
-</table>
+﻿<div class="mainBg">
+	<div class="container">
+		<h3>{{ ingredientCategory.name }}</h3>
+		<table>
+		{% for ingredient in ingredientCategory.ingredients %}
+		<tr>
+			<td><a href="/ingredient?ingredientKey={{ ingredient.key() }}">{{ ingredient.name }}</a></td>
+			<td><form action="{{delete_url}}" method="post">
+				<input type="hidden" name="ingredientCategoryKey" value="{{ ingredientCategory.key() }}"/>
+				<input type="hidden" name="ingredientKey" value="{{ ingredient.key() }}"/>
+				<input type="submit" value="Töröl">
+			</form></td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<form action="{{add_url}}" method="post">
+				<input type="hidden" name="ingredientCategoryKey" value="{{ ingredientCategory.key() }}"/>
+				<td><input type="text" name="ingredient_name" cols="60"/></td>
+				<td colspan="2"><input type="submit" value="Add ingredient"></td>
+			</form>
+		</tr>
+		</table>
+	</div>
+</div>
+
