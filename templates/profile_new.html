@@ -8,15 +8,20 @@
 						<label>E-mail <span>{{ user.email }}</span></label>
 						<label>Vezetéknév<input type="text" name="familyName" value="{{user.familyName}}"/></label>
 						<label>Keresztnév<input type="text" name="givenName" value="{{user.givenName}}"/></label>
+						<label>Telefonszám<input type="text" name="phoneNumber" value="{{user.phoneNumber}}"/></label>
 						<label><input type="submit" value="Mentés" /></label>
 					</form>
 				</div>
 				<div class="span-9 prepend-1 profileColumn profileElement">
 					<form action="/changePassword" method="post">
 						<label>Jelszó<input type="password" name="oldPassword"/></label>
+						<p style="margin: 0px; margin-bottom: 17px">
 						{% if (login_error) %}
 						<span style="color: 'RED'; font-size: 20px">{{ login_error }}</span>
+						{% else %}
+						<br/>
 						{% endif %}
+						</p>
 						<label>Új jelszó <input type="password" name="newPassword"/></label>
 						<label>Új jelszó mégegyszer <input type="password" name="passwordCheck"/></label>
 						<label><input type="submit" value="Jelszó módosítás"/></label>
@@ -28,7 +33,6 @@
 				<div class="span-22">
 					<div class="span-9 prepend-1 profileColumn profileElement">
 						<form action="/address" method="post">
-							<label>Telefonszám<input type="text" name="phoneNumber"/></label>
 							<label>Kerület <select name="district">
 								{% for district in districts %}
 									<option value="{{district}}" label="{{district}}. kerület"></option>
@@ -44,7 +48,6 @@
 						<div class="span-9 prepend-1 profileColumn profileElement">
 							<form action="/address" method="post">
 								<input type="hidden" name="addressKey" value="{{address.key()}}"/>
-								<label>Telefonszám<input type="text" name="phoneNumber" value="{{address.phoneNumber}}"/></label>
 								<label>Kerület <select name="district">
 									{% for district in districts %}
 										<option value="{{district}}" label="{{district}}. kerület" {% if district==address.district%}selected{% endif %}></option>

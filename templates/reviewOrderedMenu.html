@@ -32,8 +32,8 @@
 						{% for composit in day.composits %}
 							<div class="calendarElement">
 								{% for component in composit.components%}
-									<h3>{{component.menuItem.dish.title}}</h3>
-									<p>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}</p>
+									<h3>{{component.dish.title}}</h3>
+									<p>{% for subItem in component.components%}, {{subItem.dish.title}}{% endfor %}</p>
 								{% endfor %}
 								<strong>{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %} Ft
 								, {{ composit.orderedQuantity }} adag </strong>

@@ -20,6 +20,15 @@ def getBaseDate(handler):
 	if ((requestDay != None) and (requestDay != "")):
 		parts=requestDay.rsplit("-")
 		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+	else:
+		calendar=day.isocalendar()
+		#Organize into days
+		if calendar[2]==5 and datetime.datetime.now().hour > 12:
+			day=day+datetime.timedelta(days=3)
+		elif calendar[2]==6:
+			day=day+datetime.timedelta(days=2)
+		elif calendar[2]==7:
+			day=day+datetime.timedelta(days=1)
 	return day
 
 # Returns the day indicated by the posted form if any otherwise the current day

@@ -17,15 +17,13 @@ class User(db.Model):
 	password = db.StringProperty()
 	familyName = db.StringProperty()
 	givenName = db.StringProperty()
+	phoneNumber = db.StringProperty()
 	activated = db.BooleanProperty()
 	activationCode = db.StringProperty()
 	registrationDate=db.DateProperty()
 	role=db.ReferenceProperty(Role, collection_name='users')
 
 class Address (db.Model):
-	isBilling = db.BooleanProperty()
-	billingName = db.StringProperty()
-	phoneNumber = db.StringProperty()
 	district = db.StringProperty()
 	zipCode = db.StringProperty()
 	street = db.StringProperty()
@@ -40,6 +38,7 @@ class DishCategory(db.Model):
 class Dish(db.Model):
 	title = db.StringProperty()
 	price = db.IntegerProperty()
+	subtitle=db.StringProperty()
 	description = db.StringProperty(multiline=True)
 	category=db.ReferenceProperty(DishCategory, collection_name='dishes')
 

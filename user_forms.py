@@ -86,6 +86,7 @@ class RegisterPage(BaseHandler):
 		#self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render())
 	def post(self):
 		email = self.request.get('email')
+		phoneNumber = self.request.get('phoneNumber')
 		password = self.request.get('password')
 		passwordCheck = self.request.get('passwordCheck')
 		familyName= self.request.get('familyName')
@@ -94,6 +95,7 @@ class RegisterPage(BaseHandler):
 		user["email"]= email
 		user["familyName"]=familyName
 		user["givenName"]=givenName
+		user["phoneNumber"]=phoneNumber
 		users = User.gql('WHERE email = :1', email)
 		# Check if roles are set up properly
 #		roles=Role.all()
@@ -124,6 +126,7 @@ class RegisterPage(BaseHandler):
 			user.familyName=familyName
 			user.givenName=givenName
 			user.password = password
+			user.phoneNumber=phoneNumber
 			user.activated = False
 			user.registrationDate=datetime.date.today()
 			word = ''
@@ -228,6 +231,7 @@ class UserProfilePage (BaseHandler):
 			if user != None:
 				user.familyName = self.request.get('familyName')
 				user.givenName = self.request.get('givenName')
+				user.phoneNumber = self.request.get('phoneNumber')
 				user.put()
 				user.password = "__________"
 				user.role = None
@@ -263,7 +267,6 @@ class AddressPage (BaseHandler):
 		address.user = user
 		address.billingName = self.request.get("billingName")
 		address.district = self.request.get("district")
-		address.phoneNumber = self.request.get("phoneNumber")
 		address.zipCode = self.request.get("zipCode")
 		address.street = self.request.get("street")
 		address.streetNumber = self.request.get("streetNumber")

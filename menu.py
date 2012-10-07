@@ -11,6 +11,7 @@ from model import MenuItem, DishCategory, Dish, Composit,\
 	CompositMenuItemListItem
 from user_management import isUserCook
 from order import dayNames
+from cache import getDaysMenuItems
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -34,7 +35,7 @@ class MenuWeekEditPage(BaseHandler):
 			actualDayObject={}
 			actualDayObject["day"]=dayNames[i]
 			actualDayObject["date"]=monday+datetime.timedelta(days=i)
-			menuItems = MenuItem.all().filter("day = ", actualDay).filter("containingMenuItem = ", None).filter("active = ", True)
+			menuItems = getDaysMenuItems()
 			actualDayObject["availableMenuItems"]=menuItems
 			days.append(actualDayObject)
 		for category in dishCategories:

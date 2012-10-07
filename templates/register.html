@@ -10,6 +10,7 @@
 							<label>Jelszó mégegyszer<input type="password" name="passwordCheck"/></label>
 							<label>Vezetéknév<input type="text" name="familyName" value="{% if user != None%}{{user.familyName}}{% endif %}"/></label>
 							<label>Keresztnév<input type="text" name="givenName" value="{% if user != None%}{{user.givenName}}{% endif %}"/></label>
+							<label>Telefonszám<input type="text" name="phoneNumber"/></label>
 							{% if (registration_error) %}
 							<span style="color: 'RED'">{{registration_error}}</span><br/>
 							{% else %}

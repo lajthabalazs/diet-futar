@@ -10,6 +10,7 @@ from base_handler import BaseHandler
 from user_management import isUserAdmin, isUserCook
 from keys import DISH_CATEGORY_KEY
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
+from cache import getDish
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -29,14 +30,17 @@ class DishPage(BaseHandler):
 			self.redirect("/")
 			return
 		else:
-			if ((self.request.get('dishKey') != None) and (self.request.get('dishKey') != "")):
+			dishKey=self.request.get('dishKey')
+			if ((dishKey != None) and (dishKey != "")):
 			#Modification of basic data
-				dish = db.get(self.request.get('dishKey'))
+				dish = Dish.get(dishKey)
 				dish.title = self.request.get('title')
 				dish.subTitle = self.request.get('subTitle')
 				dish.description = self.request.get('description')
 				if self.request.get('price') != None:
 					dish.price = int(self.request.get('price'))
+				else:
+					dish.price=0
 				dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
 				if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 					dishCategory = db.get(dishCategoryKey)
