@@ -9,7 +9,7 @@
 	<td>{{item.itemCount}}</td><td>
 			<h3>{{ item.dish.title }}</h3>
 			<p>{% for component in item.components %}
-				,{{ component.dish.title }}
+				{{ component.dish.title }}
 			{% endfor %}</p>
 	</td>
 	</tr>

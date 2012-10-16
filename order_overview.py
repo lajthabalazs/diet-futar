@@ -289,7 +289,8 @@ class DeliveryPage(BaseHandler):
 					menuItemOrders.append(menuItem)
 			else:
 				actualOrder=0
-				for menuItem in orderedItem.orderedComposit.components:
+				for compositItem in orderedItem.orderedComposit.components:
+					menuItem = compositItem.menuItem;
 					actualOrder=0
 					if menuItemIndexes.has_key(menuItem.key()):
 						itemIndex=menuItemIndexes.get(menuItem.key())

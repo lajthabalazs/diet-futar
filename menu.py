@@ -35,7 +35,7 @@ class MenuWeekEditPage(BaseHandler):
 			actualDayObject={}
 			actualDayObject["day"]=dayNames[i]
 			actualDayObject["date"]=monday+datetime.timedelta(days=i)
-			menuItems = getDaysMenuItems()
+			menuItems = MenuItem.all().filter("day = ", actualDay).filter("containingMenuItem = ", None)
 			actualDayObject["availableMenuItems"]=menuItems
 			days.append(actualDayObject)
 		for category in dishCategories:
