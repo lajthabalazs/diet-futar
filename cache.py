@@ -124,11 +124,8 @@ def addMenuItem(dishKey, day):
 		# Just add this menu item
 		daysItems.append(createMenuItemData(menuItem))
 		client.set(key,daysItems)
-		ret = ret + " Items " + str(len(daysItems)) + "<br/>"
-		return ret
 	else:
 		# Don't do a thing, a request will trigger loading anyways
-		return "No items yet"
 		pass
 
 def modifyMenuItem(menuItem):
@@ -147,7 +144,7 @@ def modifyMenuItem(menuItem):
 				# Add menu item to new array
 				newItems.append(dayItem)
 		# Finally just add it to the cache 
-		client.set(key,daysItems)
+		client.set(key,newItems)
 	else:
 		# Don't do a thing, a request will trigger loading anyways
 		pass
@@ -259,7 +256,7 @@ def modifyComposit(composit):
 				# Add menu item to new array
 				newComposits.append(dayItem)
 		# Finally just add it to the cache 
-		client.set(key,daysComposits)
+		client.set(key,newComposits)
 	else:
 		# Don't do a thing, a request will trigger loading anyways
 		pass
@@ -280,7 +277,7 @@ def deleteComposit(composit):
 				# Add menu item to new array
 				newComposits.append(dayItem)
 		# Finally just add it to the cache 
-		client.set(key,daysComposits)
+		client.set(key,newComposits)
 	else:
 		# Don't do a thing, a request will trigger loading anyways
 		pass
