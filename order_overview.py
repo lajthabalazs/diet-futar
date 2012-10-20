@@ -10,7 +10,7 @@ import datetime
 from model import MenuItem, DishCategory, Composit, UserOrderAddress, User,\
 	ROLE_ADMIN, Role, ROLE_DELIVERY_GUY
 from order import dayNames
-from user_management import isUserAdmin, isUserCook, isUserDelivery
+from user_management import isUserCook, isUserDelivery
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"

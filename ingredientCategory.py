@@ -3,7 +3,7 @@ from model import IngredientCategory
 import jinja2
 import os
 from base_handler import BaseHandler
-from user_management import isUserAdmin, isUserCook
+from user_management import isUserCook
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 

@@ -7,10 +7,10 @@ from google.appengine.ext import db
 from model import Dish, Ingredient, IngredientListItem, DishCategory
 
 from base_handler import BaseHandler
-from user_management import isUserAdmin, isUserCook
+from user_management import isUserCook
 from keys import DISH_CATEGORY_KEY
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
-from cache import getDish
+
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))

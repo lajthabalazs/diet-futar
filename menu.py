@@ -11,9 +11,9 @@ from model import MenuItem, DishCategory, Dish, Composit,\
 	CompositMenuItemListItem
 from user_management import isUserCook
 from order import dayNames
-from cache import getDaysMenuItems, addMenuItem, addComposit,\
-	addMenuItemToComposit, modifyComposit, deleteComposit, modifyMenuItem,\
-	deleteMenuItem
+from cache_menu_item import addMenuItem, modifyMenuItem, deleteMenuItem
+from cache_composit import addComposit, addMenuItemToComposit, modifyComposit,\
+	deleteComposit
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -30,7 +30,7 @@ class MenuWeekEditPage(BaseHandler):
 		menu=[]
 		dishCategories=DishCategory.gql("ORDER BY index")
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
-		sunday=day+datetime.timedelta(days=-calendar[2]+7)
+		#sunday=day+datetime.timedelta(days=-calendar[2]+7)
 		days=[]
 		for i in range(0,5):
 			actualDay=monday+datetime.timedelta(days=i)
@@ -311,14 +311,9 @@ class AddMenuItemComponent(BaseHandler):
 					sumprice = menuItem.dish.price
 					#Get the dish
 					dishKey = self.request.get('componentDishKey')
-					dish = db.get(dishKey)
 					#Create a menu item for the dish
-					componentItem = MenuItem()
-					componentItem.dish = dish
-					componentItem.day = menuItem.day
+					addMenuItem(dishKey, day, menuItem)
 					#Add the menu item to the current MenuItem
-					componentItem.containingMenuItem = menuItem
-					componentItem.put()
 					for component in menuItem.components:
 						if (component.dish.price != None):
 							sumprice = sumprice + component.dish.price
@@ -341,8 +336,10 @@ class DeleteMenuItem(BaseHandler):
 				if menuItem != None and menuItem.occurrences.count() == 0 and menuItem.composits.count() == 0:
 					if menuItem.containingMenuItem != None:
 						sumprice = menuItem.containingMenuItem.dish.price
+						if sumprice == None:
+							sumprice = 0
 						for component in menuItem.containingMenuItem.components:
-							if (component.dish.price != None):
+							if component.dish.price != None:
 								sumprice = sumprice + component.dish.price
 						if menuItem.dish.price != None:
 							sumprice = sumprice - menuItem.dish.price
