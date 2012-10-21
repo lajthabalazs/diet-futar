@@ -31,10 +31,9 @@ def getMenuItem(key):
 	client = memcache.Client()
 	menuItem = client.get(key)
 	if menuItem == None:
-		menuItem = MenuItem.get(key)
-		menuItemObject = createMenuItemData(menuItem)
-		client.set(key,menuItemObject)
-		return menuItemObject
+		menuItemDb = MenuItem.get(key)
+		menuItem = createMenuItemData(menuItemDb)
+		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems
 	menuItem['dish']=getDish(menuItem['dishKey'])
 	components = []
@@ -88,9 +87,6 @@ def addMenuItem(dishKey, day, containingMenuItem = None):
 		# Just add this menu item
 		daysItems.append(createMenuItemData(menuItem))
 		client.set(key,daysItems)
-	else:
-		# Don't do a thing, a request will trigger loading anyways
-		pass
 
 def modifyMenuItem(menuItem):
 	client = memcache.Client()
@@ -109,9 +105,6 @@ def modifyMenuItem(menuItem):
 			newItems.append(dayItem)
 		# Finally just add it to the cache 
 		client.set(key,newItems)
-	else:
-		# Don't do a thing, a request will trigger loading anyways
-		pass
 
 def deleteMenuItem(menuItem):
 	client = memcache.Client()
@@ -130,6 +123,3 @@ def deleteMenuItem(menuItem):
 				newItems.append(dayItem)
 		# Finally just add it to the cache
 		client.set(key,newItems)
-	else:
-		# Don't do a thing, a request will trigger loading anyways
-		pass

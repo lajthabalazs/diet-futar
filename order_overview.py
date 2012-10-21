@@ -11,6 +11,7 @@ from model import MenuItem, DishCategory, Composit, UserOrderAddress, User,\
 	ROLE_ADMIN, Role, ROLE_DELIVERY_GUY
 from order import dayNames
 from user_management import isUserCook, isUserDelivery
+from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -47,13 +48,17 @@ class ChefReviewOrdersPage(BaseHandler):
 				#Filter menu items
 				actualMenuItems=[]
 				for menuItem in menuItems:
-					if menuItem.dish.category.key()==category.key() and menuItem.day==actualDay and menuItem.containingMenuItem == None:
-						menuItem.orderedQuantity = 0
-						for order in menuItem.occurrences:
-							menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
-						if menuItem.orderedQuantity > 0:
-							itemsInRows = itemsInRows + 1
-							actualMenuItems.append(menuItem)
+					try:
+						if menuItem.dish.category.key()==category.key() and menuItem.day==actualDay and menuItem.containingMenuItem == None:
+							menuItem.orderedQuantity = 0
+							for order in menuItem.occurrences:
+								menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
+							if menuItem.orderedQuantity > 0:
+								itemsInRows = itemsInRows + 1
+								actualMenuItems.append(menuItem)
+					except ReferencePropertyResolveError:
+						print "ReferencePropertyResolveError on "
+						print menuItem
 				actualComposits=[]
 				for composit in composits:
 					if composit.category.key()==category.key() and composit.day==actualDay:

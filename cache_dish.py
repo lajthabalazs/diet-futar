@@ -29,15 +29,13 @@ def removeDishFromCategory(categoryKey, dishKey):
 def addDishToCategory(categoryKey, dishKey):
 	client = memcache.Client()
 	category = client.get(categoryKey)
-	found = False
 	if category != None:
 		dishKeys=[]
 		for key in category.dishKeys:
 			if key != dishKey:
 				dishKeys.append(key)
-			else:
-				found = True
 				# Save modified value
+			dishKeys.append(dishKey)
 			categoryObject={
 				'key':category.key,
 				'name':category.name,

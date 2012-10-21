@@ -53,7 +53,6 @@ def getDaysComposits(day, categoryKey):
 			client.set(compositObject['key'], compositObject)
 			daysItems.append(compositObject)
 		client.set(key,daysItems)
-		return daysItems
 	retItems = []
 	# Fetch menu item data for keys
 	for composit in daysItems:

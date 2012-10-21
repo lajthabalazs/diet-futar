@@ -4,44 +4,40 @@ Created on Aug 11, 2012
 @author: lajthabalazs
 '''
 from google.appengine.api import memcache
-from model import DishCategory
+from model import IngredientCategory
 from google.appengine.ext import db
-from cache_dish import getDish
+from cache_ingredient import getIngredient
 
-CATEGORIES_KEY="CATS"
+CATEGORIES_KEY="INGREDIENTS_CATS"
 
-def getCategories():
+def getIngredientCategories():
 	client = memcache.Client()
 	categories=client.get(CATEGORIES_KEY)
 	if categories == None:
-		categories = DishCategory.all().order("index")
+		categories = IngredientCategory.all().order("name")
 		categoryList=[]
 		for category in categories:
 			categoryObject={
 				'key':str(category.key()),
 				'name':category.name,
-				'isMenu':category.isMenu,
-				'index':category.index
 			}
 			categoryList.append(categoryObject)
 		client.set(CATEGORIES_KEY, categoryList)
 		return categoryList
 	return categories
 
-def addCategory(category):
+def addIngredientCategory(category):
 	client = memcache.Client()
 	categories=client.get(CATEGORIES_KEY)
 	if categories != None:
 		categoryObject={
 			'key':str(category.key()),
 			'name':category.name,
-			'isMenu':category.isMenu,
-			'index':category.index
 		}
 		categories.append(categoryObject)
 		client.set(CATEGORIES_KEY, categories)
 
-def deleteCategory(key):
+def deleteIngredientCategory(key):
 	client = memcache.Client()
 	categories=client.get(CATEGORIES_KEY)
 	if categories != None:
@@ -53,46 +49,43 @@ def deleteCategory(key):
 				categoryList.append(category)
 		client.set(CATEGORIES_KEY, categoryList)
 
-def modifyCategory(category):
+def modifyIngredientCategory(category):
 	client = memcache.Client()
 	categories=client.get(CATEGORIES_KEY)
 	if categories != None:
 		categoryList=[]
 		for categoryObject in categories:
-			dishKeys=[]
-			for dish in category.dishes:
-				dishKeys.append(str(dish.key()))
 			if category.key == categoryObject.key:
+				ingredientKeys = []
+				for ingredient in categoryObject.ingredients:
+					ingredientKeys.append(str(ingredient.key()))
 				categoryObject['name'] = category.name
-				categoryObject['isMenu'] = category.isMenu
-				categoryObject['index'] = category.index
-				categoryObject['dishesKeys'] = categoryObject.dishKeys
+				categoryObject['ingredientsKeys'] = ingredientKeys
 			categoryList.append(categoryObject)
 		client.set(CATEGORIES_KEY, categoryList)
 
-def getCategoryWithDishes(key):
+def getIngredientCategoryWithIngredients(key):
 	client = memcache.Client()
 	category = client.get(key)
 	if category == None:
-		categoryDb = DishCategory.get(key)
+		categoryDb = IngredientCategory.get(key)
 		if categoryDb != None:
-			dishKeys=[]
-			for dish in category.dishes:
-				dishKeys.append(str(dish.key()))
+			ingredientKeys = []
+			for ingredient in categoryDb.ingredients:
+				ingredientKeys.append(str(ingredient.key()))
 			category={
 				'key':key,
 				'name':category.name,
-				'isMenu':category.isMenu,
-				'index':category.index,
-				'dishesKeys':dishKeys
+				'ingredientsKeys':ingredientKeys
 			}
 			client.set(key, category)
 		else:
 			return None
-	# Fetch dishes
-	dishes = []
-	for dishKey in category['dishKeys']:
-		dishes.append(getDish(dishKey))
-	category['dishes'] = dishes
+		# Fetch dishes
+	ingredients = []
+	for dishKey in category['ingredientsKeys']:
+		ingredients.append(getIngredient(dishKey))
+	category['dishes'] = ingredients
+
 	return category
 

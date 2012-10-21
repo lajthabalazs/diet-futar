@@ -2,14 +2,14 @@
 	<div class="container">
 		<h3>{{ ingredient.name }}</h3>
 		<strong>{% if ingredient.category != None %}
-				<a href="ingredientCategory?ingredientCategoryKey={{ ingredient.category.key() }}">{{ ingredient.category.name }}</a>
+				<a href="ingredientCategory?ingredientCategoryKey={{ ingredient.category.key }}">{{ ingredient.category.name }}</a>
 		{% else %}Nincs kategória{% endif %}</strong>
 		<form method="post">
 			<select name="ingredientCategoryKey">
 				<option value="">-- törlés a kategóriából --</option>
 				{% for availableCategory in availableCategories %}
-					<option value="{{ availableCategory.key() }}"
-						{% if ((ingredient.category != None) and (availableCategory.key()==ingredient.category.key())) %}
+					<option value="{{ availableCategory.key }}"
+						{% if ((ingredient.category != None) and (availableCategory.key==ingredient.category.key)) %}
 							selected="true"
 						{% endif %}
 		
@@ -17,7 +17,7 @@
 				{% endfor %}
 		
 			</select>
-			<input type="hidden" name="ingredientKey" value="{{ ingredient.key() }}"/>
+			<input type="hidden" name="ingredientKey" value="{{ ingredient.key }}"/>
 			<table>
 				<th><td colspan="2">100g-ban</td></th>
 				<tr><td>Energia</td><td><input type="text" name="energy" value="{{ ingredient.energy }}"/> kCal</td></tr>

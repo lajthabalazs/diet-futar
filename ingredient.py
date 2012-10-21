@@ -5,6 +5,10 @@ import os
 from base_handler import BaseHandler
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import isUserCook
+from cache_ingredient import getIngredient, modifyIngredient, addIngredient,\
+	getIngredients
+from cache_ingredient_category import getIngredientCategories,\
+	getIngredientCategoryWithIngredients
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -17,13 +21,12 @@ class IngredientPage(BaseHandler):
 		ingredientKey=self.request.get('ingredientKey')
 		if ((ingredientKey != None) and (ingredientKey != "")):
 			#Ingredient must exist
-			ingredient = db.get(ingredientKey)
+			ingredient = Ingredient.get(ingredientKey)
 			ingredientCategoryKey=self.request.get('ingredientCategoryKey')
 			if ((ingredientCategoryKey != None) and (ingredientCategoryKey != "")):
-				category = db.get(ingredientCategoryKey)
-				ingredient.category = category
+				ingredient.category = IngredientCategory.get(ingredientCategoryKey)
 			else:
-				ingredient.category = None
+				ingredient.categoryKey = None
 			energy=self.request.get('energy')
 			protein=self.request.get('protein')
 			carbs=self.request.get('carbs')
@@ -40,10 +43,15 @@ class IngredientPage(BaseHandler):
 			if ((fiber != None) and (fiber != "")):
 				ingredient.fiber = float(self.request.get('fiber'))
 			ingredient.put()
+			modifyIngredient(ingredient)
 			sourceKey=self.request.get('source')
 			if ((sourceKey == ingredientCategoryKey) and (sourceKey!=None) and (sourceKey != "")):
-				self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
-				return
+				if ingredient.category != None:
+					self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % ingredient.category.key())
+					return
+				else:
+					self.redirect('/ingredient')
+					return
 			else:
 				self.redirect('/ingredient')
 				return
@@ -51,6 +59,7 @@ class IngredientPage(BaseHandler):
 			ingredient = Ingredient()
 			ingredient.name = self.request.get('ingredient_name')
 			ingredient.put()
+			addIngredient(ingredient)
 			self.redirect('/ingredient?ingredientKey=%s' % ingredient.key())
 	def get(self):
 		if not isUserCook(self):
@@ -59,17 +68,17 @@ class IngredientPage(BaseHandler):
 		ingredientKey=self.request.get('ingredientKey')
 		sourceKey=self.request.get('source')
 		if ((ingredientKey != None) and (ingredientKey != "")):
-			ingredient = db.get(ingredientKey)
-			availableCategories = IngredientCategory.gql("ORDER BY name")
+			ingredient = getIngredient(ingredientKey)
+			availableCategories = getIngredientCategories()
 			template_values = {
 				'ingredient': ingredient,
 				'availableCategories':availableCategories,
 				'source':sourceKey
 			}
 			template = jinja_environment.get_template('templates/ingredient.html')
-			self.printPage(ingredient.name, template.render(template_values), False, False)
+			self.printPage(ingredient['name'], template.render(template_values), False, False)
 		else:
-			oldIngredients = Ingredient.gql("ORDER BY name")
+			oldIngredients = getIngredients()
 			ingredients = []
 			for ingredient in oldIngredients:
 				try:
