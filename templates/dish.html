@@ -4,17 +4,17 @@
 		<h4>{{ dish.subTitle }}</h4>
 		<p>{{ dish.description }}</p>
 		<form method="post">
-			<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
+			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
 			<input type="text" name="title" value="{{ dish.title }}"/><br/>
 			{% if dish.category != None %}
-					<a href="dishCategory?dishCategoryKey={{ dish.category.key() }}">{{ dish.category.name }}</a>
+					<a href="dishCategory?dishCategoryKey={{ dish.category.key }}">{{ dish.category.name }}</a>
 			{% else %}Nincs kategória{% endif %}<br/>
 			
 			<select name="dishCategoryKey">
 				<option value="">-- törlés a kategóriából --</option>
 				{% for availableCategory in availableCategories %}
-					<option value="{{ availableCategory.key() }}"
-						{% if ((dish.category != None) and (availableCategory.key()==dish.category.key())) %}
+					<option value="{{ availableCategory.key }}"
+						{% if ((dish.category != None) and (availableCategory.key==dish.category.key)) %}
 							selected="selected"
 						{% endif %}
 					>{{ availableCategory.name }}</option>
@@ -30,10 +30,10 @@
 		<br/>
 			<!-- Add a new ingredient -->
 		<form action="{{ add_url }}" method="post">
-			<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
+			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
 			<select name = "ingredientKey">
 			{% for ingredient in availableIngredients %}
-				<option value="{{ ingredient.key() }}">{{ ingredient.name }}</option>
+				<option value="{{ ingredient.key }}">{{ ingredient.name }}</option>
 			{% endfor %}
 			</select>
 			<input type="text" name="quantity" cols="5"/> g
@@ -48,14 +48,14 @@
 		{% for ingredient in dish.ingredients %}
 		<tr>
 		<form action="{{ add_url }}" method="post">
-			<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
-			<input type="hidden" name="dishIngredientKey" value="{{ ingredient.key() }}"/>
-			<td><input type="text" name="quantity" value="{{ ingredient.quantity }}"/> g </td><td><a href="/ingredient?ingredientKey={{ingredient.ingredient.key()}}"> {{ ingredient.ingredient.name }}</a> {% if (ingredient.ingredient.energy==None or ingredient.ingredient.energy==0.0) %}<strong><font color="red">!!!</font></strong>{%endif%}</td>
+			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
+			<input type="hidden" name="dishIngredientKey" value="{{ ingredient.key }}"/>
+			<td><input type="text" name="quantity" value="{{ ingredient.quantity }}"/> g </td><td><a href="/ingredient?ingredientKey={{ingredient.ingredient.key}}"> {{ ingredient.ingredient.name }}</a> {% if (ingredient.ingredient.energy==None or ingredient.ingredient.energy==0.0) %}<strong><font color="red">!!!</font></strong>{%endif%}</td>
 			<td><input type="submit" value ="Mentés"/></td>
 		</form>
 		<td><form action="/deleteIngredientFromDish" method="post">
-			<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
-			<input type="hidden" name="dishIngredientKey" value="{{ ingredient.key() }}"/>
+			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
+			<input type="hidden" name="dishIngredientKey" value="{{ ingredient.key }}"/>
 			<input type="submit" value="Tölés">
 		</form></td>
 	    {% endfor %}

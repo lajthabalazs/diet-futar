@@ -16,7 +16,7 @@ def removeDishFromCategory(categoryKey, dishKey):
 		for key in category.dishKeys:
 			if key != dishKey:
 				dishKeys.append(key)
-		category['disheKeys'] = dishKeys
+		category['dishKeys'] = dishKeys
 		client.set(categoryKey, category)
 
 
@@ -30,7 +30,7 @@ def addDishToCategory(categoryKey, dishKey):
 				dishKeys.append(key)
 				# Save modified value
 			dishKeys.append(dishKey)
-			category['disheKeys'] = dishKeys
+			category['dishKeys'] = dishKeys
 			client.set(key, category)
 
 def getDish(key):
@@ -40,10 +40,8 @@ def getDish(key):
 		dishDb = Dish.get(key)
 		if dishDb != None:
 			dish = createDishObjectDb(dishDb)
-			client.set(key, dish)
-			return dish
-	else:
-		return dish
+			client.set(dish['key'], dish)
+	return dish
 
 # Modify dish
 def modifyDish(dishDb):
@@ -51,13 +49,15 @@ def modifyDish(dishDb):
 	key = str(dishDb.key())
 	# Update dishes old category
 	dishObject = getDish(key)
-	categoryKey = str(dishDb.category.key())
-	if dishObject != None and dishObject["categoryKey"] != categoryKey:
+	categoryKey = None
+	if dishDb.category != None:
+		categoryKey = str(dishDb.category.key())
+	if dishObject != None and dishObject["category"]!= None and dishObject["category"]['key'] != categoryKey:
 		# Update category objects in cacge
-		removeDishFromCategory(dishObject["categoryKey"], key)
+		removeDishFromCategory(dishObject["category"]['key'], key)
 	# Create object
 	newDishObject = createDishObjectDb(dishDb)
-	if dishObject == None or dishObject["categoryKey"] != categoryKey:
+	if ( dishObject == None or dishObject["category"] != categoryKey ) and categoryKey != None:
 		addDishToCategory(categoryKey, key)
 	client.set(key, newDishObject)
 

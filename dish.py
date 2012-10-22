@@ -10,6 +10,7 @@ from base_handler import BaseHandler
 from user_management import isUserCook
 from keys import DISH_CATEGORY_KEY
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
+from cache_dish import getDish, deleteDish, modifyDish
 
 #from user_management import getUserBox
 
@@ -20,8 +21,10 @@ class DeleteDishPage(BaseHandler):
 		if not isUserCook(self):
 			self.redirect("/")
 			return
-		dish = db.get(self.request.get('dishKey'))
+		dishKey = self.request.get('dishKey')
+		dish = db.get(dishKey)
 		dish.delete()
+		deleteDish(dishKey)
 		self.redirect('/dish')
 	
 class DishPage(BaseHandler):
@@ -48,6 +51,7 @@ class DishPage(BaseHandler):
 				else:
 					dish.category = None
 				dish.put()
+				modifyDish(dish)
 				self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
 				return
 			else:
@@ -65,16 +69,12 @@ class DishPage(BaseHandler):
 		dishKey=self.request.get('dishKey')
 		if ((dishKey != None) and (dishKey != "")):
 		# A single dish with editable ingredient list
-			dish=db.get(dishKey)
+			dish=getDish(dishKey)
 			#Check if category exists
-			try:
-				dish.category
-			except ReferencePropertyResolveError:
-				dish.category = None
-			ingredients = dish.ingredients
-			dish.energy = 0
+			ingredients = dish['ingredients']
+			dish['energy'] = 0
 			for ingredient in ingredients:
-				dish.energy = dish.energy + ingredient.quantity * ingredient.ingredient.energy / 100.0
+				dish['energy'] = dish['energy'] + ingredient['quantity'] * ingredient['ingredient']['energy'] / 100.0
 			availableIngredients = Ingredient.gql(" ORDER BY name")
 			availableCategories = DishCategory.gql("WHERE isMenu = False ORDER BY index")
 			template_values = {
@@ -85,7 +85,7 @@ class DishPage(BaseHandler):
 				'delete_url':"/deleteIngredientFromDish"
 			}
 			template = jinja_environment.get_template('templates/dish.html')
-			self.printPage(dish.title, template.render(template_values), False, False)
+			self.printPage(dish['title'], template.render(template_values), False, False)
 		else:
 		# All the dishes
 			unprocessedDishes = Dish.gql("ORDER BY title")
@@ -113,6 +113,7 @@ class DishIngredientDeletePage(BaseHandler):
 		dish = db.get(self.request.get('dishKey'))
 		ingredientToDish = db.get(self.request.get('dishIngredientKey'))
 		ingredientToDish.delete()
+		modifyDish(dish)
 		self.redirect('/dish?dishKey=%s' % dish.key())
 
 class DishIngredientAddPage(BaseHandler):
@@ -129,13 +130,18 @@ class DishIngredientAddPage(BaseHandler):
 			ingredientToDish.put()
 		else:
 			# Retrieve the ingredient
-			ingredient = db.get(self.request.get('ingredientKey'))
+			ingredientKey = self.request.get('ingredientKey')
+			print "Hello"
+			print ingredientKey
+			return
+			ingredient = db.get()
 			quantity = float(self.request.get('quantity'))
 			ingredientListItem = IngredientListItem()
 			ingredientListItem.quantity = quantity
 			ingredientListItem.dish = dish
 			ingredientListItem.ingredient = ingredient
 			ingredientListItem.put()
+			modifyDish(dish)
 		self.redirect('/dish?dishKey=%s' % dish.key())
 
 

@@ -3,37 +3,6 @@ Created on Aug 11, 2012
 
 @author: lajthabalazs
 '''
-from google.appengine.api import memcache
-from model import Ingredient
-
-INGREDIENTS_KEY = "Ingredients"
-
-def createDishCategoryObjectDb(categoryDb):
-	if categoryDb == None:
-		return None
-	else:
-		categoryObject={
-			'key':categoryDb.key,
-			'name':categoryDb.name,
-			'isMenu':categoryDb.isMenu,
-			'index':categoryDb.index,
-			'disheKeys': []
-		}
-		return categoryObject
-
-
-def createDishObjectDb(dishDb):
-	if dishDb == None:
-		return None
-	else:
-		dish={
-			'key':str(dishDb.key()),
-			'title':dishDb.title,
-			'categoryKey':str(dishDb.category.key()),
-			'price':dishDb.price
-		}
-		# TDOO ingredients
-		return dish
 
 def createIngredientCategoryDb(categoryDb):
 	if categoryDb == None:
@@ -59,3 +28,33 @@ def createIngredientDb (ingredientDb):
 		'glucozeFree':ingredientDb.glucozeFree
 	}
 	return ingredient
+
+def createDishCategoryObjectDb(categoryDb):
+	if categoryDb == None:
+		return None
+	else:
+		categoryObject={
+			'key':str(categoryDb.key()),
+			'name':categoryDb.name,
+			'isMenu':categoryDb.isMenu,
+			'index':categoryDb.index,
+			'dishKeys': []
+		}
+		return categoryObject
+
+
+def createDishObjectDb(dishDb):
+	if dishDb == None:
+		return None
+	else:
+		ingredients = []
+		for ingredientDb in dishDb.ingredients:
+			ingredients.append(createIngredientDb(ingredientDb.ingredient))
+		dish={
+			'key':str(dishDb.key()),
+			'title':dishDb.title,
+			'category':createDishCategoryObjectDb(dishDb.category),
+			'price':dishDb.price,
+			'ingredients':ingredients
+		}
+		return dish

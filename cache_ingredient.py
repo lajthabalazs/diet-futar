@@ -89,12 +89,6 @@ def modifyIngredient(ingredientDb):
 	key = str(ingredientDb.key())
 	# Update dishes old category
 	ingredientObject = getIngredient(key)
-	#print "Hello"
-	#print ingredientObject
-	#print "<br/>"
-	#print "Bello"
-	#print createIngredientDb(ingredientDb)
-	#print "<br/>"
 	categoryKey = None
 	if ingredientDb.category != None:
 		categoryKey = str(ingredientDb.category.key())
@@ -118,6 +112,7 @@ def modifyIngredient(ingredientDb):
 				category['ingredients'] = newIngredients
 				client.set(categoryKey, category)
 	# Adds ingredient
+	# TODO modify dishes containing this ingredient
 	client.set(key, newIngredientObject)
 	# Adds ingredient to ingredient list
 	ingredients = client.get(INGREDIENTS_KEY)

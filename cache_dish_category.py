@@ -65,7 +65,7 @@ def modifyCategory(category):
 				categoryObject['name'] = category.name
 				categoryObject['isMenu'] = category.isMenu
 				categoryObject['index'] = category.index
-				categoryObject['dishesKeys'] = categoryObject.dishKeys
+				categoryObject['dishKeys'] = categoryObject.dishKeys
 			categoryList.append(categoryObject)
 		client.set(CATEGORIES_KEY, categoryList)
 
@@ -83,7 +83,7 @@ def getCategoryWithDishes(key):
 				'name':category.name,
 				'isMenu':category.isMenu,
 				'index':category.index,
-				'dishesKeys':dishKeys
+				'dishKeys':dishKeys
 			}
 			client.set(key, category)
 		else:
