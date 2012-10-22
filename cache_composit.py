@@ -19,7 +19,6 @@ def createCompositData(composit):
 		'key':str(composit.key()),
 		'categoryKey':composit.categoryKey,
 		'price':composit.price,
-		'sumprice':composit.sumprice,
 		'day':composit.day,
 		'active':composit.active,
 		'menuItemKeys':menuItemKeys

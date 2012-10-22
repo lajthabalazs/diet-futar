@@ -6,6 +6,7 @@ Created on Aug 11, 2012
 from google.appengine.api import memcache
 from model import Ingredient
 from cache_helper import createIngredientDb
+from cache_dish import modifyDish
 
 INGREDIENTS_KEY = "Ingredients"
 
@@ -133,8 +134,12 @@ def modifyIngredient(ingredientDb):
 	# TODO modify dishes containing this ingredient
 	if (differenceToPropagate(ingredientObject, newIngredientObject)):
 		for dishIngredient in ingredientDb.dishes:
-			dishKey = dishIngredient.dish.key()
-			client.delete(str(dishKey))
+			dishKey = str(dishIngredient.dish.key())
+			title = dishIngredient.dish.title
+			subtitle = dishIngredient.dish.subtitle
+			description = dishIngredient.dish.description
+			dishCategory = dishIngredient.dish.category
+			modifyDish(dishKey, title, subtitle, description, dishCategory)
 	client.set(key, newIngredientObject)
 	# Adds ingredient to ingredient list
 	ingredients = client.get(INGREDIENTS_KEY)

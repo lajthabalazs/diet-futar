@@ -19,7 +19,7 @@
 								{% for composit in day.composits%}
 									<div class="calendarElement">
 										{% for component in composit.components%}
-											<h3>{{component.menuItem.dish.title}}</h3>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %} {{component.menuItem.price}} Ft<br/>
+											<h3>{{component.menuItem.dish.title}}</h3>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %} {{component.menuItem.sumprice}} Ft<br/>
 											{% if composit.alterable %}
 												<form action="/deleteItemFromComposit" method="post">
 													<input type="hidden" name="componentKey" value="{{ component.key() }}"/>
@@ -69,7 +69,7 @@
 									<div class="calendarElement">
 										<h3>{{menuItem.dish.title}}</h3>
 										<!-- References of components -->
-										{% if menuItem.dish.price == None%}0{% else %}{{ menuItem.dish.price }}{% endif %} Ft
+										{% if menuItem.dish.price == None%}0{% else %}{{ menuItem.dish.price }}{% endif %} This Ft
 										<br/>
 										{% for component in menuItem.components %}
 											{{ component.dish.title }}

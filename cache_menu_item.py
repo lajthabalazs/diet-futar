@@ -19,7 +19,6 @@ def createMenuItemData(menuItem):
 		'categoryKey':menuItem.categoryKey,
 		'dishKey':str(menuItem.dish.key()),
 		'price':menuItem.price,
-		'sumprice':menuItem.sumprice,
 		'day':menuItem.day,
 		'containingMenuItem':None,
 		'active':menuItem.active,
@@ -36,9 +35,18 @@ def getMenuItem(key):
 		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems
 	menuItem['dish']=getDish(menuItem['dishKey'])
+	sumprice = menuItem.dish.price
+	if sumprice == None:
+		sumprice = 0
+	# Calculate sum price
 	components = []
 	for subItemKey in menuItem['componentKeys']:
-		components.append(getMenuItem(subItemKey))
+		component = getMenuItem(subItemKey)
+		components.append(component)
+		componentPrice = component.dish.price
+		if componentPrice != None:
+			sumprice = sumprice + componentPrice
+	menuItem['sumprice'] = sumprice
 	menuItem['components'] = components
 	return menuItem
 	
@@ -56,10 +64,19 @@ def getDaysMenuItems(day, categoryKey):
 	# Fetch dishes for menu items
 	ret = []
 	for menuItem in daysItems:
+		sumprice = menuItem.dish.price
+		if sumprice == None:
+			sumprice = 0
+
 		menuItem['dish']=getDish(menuItem['dishKey'])
 		components = []
 		for subItemKey in menuItem['componentKeys']:
-			components.append(getMenuItem(subItemKey))
+			component = getMenuItem(subItemKey)
+			components.append(component)
+			componentPrice = component.dish.price
+			if componentPrice != None:
+				sumprice = sumprice + componentPrice
+		menuItem['sumprice'] = sumprice
 		menuItem['components'] = components
 		ret.append(menuItem)
 	return ret
@@ -71,7 +88,6 @@ def addMenuItem(dishKey, day, containingMenuItem = None):
 	menuItem.day=day
 	menuItem.dish=dish
 	menuItem.price = dish.price
-	menuItem.sumprice = dish.price
 	menuItem.categoryKey=str(dish.category.key())
 	menuItem.containingMenuItem = containingMenuItem
 	menuItem.put()
