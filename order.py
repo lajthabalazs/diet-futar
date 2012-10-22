@@ -11,9 +11,9 @@ from model import MenuItem, UserOrder, UserOrderItem, User,\
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import USER_KEY, getUser, isUserLoggedIn
 from timezone import USTimeZone
-from cache_category import getCategories
 from cache_menu_item import getDaysMenuItems
 from cache_composit import getDaysComposits
+from cache_dish_category import getCategories
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"

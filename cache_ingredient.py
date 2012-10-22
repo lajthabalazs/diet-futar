@@ -5,34 +5,9 @@ Created on Aug 11, 2012
 '''
 from google.appengine.api import memcache
 from model import Ingredient
+from cache_helper import createIngredientDb
 
 INGREDIENTS_KEY = "Ingredients"
-
-def createCategoryDb(categoryDb):
-	if categoryDb == None:
-		return None
-	else:
-		category = {
-			'key': str(categoryDb.key()),
-			'name': categoryDb.name
-		}
-		return category
-	
-def createIngredientDb (ingredientDb):
-	ingredient={
-		'key':str(ingredientDb.key()),
-		'name':ingredientDb.name,
-		'category':createCategoryDb(ingredientDb.category),
-		'price':ingredientDb.price,
-		'energy':ingredientDb.energy,
-		'carbs':ingredientDb.carbs,
-		'protein':ingredientDb.protein,
-		'fat':ingredientDb.fat,
-		'fiber':ingredientDb.fiber,
-		'glucozeFree':ingredientDb.glucozeFree
-	}
-	return ingredient
-
 
 def removeIngredientFromCategory(categoryKey, ingredientKey):
 	client = memcache.Client()
@@ -108,7 +83,6 @@ def getIngredients():
 			client.set(INGREDIENTS_KEY, ingredients)
 	return ingredients
 
-
 # Modify dish
 def modifyIngredient(ingredientDb):
 	client = memcache.Client()
@@ -154,7 +128,6 @@ def modifyIngredient(ingredientDb):
 				ingredient = newIngredientObject
 			newIngredients.append(ingredient)
 		client.set(INGREDIENTS_KEY, newIngredients)
-
 
 # Adds a dish to the cache
 def addIngredient(ingredientDb):

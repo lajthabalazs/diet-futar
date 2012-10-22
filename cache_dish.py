@@ -5,8 +5,8 @@ Created on Aug 11, 2012
 '''
 from google.appengine.api import memcache
 from model import Dish
-from google.appengine.ext import db
-
+from cache_helper import createDishObjectDb
+	
 def removeDishFromCategory(categoryKey, dishKey):
 	client = memcache.Client()
 	category = client.get(categoryKey)
@@ -16,14 +16,8 @@ def removeDishFromCategory(categoryKey, dishKey):
 		for key in category.dishKeys:
 			if key != dishKey:
 				dishKeys.append(key)
-		categoryObject={
-			'key':category.key,
-			'name':category.name,
-			'isMenu':category.isMenu,
-			'index':category.index,
-			'disheKeys':dishKeys
-		}
-		client.set(categoryKey, categoryObject)
+		category['disheKeys'] = dishKeys
+		client.set(categoryKey, category)
 
 
 def addDishToCategory(categoryKey, dishKey):
@@ -36,69 +30,46 @@ def addDishToCategory(categoryKey, dishKey):
 				dishKeys.append(key)
 				# Save modified value
 			dishKeys.append(dishKey)
-			categoryObject={
-				'key':category.key,
-				'name':category.name,
-				'isMenu':category.isMenu,
-				'index':category.index,
-				'dishKeys':dishKeys
-			}
-			client.set(key, categoryObject)
-			return categoryObject
-	else:
-		return category
+			category['disheKeys'] = dishKeys
+			client.set(key, category)
 
 def getDish(key):
 	client = memcache.Client()
 	dish = client.get(key)
 	if dish == None:
-		dish = Dish.get(key)
-		if dish != None:
-			dishDict={
-				'key':key,
-				'title':dish.title,
-				'categoryKey':str(dish.category.key()),
-				'price':dish.price
-			}
-			client.set(key, dishDict)
-			return dishDict
+		dishDb = Dish.get(key)
+		if dishDb != None:
+			dish = createDishObjectDb(dishDb)
+			client.set(key, dish)
+			return dish
 	else:
 		return dish
 
 # Modify dish
-def modifyDish(dish):
+def modifyDish(dishDb):
 	client = memcache.Client()
-	key = str(dish.key())
+	key = str(dishDb.key())
 	# Update dishes old category
 	dishObject = getDish(key)
-	categoryKey = str(dish.category.key())
+	categoryKey = str(dishDb.category.key())
 	if dishObject != None and dishObject["categoryKey"] != categoryKey:
 		# Update category objects in cacge
 		removeDishFromCategory(dishObject["categoryKey"], key)
 	# Create object
-	dishDict={
-		'key':key,
-		'title':dish.title,
-		'categoryKey':categoryKey,
-		'price':dish.price
-	}
+	newDishObject = createDishObjectDb(dishDb)
 	if dishObject == None or dishObject["categoryKey"] != categoryKey:
 		addDishToCategory(categoryKey, key)
-	client.set(key, dishDict)
+	client.set(key, newDishObject)
 
-# Adds a dish to the cache
-def addDish(dish):
+# Adds a dishDb to the cache
+def addDish(dishDb):
 	client = memcache.Client()
-	key = str(dish.key())
-	categoryKey = str(dish.category.key())
-	dishDict={
-		'key':key,
-		'title':dish.title,
-		'categoryKey':categoryKey,
-		'price':dish.price
-	}
-	addDishToCategory(categoryKey, key)
-	client.set(str(dish.key()), dishDict)
+	key = str(dishDb.key())
+	if dishDb.category != None:
+		categoryKey = str(dishDb.category.key())
+		addDishToCategory(categoryKey, key)
+	dishObject = createDishObjectDb(dishDb)
+	client.set(str(dishDb.key()), dishObject)
 
 # Delete dish from cache
 def deleteDish(key):

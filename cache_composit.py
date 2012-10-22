@@ -6,7 +6,6 @@ Created on Aug 11, 2012
 from google.appengine.api import memcache
 from model import DishCategory, MenuItem, Composit,\
 	CompositMenuItemListItem
-from google.appengine.ext import db
 from cache_menu_item import getMenuItem
 
 COMPOSIT_FOR_DAY="COMP_DAY"

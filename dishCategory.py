@@ -5,7 +5,7 @@ import os
 from base_handler import BaseHandler
 from keys import DISH_CATEGORY_KEY, DISH_KEY, DISH_CATEGORY_URL, DISH_CATEGORY_NAME,\
 	DISH_CATEGORY_DELETE_URL, DISH_CATEGORY_ADD_URL, DISH_CATEGORY_INDEX
-from user_management import isUserAdmin, isUserCook
+from user_management import isUserCook
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 

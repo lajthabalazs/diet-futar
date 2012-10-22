@@ -5,7 +5,6 @@ Created on Aug 11, 2012
 '''
 from google.appengine.api import memcache
 from model import DishCategory
-from google.appengine.ext import db
 from cache_dish import getDish
 
 CATEGORIES_KEY="CATS"

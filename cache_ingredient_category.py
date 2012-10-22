@@ -5,8 +5,7 @@ Created on Aug 11, 2012
 '''
 from google.appengine.api import memcache
 from model import IngredientCategory
-from google.appengine.ext import db
-from cache_ingredient import getIngredient, createIngredientDb
+from cache_helper import createIngredientCategoryDb, createIngredientDb
 
 CATEGORIES_KEY="INGREDIENTS_CATS"
 
@@ -17,11 +16,7 @@ def getIngredientCategories():
 		categories = IngredientCategory.all().order("name")
 		categoryList=[]
 		for category in categories:
-			categoryObject={
-				'key':str(category.key()),
-				'name':category.name,
-			}
-			categoryList.append(categoryObject)
+			categoryList.append(createIngredientCategoryDb(category))
 		client.set(CATEGORIES_KEY, categoryList)
 		return categoryList
 	return categories
@@ -30,11 +25,7 @@ def addIngredientCategory(category):
 	client = memcache.Client()
 	categories=client.get(CATEGORIES_KEY)
 	if categories != None:
-		categoryObject={
-			'key':str(category.key()),
-			'name':category.name,
-		}
-		categories.append(categoryObject)
+		categories.append(createIngredientCategoryDb(category))
 		client.set(CATEGORIES_KEY, categories)
 
 def deleteIngredientCategory(key):
@@ -78,4 +69,3 @@ def getIngredientCategoryWithIngredients(key):
 		else:
 			return None
 	return category
-
