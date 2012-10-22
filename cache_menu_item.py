@@ -35,7 +35,7 @@ def getMenuItem(key):
 		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems
 	menuItem['dish']=getDish(menuItem['dishKey'])
-	sumprice = menuItem.dish.price
+	sumprice = getDish(menuItem['dishKey'])['price']
 	if sumprice == None:
 		sumprice = 0
 	# Calculate sum price
@@ -64,7 +64,7 @@ def getDaysMenuItems(day, categoryKey):
 	# Fetch dishes for menu items
 	ret = []
 	for menuItem in daysItems:
-		sumprice = menuItem.dish.price
+		sumprice = getDish(menuItem['dishKey'])['price']
 		if sumprice == None:
 			sumprice = 0
 
@@ -73,7 +73,7 @@ def getDaysMenuItems(day, categoryKey):
 		for subItemKey in menuItem['componentKeys']:
 			component = getMenuItem(subItemKey)
 			components.append(component)
-			componentPrice = component.dish.price
+			componentPrice = getDish(component['dishKey'])['price']
 			if componentPrice != None:
 				sumprice = sumprice + componentPrice
 		menuItem['sumprice'] = sumprice
