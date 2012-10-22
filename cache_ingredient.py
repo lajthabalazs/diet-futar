@@ -4,33 +4,19 @@ Created on Aug 11, 2012
 @author: lajthabalazs
 '''
 from google.appengine.api import memcache
-from model import Dish, Ingredient
-from google.appengine.ext import db
+from model import Ingredient
 
 INGREDIENTS_KEY = "Ingredients"
 
-class MyClass:
-	"""A simple example class"""
-
-def createIngredientFromDic (ingredientDict):
-	ingredient= MyClass()
-	ingredient.key = ingredientDict['key'],
-	ingredient.name = ingredientDict['name'],
-	ingredient.category = ingredientDict['category'],
-	ingredient.price = ingredientDict['price'],
-	ingredient.energy = ingredientDict['energy'],
-	ingredient.carbs = ingredientDict['carbs'],
-	ingredient.protein = ingredientDict['protein'],
-	ingredient.fat = ingredientDict['fat'],
-	ingredient.fiber = ingredientDict['fiber'],
-	ingredient.glucozeFree = ingredientDict['glucozeFree']
-	return ingredient
-
 def createCategoryDb(categoryDb):
-	category = MyClass()
-	category.key = str(categoryDb.key())
-	category.name = categoryDb.name
-	return category
+	if categoryDb == None:
+		return None
+	else:
+		category = {
+			'key': str(categoryDb.key()),
+			'name': categoryDb.name
+		}
+		return category
 	
 def createIngredientDb (ingredientDb):
 	ingredient={
@@ -54,16 +40,16 @@ def removeIngredientFromCategory(categoryKey, ingredientKey):
 	ingredient = client.get(ingredientKey)
 	# If not in memcache, does nothing
 	if ingredient != None:
-		ingredient.category = None
+		ingredient['category'] = None
 		client.set(ingredientKey, ingredient)
 		if category != None:
 			ingredients=[]
-			for ingredient in category.ingredients:
-				if ingredient.key != ingredientKey:
+			for ingredient in category['ingredients']:
+				if ingredient['key'] != ingredientKey:
 					ingredients.append(ingredient)
 			categoryObject={
-				'key':category.key,
-				'name':category.name,
+				'key':category['key'],
+				'name':category['name'],
 				'ingredients':ingredients
 			}		
 			client.set(categoryKey, categoryObject)
@@ -75,22 +61,24 @@ def addIngredientToCategory(categoryKey, ingredientObject):
 	found = False
 	if category != None:
 		ingredients=[]
-		for ingredient in category.ingredients:
-			if ingredient.key == ingredientObject.key:
+		for ingredient in category['ingredients']:
+			if ingredient['key'] == ingredientObject['key']:
 				found = True
 			ingredients.append(ingredient)
 		# Save modified value
 		if not found:
 			ingredients.append(ingredientObject)
 			categoryObject={
-				'key':category.key,
-				'name':category.name,
+				'key':category['key'],
+				'name':category['name'],
 				'ingredients':ingredients
 			}
-			ingredient = client.get(ingredientObject.key)
-			if ingredient != None:
-				ingredient.categoryKey = categoryKey
-				client.set(ingredientObject.key, ingredient)
+			if ingredientObject != None:
+				ingredientObject['category'] = {
+					'key':category['key'],
+					'name':category['name']
+				}
+				client.set(ingredientObject['key'], ingredientObject)
 			client.set(categoryKey, categoryObject)
 
 
@@ -101,6 +89,7 @@ def getIngredient(key):
 		ingredientDb = Ingredient.get(key)
 		if ingredientDb != None:
 			ingredient = createIngredientDb(ingredientDb)
+			print ingredient
 			client.set(key, ingredient)
 	return client.get(key)
 
@@ -114,9 +103,10 @@ def getIngredients():
 		if ingredientsDb != None:
 			for ingredientDb in ingredientsDb:
 				ingredient = createIngredientDb(ingredientDb)
+				print ingredient
 				ingredients.append(ingredient)
 			client.set(INGREDIENTS_KEY, ingredients)
-	return ingredient
+	return ingredients
 
 
 # Modify dish
@@ -125,67 +115,68 @@ def modifyIngredient(ingredientDb):
 	key = str(ingredientDb.key())
 	# Update dishes old category
 	ingredientObject = getIngredient(key)
-	categoryKey = str(ingredientDb.category.key())
-	if ingredientObject != None and ingredientObject.category.key != categoryKey:
+	#print "Hello"
+	#print ingredientObject
+	#print "<br/>"
+	#print "Bello"
+	#print createIngredientDb(ingredientDb)
+	#print "<br/>"
+	categoryKey = None
+	if ingredientDb.category != None:
+		categoryKey = str(ingredientDb.category.key())
+	if ingredientObject != None and ingredientObject['category']!=None and ingredientObject['category']['key'] != categoryKey:
 		# Update category objects in cacge
-		removeIngredientFromCategory(ingredientObject.category.key, key)
+		removeIngredientFromCategory(ingredientObject['category']['key'], key)
 	# Create object
 	newIngredientObject=createIngredientDb(ingredientDb)
-	if ingredientObject == None or ingredientObject["categoryKey"] != categoryKey:
+	if ingredientObject == None or (categoryKey != None and (ingredientObject["category"] == None or ingredientObject["category"]['key'] != categoryKey)):
 		addIngredientToCategory(categoryKey, newIngredientObject)
 	else:
-		# Modify ingredientDb in category
-		category = client.get(categoryKey)
-		if category != None:
-			newIngredients = []
-			for ingredient in category.ingredients:
-				if ingredient.key == key:
-					ingredient = newIngredientObject
-				newIngredients.append(ingredient)
-			category.ingredients = newIngredients
-			client.set(categoryKey, category)
+		if categoryKey!= None:
+			# Modify ingredientDb in category
+			category = client.get(categoryKey)
+			if category != None:
+				newIngredients = []
+				for ingredient in category['ingredients']:
+					if ingredient['key'] == key:
+						ingredient = newIngredientObject
+					newIngredients.append(ingredient)
+				category['ingredients'] = newIngredients
+				client.set(categoryKey, category)
 	# Adds ingredient
 	client.set(key, newIngredientObject)
 	# Adds ingredient to ingredient list
 	ingredients = client.get(INGREDIENTS_KEY)
 	if ingredients != None:
 		newIngredients = []
-		for ingredientDb in ingredients:
-			if ingredientDb.key == key:
-				ingredientDb = newIngredientObject
-			newIngredients.append(ingredientDb)
+		for ingredient in ingredients:
+			if ingredient['key'] == key:
+				ingredient = newIngredientObject
+			newIngredients.append(ingredient)
 		client.set(INGREDIENTS_KEY, newIngredients)
 
 
 # Adds a dish to the cache
-def addIngredient(ingredient):
+def addIngredient(ingredientDb):
 	client = memcache.Client()
-	key = str(ingredient.key())
-	categoryKey = str(ingredient.category.key())
-	newIngredientObject={
-		'key':key,
-		'name':ingredient.name,
-		'categoryKey':categoryKey,
-		'price':ingredient.price,
-		'energy':ingredient.energy,
-		'carbs':ingredient.carbs,
-		'protein':ingredient.protein,
-		'fat':ingredient.fat,
-		'fiber':ingredient.fiber,
-		'glucozeFree':ingredient.glucozeFree
-	}
-	addIngredientToCategory(categoryKey, key)
-	client.set(key, newIngredientObject)
+	key = str(ingredientDb.key())
+	categoryKey = None
+	if ingredientDb.category != None:
+		categoryKey = str(ingredientDb.category.key())
+	ingredient=createIngredientDb(ingredientDb)
+	if categoryKey != None:
+		addIngredientToCategory(categoryKey, ingredient)
+	client.set(key, ingredient)
 	ingredients = client.get(INGREDIENTS_KEY)
 	if ingredients != None:
 		newIngredients = []
 		found = False
 		for ingredient in ingredients:
-			if ingredient.key == key:
+			if ingredient['key'] == key:
 				found = True
 			newIngredients.append(ingredient)
 		if not found:
-			newIngredients.append(newIngredientObject)
+			newIngredients.append(ingredient)
 		client.set(INGREDIENTS_KEY, newIngredients)
 
 # Delete dish from cache
@@ -195,10 +186,10 @@ def deleteIngredient(key):
 	if ingredientObject != None:
 		removeIngredientFromCategory(ingredientObject.categoryKey, key)
 		client.delete(key)
-		ingredients = client.get(INGREDIENTS_KEY)
+	ingredients = client.get(INGREDIENTS_KEY)
 	if ingredients != None:
 		newIngredients = []
 		for ingredient in ingredients:
-			if ingredient.key != key:
+			if ingredient['key'] != key:
 				newIngredients.append(ingredient)
 		client.set(INGREDIENTS_KEY, newIngredients)

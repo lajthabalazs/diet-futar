@@ -6,7 +6,7 @@ Created on Aug 11, 2012
 from google.appengine.api import memcache
 from model import IngredientCategory
 from google.appengine.ext import db
-from cache_ingredient import getIngredient
+from cache_ingredient import getIngredient, createIngredientDb
 
 CATEGORIES_KEY="INGREDIENTS_CATS"
 
@@ -56,11 +56,7 @@ def modifyIngredientCategory(category):
 		categoryList=[]
 		for categoryObject in categories:
 			if category.key == categoryObject.key:
-				ingredientKeys = []
-				for ingredient in categoryObject.ingredients:
-					ingredientKeys.append(str(ingredient.key()))
 				categoryObject['name'] = category.name
-				categoryObject['ingredientsKeys'] = ingredientKeys
 			categoryList.append(categoryObject)
 		client.set(CATEGORIES_KEY, categoryList)
 
@@ -70,22 +66,16 @@ def getIngredientCategoryWithIngredients(key):
 	if category == None:
 		categoryDb = IngredientCategory.get(key)
 		if categoryDb != None:
-			ingredientKeys = []
-			for ingredient in categoryDb.ingredients:
-				ingredientKeys.append(str(ingredient.key()))
+			ingredient = []
+			for ingredientDb in categoryDb.ingredients:
+				ingredient.append(createIngredientDb(ingredientDb))
 			category={
 				'key':key,
-				'name':category.name,
-				'ingredientsKeys':ingredientKeys
+				'name':categoryDb.name,
+				'ingredients':ingredient
 			}
 			client.set(key, category)
 		else:
 			return None
-		# Fetch dishes
-	ingredients = []
-	for dishKey in category['ingredientsKeys']:
-		ingredients.append(getIngredient(dishKey))
-	category['dishes'] = ingredients
-
 	return category
 

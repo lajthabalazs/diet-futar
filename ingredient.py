@@ -6,7 +6,7 @@ from base_handler import BaseHandler
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import isUserCook
 from cache_ingredient import getIngredient, modifyIngredient, addIngredient,\
-	getIngredients
+	getIngredients, deleteIngredient
 from cache_ingredient_category import getIngredientCategories,\
 	getIngredientCategoryWithIngredients
 
@@ -26,7 +26,7 @@ class IngredientPage(BaseHandler):
 			if ((ingredientCategoryKey != None) and (ingredientCategoryKey != "")):
 				ingredient.category = IngredientCategory.get(ingredientCategoryKey)
 			else:
-				ingredient.categoryKey = None
+				ingredient.category = None
 			energy=self.request.get('energy')
 			protein=self.request.get('protein')
 			carbs=self.request.get('carbs')
@@ -78,16 +78,8 @@ class IngredientPage(BaseHandler):
 			template = jinja_environment.get_template('templates/ingredient.html')
 			self.printPage(ingredient['name'], template.render(template_values), False, False)
 		else:
-			oldIngredients = getIngredients()
-			ingredients = []
-			for ingredient in oldIngredients:
-				try:
-					ingredient.category
-				except ReferencePropertyResolveError:
-					ingredient.category = None
-				ingredients.append(ingredient)
 			template_values = {
-				'ingredients': ingredients,
+				'ingredients': getIngredients(),
 				'delete_url':"/deleteIngredient"
 			}
 			template = jinja_environment.get_template('templates/ingredient_list.html')
@@ -100,9 +92,13 @@ class IngredientDeletePage(BaseHandler):
 			return	
 		ingredient = db.get(self.request.get('ingredientKey'))
 		#Delete all instances of the ingredient association
-		for dishIngredient in ingredient.dishes:
-			dishIngredient.delete()
-		ingredient.delete()
+		if ingredient!= None:
+			if ingredient.dishes != None:
+				for dishIngredient in ingredient.dishes:
+					dishIngredient.delete()
+			ingredient.delete()
+		# Remove from cache
+		deleteIngredient(self.request.get('ingredientKey'))
 		self.redirect('/ingredient')
 
 class IngredientAddPage(BaseHandler):
@@ -115,6 +111,7 @@ class IngredientAddPage(BaseHandler):
 		ingredient.name = self.request.get('ingredient_name')
 		ingredient.category = category
 		ingredient.put()
+		addIngredient(ingredient)
 		self.redirect('/ingredient?ingredientKey=%s&source=%s' % (ingredient.key(), category.key()))
 
 

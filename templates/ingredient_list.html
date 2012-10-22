@@ -10,13 +10,13 @@
 		</tr>
 		{% for ingredient in ingredients %}
 		<tr>
-			<td><a href="/ingredient?ingredientKey={{ingredient.key()}}">{{ ingredient.name }}</a></td>
+			<td><a href="/ingredient?ingredientKey={{ingredient.key}}">{{ ingredient.name }}</a></td>
 			<td>{% if ingredient.category != None %}
-				<a href="ingredientCategory?ingredientCategoryKey={{ ingredient.category.key() }}">{{ ingredient.category.name }}</a>
+				<a href="ingredientCategory?ingredientCategoryKey={{ ingredient.category.key }}">{{ ingredient.category.name }}</a>
 			{% endif %}
 			</td>
 			<td><form action="{{delete_url}}" method="post">
-				<input type="hidden" name="ingredientKey" value="{{ ingredient.key() }}"/>
+				<input type="hidden" name="ingredientKey" value="{{ ingredient.key }}"/>
 				<input type="submit" value="Töröl">
 			</form></td>
 		</tr>
