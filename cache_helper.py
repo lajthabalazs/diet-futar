@@ -3,6 +3,7 @@ Created on Aug 11, 2012
 
 @author: lajthabalazs
 '''
+from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 
 def createIngredientCategoryDb(categoryDb):
 	if categoryDb == None:
@@ -13,6 +14,7 @@ def createIngredientCategoryDb(categoryDb):
 			'name': categoryDb.name
 		}
 		return category
+
 
 def createIngredientDb (ingredientDb):
 	ingredient={
@@ -26,6 +28,24 @@ def createIngredientDb (ingredientDb):
 		'fat':ingredientDb.fat,
 		'fiber':ingredientDb.fiber,
 		'glucozeFree':ingredientDb.glucozeFree
+	}
+	return ingredient
+
+
+def createDishIngredientDb (ingredientDb):
+	ingredient={
+		'key':str(ingredientDb.key()),
+		'ingredient_key':str(ingredientDb.ingredient.key()),
+		'name':ingredientDb.ingredient.name,
+		'category':createIngredientCategoryDb(ingredientDb.ingredient.category),
+		'price':ingredientDb.ingredient.price,
+		'energy':ingredientDb.ingredient.energy,
+		'carbs':ingredientDb.ingredient.carbs,
+		'protein':ingredientDb.ingredient.protein,
+		'fat':ingredientDb.ingredient.fat,
+		'fiber':ingredientDb.ingredient.fiber,
+		'glucozeFree':ingredientDb.ingredient.glucozeFree,
+		'quantity':ingredientDb.quantity
 	}
 	return ingredient
 
@@ -47,14 +67,18 @@ def createDishObjectDb(dishDb):
 	if dishDb == None:
 		return None
 	else:
+		price = 0
 		ingredients = []
 		for ingredientDb in dishDb.ingredients:
-			ingredients.append(createIngredientDb(ingredientDb.ingredient))
+			ingredient = createDishIngredientDb(ingredientDb)
+			if ingredientDb.ingredient.price != None and ingredientDb.quantity != None:
+				price = price + ingredientDb.quantity * ingredientDb.ingredient.price
+			ingredients.append(ingredient)
 		dish={
 			'key':str(dishDb.key()),
 			'title':dishDb.title,
 			'category':createDishCategoryObjectDb(dishDb.category),
-			'price':dishDb.price,
+			'price':int(price / 100),
 			'ingredients':ingredients
 		}
 		return dish

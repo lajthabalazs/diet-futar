@@ -44,9 +44,13 @@ def getDish(key):
 	return dish
 
 # Modify dish
-def modifyDish(dishDb):
+def modifyDish(key, title, subTitle, description, dishCategoryDb):
+	dishDb = Dish.get(key)
 	client = memcache.Client()
-	key = str(dishDb.key())
+	dishDb.title = title
+	dishDb.subTitle = subTitle
+	dishDb.description = description
+	dishDb.category = dishCategoryDb
 	# Update dishes old category
 	dishObject = getDish(key)
 	categoryKey = None
@@ -57,9 +61,11 @@ def modifyDish(dishDb):
 		removeDishFromCategory(dishObject["category"]['key'], key)
 	# Create object
 	newDishObject = createDishObjectDb(dishDb)
+	dishDb.price = int(newDishObject['price'])
 	if ( dishObject == None or dishObject["category"] != categoryKey ) and categoryKey != None:
 		addDishToCategory(categoryKey, key)
 	client.set(key, newDishObject)
+	dishDb.put()
 
 # Adds a dishDb to the cache
 def addDish(dishDb):

@@ -13,7 +13,7 @@ from user_management import USER_KEY, getUser, isUserLoggedIn
 from timezone import USTimeZone
 from cache_menu_item import getDaysMenuItems
 from cache_composit import getDaysComposits
-from cache_dish_category import getCategories
+from cache_dish_category import getDishCategories
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -58,7 +58,7 @@ class MenuOrderPage(BaseHandler):
 		#Organize into days
 		menu=[] #Contains menu items
 		actualOrder=self.session.get(ACTUAL_ORDER,[])
-		dishCategories=getCategories()
+		dishCategories=getDishCategories()
 		orderedPrice = [0,0,0,0,0]
 		basketPrice = [0,0,0,0,0]
 		for category in dishCategories:
@@ -203,7 +203,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			#Organize into days
 			menu=[] #Contains menu items
 			actualOrder=self.session.get(ACTUAL_ORDER,[])
-			dishCategories=getCategories()
+			dishCategories=getDishCategories()
 			monday=day+datetime.timedelta(days=-calendar[2]+1)
 			dayTotal = [0,0,0,0,0]
 			menuItems=sorted(orderedItems, key=lambda item:item.dish.title)
@@ -341,7 +341,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		calendar=day.isocalendar()
 		#Organize into days
 		menu=[] #Contains menu items
-		dishCategories=getCategories()
+		dishCategories=getDishCategories()
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		orderedPrice = [0,0,0,0,0]
 		for category in dishCategories:

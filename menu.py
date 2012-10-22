@@ -11,7 +11,8 @@ from model import MenuItem, DishCategory, Dish, Composit,\
 	CompositMenuItemListItem
 from user_management import isUserCook
 from order import dayNames
-from cache_menu_item import addMenuItem, modifyMenuItem, deleteMenuItem
+from cache_menu_item import addMenuItem, modifyMenuItem, deleteMenuItem,\
+	getDaysMenuItems
 from cache_composit import addComposit, addMenuItemToComposit, modifyComposit,\
 	deleteComposit
 #from user_management import getUserBox

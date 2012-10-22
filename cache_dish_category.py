@@ -9,7 +9,7 @@ from cache_dish import getDish
 
 CATEGORIES_KEY="CATS"
 
-def getCategories():
+def getDishCategories():
 	client = memcache.Client()
 	categories=client.get(CATEGORIES_KEY)
 	if categories == None:

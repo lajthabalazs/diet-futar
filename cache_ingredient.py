@@ -9,6 +9,25 @@ from cache_helper import createIngredientDb
 
 INGREDIENTS_KEY = "Ingredients"
 
+def differenceToPropagate(o, n):
+	if (o['name'] != n['name']):
+		return True
+	if (o['price'] != n['price']):
+		return True
+	if (o['energy'] != n['energy']):
+		return True
+	if (o['carbs'] != n['carbs']):
+		return True
+	if (o['protein'] != n['protein']):
+		return True
+	if (o['fat'] != n['fat']):
+		return True
+	if (o['fiber'] != n['fiber']):
+		return True
+	if (o['glucozeFree'] != n['glucozeFree']):
+		return True
+	return False
+
 def removeIngredientFromCategory(categoryKey, ingredientKey):
 	client = memcache.Client()
 	category = client.get(categoryKey)
@@ -28,7 +47,6 @@ def removeIngredientFromCategory(categoryKey, ingredientKey):
 				'ingredients':ingredients
 			}		
 			client.set(categoryKey, categoryObject)
-
 
 def addIngredientToCategory(categoryKey, ingredientObject):
 	client = memcache.Client()
@@ -113,6 +131,10 @@ def modifyIngredient(ingredientDb):
 				client.set(categoryKey, category)
 	# Adds ingredient
 	# TODO modify dishes containing this ingredient
+	if (differenceToPropagate(ingredientObject, newIngredientObject)):
+		for dishIngredient in ingredientDb.dishes:
+			dishKey = dishIngredient.dish.key()
+			client.delete(str(dishKey))
 	client.set(key, newIngredientObject)
 	# Adds ingredient to ingredient list
 	ingredients = client.get(INGREDIENTS_KEY)

@@ -47,7 +47,7 @@ class IngredientCategory(db.Model):
 
 class Ingredient(db.Model):
 	name = db.StringProperty()
-	price = db.IntegerProperty()
+	price = db.FloatProperty(default=0.0)
 	category = db.ReferenceProperty(IngredientCategory, collection_name='ingredients')
 	energy = db.FloatProperty(default=0.0)
 	carbs = db.FloatProperty(default=0.0)

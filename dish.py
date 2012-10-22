@@ -4,13 +4,15 @@ import jinja2
 import os
 
 from google.appengine.ext import db
-from model import Dish, Ingredient, IngredientListItem, DishCategory
+from model import Dish, IngredientListItem, DishCategory
 
 from base_handler import BaseHandler
 from user_management import isUserCook
 from keys import DISH_CATEGORY_KEY
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
-from cache_dish import getDish, deleteDish, modifyDish
+from cache_dish import getDish, deleteDish, modifyDish, addDish
+from cache_dish_category import getDishCategories
+from cache_ingredient import getIngredients
 
 #from user_management import getUserBox
 
@@ -36,32 +38,25 @@ class DishPage(BaseHandler):
 			dishKey=self.request.get('dishKey')
 			if ((dishKey != None) and (dishKey != "")):
 			#Modification of basic data
-				dish = Dish.get(dishKey)
-				dish.title = self.request.get('title')
-				dish.subTitle = self.request.get('subTitle')
-				dish.description = self.request.get('description')
-				if self.request.get('price') != None:
-					dish.price = int(self.request.get('price'))
-				else:
-					dish.price=0
+				title = self.request.get('title')
+				subtitle = self.request.get('subtitle')
+				description = self.request.get('description')
 				dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
+				dishCategory=None
 				if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 					dishCategory = db.get(dishCategoryKey)
-					dish.category = dishCategory
-				else:
-					dish.category = None
-				dish.put()
-				modifyDish(dish)
+				modifyDish(dishKey, title, subtitle, description, dishCategory)
 				self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
 				return
 			else:
 				dish = Dish()
 				dish.title = self.request.get('title')
-				dish.subTitle = self.request.get('subTitle')
+				dish.subtitle = self.request.get('subtitle')
 				dish.description = self.request.get('description')
 				dish.category = DishCategory.get(self.request.get('dishCategoryKey'))
 				dish.put()
-				self.redirect('/dish?dishKey=%s' % dish.key())
+				addDish(dish)
+				self.redirect('/dish?dishKey=%s' % str(dish.key()))
 	def get(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -74,9 +69,11 @@ class DishPage(BaseHandler):
 			ingredients = dish['ingredients']
 			dish['energy'] = 0
 			for ingredient in ingredients:
-				dish['energy'] = dish['energy'] + ingredient['quantity'] * ingredient['ingredient']['energy'] / 100.0
-			availableIngredients = Ingredient.gql(" ORDER BY name")
-			availableCategories = DishCategory.gql("WHERE isMenu = False ORDER BY index")
+				dish['energy'] = dish['energy'] + ingredient['quantity'] * ingredient['energy'] / 100.0
+			gotIngredients = getIngredients()
+			availableIngredients = sorted(gotIngredients, key=lambda ingredient:ingredient['name'])
+			gotCategories = getDishCategories()
+			availableCategories = sorted(gotCategories, key=lambda category:category['name'])
 			template_values = {
 				'dish': dish,
 				'availableCategories':availableCategories,
@@ -113,8 +110,8 @@ class DishIngredientDeletePage(BaseHandler):
 		dish = db.get(self.request.get('dishKey'))
 		ingredientToDish = db.get(self.request.get('dishIngredientKey'))
 		ingredientToDish.delete()
-		modifyDish(dish)
-		self.redirect('/dish?dishKey=%s' % dish.key())
+		modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category)
+		self.redirect('/dish?dishKey=%s' % str(dish.key()))
 
 class DishIngredientAddPage(BaseHandler):
 	def post(self):
@@ -128,21 +125,20 @@ class DishIngredientAddPage(BaseHandler):
 			ingredientToDish = db.get(self.request.get('dishIngredientKey'))
 			ingredientToDish.quantity = float(self.request.get('quantity'))
 			ingredientToDish.put()
+			#Modification of basic data
+			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category)
 		else:
 			# Retrieve the ingredient
 			ingredientKey = self.request.get('ingredientKey')
-			print "Hello"
-			print ingredientKey
-			return
-			ingredient = db.get()
+			ingredient = db.get(ingredientKey)
 			quantity = float(self.request.get('quantity'))
 			ingredientListItem = IngredientListItem()
 			ingredientListItem.quantity = quantity
 			ingredientListItem.dish = dish
 			ingredientListItem.ingredient = ingredient
 			ingredientListItem.put()
-			modifyDish(dish)
-		self.redirect('/dish?dishKey=%s' % dish.key())
+			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category)
+		self.redirect('/dish?dishKey=%s' % str(dish.key()))
 
 
 

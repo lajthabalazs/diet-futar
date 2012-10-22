@@ -27,11 +27,14 @@ class IngredientPage(BaseHandler):
 				ingredient.category = IngredientCategory.get(ingredientCategoryKey)
 			else:
 				ingredient.category = None
+			price=self.request.get('price')
 			energy=self.request.get('energy')
 			protein=self.request.get('protein')
 			carbs=self.request.get('carbs')
 			fat=self.request.get('fat')
 			fiber=self.request.get('fiber')
+			if ((price != None) and (price != "")):
+				ingredient.price = float(price)
 			if ((energy != None) and (energy != "")):
 				ingredient.energy = float(energy)
 			if ((protein != None) and (protein != "")):

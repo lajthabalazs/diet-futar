@@ -21,7 +21,7 @@
 				{% endfor %}
 		
 			</select><br/>
-			<input style="text-align: right" type="text" name="price" value="{% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %}"/> Ft<br/>
+			<strong>{% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %} Ft</strong><br/>
 			<input type="text" name="subTitle" value="{{ dish.subTitle }}"/><br/>
 			<textarea name="description" cols="40">{{ dish.description }}</textarea><br/>
 			<td><input type="submit" value ="Mentés"/></td>
@@ -50,7 +50,7 @@
 		<form action="{{ add_url }}" method="post">
 			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
 			<input type="hidden" name="dishIngredientKey" value="{{ ingredient.key }}"/>
-			<td><input type="text" name="quantity" value="{{ ingredient.quantity }}"/> g </td><td><a href="/ingredient?ingredientKey={{ingredient.ingredient.key}}"> {{ ingredient.ingredient.name }}</a> {% if (ingredient.ingredient.energy==None or ingredient.ingredient.energy==0.0) %}<strong><font color="red">!!!</font></strong>{%endif%}</td>
+			<td><input type="text" name="quantity" value="{{ ingredient.quantity }}"/> g </td><td><a href="/ingredient?ingredientKey={{ingredient.ingredient_key}}"> {{ ingredient.name }}</a> {% if (ingredient.energy==None or ingredient.energy==0.0) %}<strong><font color="red">!!!</font></strong>{%endif%}</td>
 			<td><input type="submit" value ="Mentés"/></td>
 		</form>
 		<td><form action="/deleteIngredientFromDish" method="post">
