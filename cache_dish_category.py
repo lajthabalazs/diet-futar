@@ -76,13 +76,13 @@ def getCategoryWithDishes(key):
 		categoryDb = DishCategory.get(key)
 		if categoryDb != None:
 			dishKeys=[]
-			for dish in category.dishes:
+			for dish in categoryDb.dishes:
 				dishKeys.append(str(dish.key()))
 			category={
 				'key':key,
-				'name':category.name,
-				'isMenu':category.isMenu,
-				'index':category.index,
+				'name':categoryDb.name,
+				'isMenu':categoryDb.isMenu,
+				'index':categoryDb.index,
 				'dishKeys':dishKeys
 			}
 			client.set(key, category)

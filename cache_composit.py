@@ -21,7 +21,8 @@ def createCompositData(composit):
 		'price':composit.price,
 		'day':composit.day,
 		'active':composit.active,
-		'menuItemKeys':menuItemKeys
+		'menuItemKeys':menuItemKeys,
+		'alterable':True
 	}
 	return compositObject
 

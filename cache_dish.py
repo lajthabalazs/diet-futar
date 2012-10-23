@@ -7,13 +7,15 @@ from google.appengine.api import memcache
 from model import Dish
 from cache_helper import createDishObjectDb
 	
+ALL_DISHES="avilable_dishes"
+
 def removeDishFromCategory(categoryKey, dishKey):
 	client = memcache.Client()
 	category = client.get(categoryKey)
 	# If not in memcache, does nothing
 	if category != None:
 		dishKeys=[]
-		for key in category.dishKeys:
+		for key in category['dishKeys']:
 			if key != dishKey:
 				dishKeys.append(key)
 		category['dishKeys'] = dishKeys
@@ -25,7 +27,7 @@ def addDishToCategory(categoryKey, dishKey):
 	category = client.get(categoryKey)
 	if category != None:
 		dishKeys=[]
-		for key in category.dishKeys:
+		for key in category['dishKeys']:
 			if key != dishKey:
 				dishKeys.append(key)
 				# Save modified value
@@ -74,6 +76,10 @@ def addDish(dishDb):
 	if dishDb.category != None:
 		categoryKey = str(dishDb.category.key())
 		addDishToCategory(categoryKey, key)
+	dishKeys = client.get(ALL_DISHES)
+	if dishKeys != None:
+		dishKeys.append(str(dishDb.key()))
+		client.set(ALL_DISHES, dishKeys)
 	dishObject = createDishObjectDb(dishDb)
 	client.set(str(dishDb.key()), dishObject)
 
@@ -86,3 +92,30 @@ def deleteDish(key):
 	else:
 		removeDishFromCategory(dishObject["categoryKey"], key)
 		client.delete(key)
+	dishKeys = client.get(ALL_DISHES)
+	# If not in memcache, does nothing
+	if dishKeys != None:
+		dishKeys=[]
+		for actualKey in dishKeys:
+			if actualKey != key:
+				dishKeys.append(actualKey)
+		client.set(ALL_DISHES, dishKeys)
+
+		
+def getDishes():
+	client = memcache.Client()
+	dishKeys = client.get(ALL_DISHES)
+	if dishKeys == None:
+		dishKeys=[]
+		dishes = Dish.gql("ORDER BY title")
+		if dishes != None:
+			for dish in dishes:
+				dishKeys.append(str(dish.key()))
+			client.set(ALL_DISHES, dishKeys)
+		else:
+			return None
+	# Fetch dishes
+	dishes = []
+	for dishKey in dishKeys:
+		dishes.append(getDish(dishKey))
+	return dishes

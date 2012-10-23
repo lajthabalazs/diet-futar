@@ -7,14 +7,15 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler, getBaseDate, getFormDate
 import datetime
-from model import MenuItem, DishCategory, Dish, Composit,\
-	CompositMenuItemListItem
+from model import MenuItem, Dish, Composit, CompositMenuItemListItem
 from user_management import isUserCook
 from order import dayNames
 from cache_menu_item import addMenuItem, modifyMenuItem, deleteMenuItem,\
-	getDaysMenuItems
+	getDaysMenuItems, getDaysAvailableMenuItems
 from cache_composit import addComposit, addMenuItemToComposit, modifyComposit,\
-	deleteComposit
+	deleteComposit, getDaysComposits
+from cache_dish_category import getCategoryWithDishes, getDishCategories
+from cache_dish import getDishes
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -29,7 +30,7 @@ class MenuWeekEditPage(BaseHandler):
 		calendar=day.isocalendar()
 		#Organize into days
 		menu=[]
-		dishCategories=DishCategory.gql("ORDER BY index")
+		dishCategories=getDishCategories()
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		#sunday=day+datetime.timedelta(days=-calendar[2]+7)
 		days=[]
@@ -38,14 +39,14 @@ class MenuWeekEditPage(BaseHandler):
 			actualDayObject={}
 			actualDayObject["day"]=dayNames[i]
 			actualDayObject["date"]=monday+datetime.timedelta(days=i)
-			menuItems = MenuItem.all().filter("day = ", actualDay).filter("containingMenuItem = ", None)
-			actualDayObject["availableMenuItems"]=menuItems
+			actualDayObject["availableMenuItems"]=getDaysAvailableMenuItems(actualDay)
 			days.append(actualDayObject)
 		for category in dishCategories:
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
-			categoryKey=str(category.key())
-			availableDishes=sorted(category.dishes, key=lambda dish: dish.title)
+			categoryKey=category['key']
+			dishes = getCategoryWithDishes(category['key'])['dishes']
+			availableDishes=sorted(dishes, key=lambda dish: dish['title'])
 			actualCategoryObject['availableDishes']=availableDishes
 			menu.append(actualCategoryObject)
 			items=[]
@@ -54,13 +55,13 @@ class MenuWeekEditPage(BaseHandler):
 				actualDayObject={}
 				actualDayObject["day"]=dayNames[i]
 				actualDayObject["date"]=actualDay
-				menuItems = MenuItem.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay).filter("containingMenuItem = ", None)
-				composits=Composit.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay)
+				menuItems = getDaysMenuItems(actualDay, categoryKey)
+				composits= getDaysComposits(actualDay, categoryKey)
 				#Filter menu items
 				actualMenuItems=[]
 				actualComposits=[]
 				availableMenuItems=days[i]["availableMenuItems"]
-				for menuItem in menuItems:
+				"""for menuItem in menuItems:
 					try:
 						menuItem.occurrences[0]
 						menuItem.alterable = False
@@ -73,9 +74,9 @@ class MenuWeekEditPage(BaseHandler):
 					else:
 						composit.alterable = True
 					actualComposits.append(composit)
-				#Get every menu item for the day
-				actualDayObject["menuItems"]=actualMenuItems
-				actualDayObject["composits"]=actualComposits
+				"""
+				actualDayObject["menuItems"]=menuItems
+				actualDayObject["composits"]=composits
 				actualDayObject["availableMenuItems"]=availableMenuItems
 				items.append(actualDayObject)
 			actualCategoryObject["days"]=items
@@ -85,7 +86,7 @@ class MenuWeekEditPage(BaseHandler):
 		today=datetime.date.today()
 		todayCalendat=today.isocalendar()
 		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
-		allDishes=Dish.gql("ORDER BY title")
+		allDishes=getDishes()
 		template_values = {
 			'days':days,
 			'prev':prevMonday,
@@ -118,21 +119,21 @@ class MenuEditPage(BaseHandler):
 		nextCalendar=day.isocalendar()
 		#Organize into days
 		menu=[]
-		dishCategories=DishCategory.gql("ORDER BY index")
+		dishCategories=getDishCategories()
 		dayIndex=nextCalendar[2]-1
 		days=[]
 		actualDay=day
 		actualDayObject={}
 		actualDayObject["day"]=dayNames[dayIndex]
 		actualDayObject["date"]=day
-		menuItems = MenuItem.all().filter("day = ", actualDay).filter("containingMenuItem = ", None)
-		actualDayObject["availableMenuItems"]=menuItems
+		actualDayObject["availableMenuItems"]=getDaysAvailableMenuItems(actualDay)
 		days.append(actualDayObject)
 		for category in dishCategories:
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
-			categoryKey=str(category.key())
-			availableDishes=sorted(category.dishes, key=lambda dish: dish.title)
+			categoryKey=category['key']
+			dishes = getCategoryWithDishes(category['key'])['dishes']
+			availableDishes=sorted(dishes, key=lambda dish: dish['title'])
 			actualCategoryObject['availableDishes']=availableDishes
 			menu.append(actualCategoryObject)
 			items=[]
@@ -140,13 +141,13 @@ class MenuEditPage(BaseHandler):
 			actualDayObject={}
 			actualDayObject["day"]=dayNames[dayIndex]
 			actualDayObject["date"]=actualDay
-			menuItems = MenuItem.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay).filter("containingMenuItem = ", None)
-			composits=Composit.all().filter("categoryKey = ", categoryKey).filter("day = ", actualDay)
+			menuItems = getDaysMenuItems(actualDay, categoryKey)
+			composits=getDaysComposits(actualDay, categoryKey)
 			#Filter menu items
 			actualMenuItems=[]
 			actualComposits=[]
 			availableMenuItems=days[0]["availableMenuItems"]
-			for menuItem in menuItems:
+			"""for menuItem in menuItems:
 				try:
 					menuItem.occurrences[0]
 					menuItem.alterable = False
@@ -158,10 +159,10 @@ class MenuEditPage(BaseHandler):
 					composit.alterable = False
 				else:
 					composit.alterable = True
-				actualComposits.append(composit)
+				actualComposits.append(composit)"""
 			#Get every menu item for the day
-			actualDayObject["menuItems"]=actualMenuItems
-			actualDayObject["composits"]=actualComposits
+			actualDayObject["menuItems"]=menuItems
+			actualDayObject["composits"]=composits
 			actualDayObject["availableMenuItems"]=availableMenuItems
 			items.append(actualDayObject)
 			actualCategoryObject["days"]=items
@@ -180,7 +181,7 @@ class MenuEditPage(BaseHandler):
 			prevDay=prevDay+datetime.timedelta(days=-1)
 		elif prevCalendar[2]==7:
 			prevDay=prevDay+datetime.timedelta(days=-2)
-		allDishes=Dish.gql("ORDER BY title")
+		allDishes=getDishes()
 		template_values = {
 			'days':days,
 			'prev':prevDay,
@@ -271,6 +272,8 @@ class DeleteComposit(BaseHandler):
 			if ((compositKey != None) and (compositKey != "")):
 				composit=Composit.get(compositKey)
 				if composit != None and composit.occurrences.count() == 0:
+					for component in composit.components:
+						component.delete()
 					composit.delete()
 					deleteComposit(composit)
 				else:
@@ -334,6 +337,10 @@ class DeleteMenuItem(BaseHandler):
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
+				print "Menu item "
+				print menuItem.day
+				print  menuItem.occurrences.count() 
+				print  menuItem.composits.count()
 				if menuItem != None and menuItem.occurrences.count() == 0 and menuItem.composits.count() == 0:
 					if menuItem.containingMenuItem != None:
 						sumprice = menuItem.containingMenuItem.dish.price

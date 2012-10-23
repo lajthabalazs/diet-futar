@@ -22,7 +22,8 @@ def createMenuItemData(menuItem):
 		'day':menuItem.day,
 		'containingMenuItem':None,
 		'active':menuItem.active,
-		'componentKeys':subItemKeys
+		'componentKeys':subItemKeys,
+		'alterable':True
 	}
 	return menuItemObject
 
@@ -43,7 +44,7 @@ def getMenuItem(key):
 	for subItemKey in menuItem['componentKeys']:
 		component = getMenuItem(subItemKey)
 		components.append(component)
-		componentPrice = component.dish.price
+		componentPrice = component['dish']['price']
 		if componentPrice != None:
 			sumprice = sumprice + componentPrice
 	menuItem['sumprice'] = sumprice
@@ -67,7 +68,36 @@ def getDaysMenuItems(day, categoryKey):
 		sumprice = getDish(menuItem['dishKey'])['price']
 		if sumprice == None:
 			sumprice = 0
+		menuItem['dish']=getDish(menuItem['dishKey'])
+		components = []
+		for subItemKey in menuItem['componentKeys']:
+			component = getMenuItem(subItemKey)
+			components.append(component)
+			componentPrice = getDish(component['dishKey'])['price']
+			if componentPrice != None:
+				sumprice = sumprice + componentPrice
+		menuItem['sumprice'] = sumprice
+		menuItem['components'] = components
+		ret.append(menuItem)
+	return ret
 
+def getDaysAvailableMenuItems(day):
+	client = memcache.Client()
+	key = MENU_ITEMS_FOR_DAY+ str(day)
+	daysItems = client.get(key)
+	if daysItems == None:
+		menuItems = MenuItem.all().filter("day = ", day).filter("containingMenuItem = ", None)
+		daysItems=[]
+		for menuItem in menuItems:
+			menuItemObject = createMenuItemData(menuItem)
+			daysItems.append(menuItemObject)
+		client.set(key,daysItems)
+	# Fetch dishes for menu items
+	ret = []
+	for menuItem in daysItems:
+		sumprice = getDish(menuItem['dishKey'])['price']
+		if sumprice == None:
+			sumprice = 0
 		menuItem['dish']=getDish(menuItem['dishKey'])
 		components = []
 		for subItemKey in menuItem['componentKeys']:
@@ -91,18 +121,23 @@ def addMenuItem(dishKey, day, containingMenuItem = None):
 	menuItem.categoryKey=str(dish.category.key())
 	menuItem.containingMenuItem = containingMenuItem
 	menuItem.put()
-	ret = ""
 	# Store it in cache
 	client = memcache.Client()
 	client.set(str(menuItem.key()), createMenuItemData(menuItem))
 	key = MENU_ITEMS_FOR_DAY+ str(menuItem.day) + "_" + str(menuItem.categoryKey)
-	ret = ret + " KEY " + key + "<br/>"
 	daysItems = client.get(key)
 	#If we have something to update
-	if daysItems != None and containingMenuItem != None:
+	if daysItems != None and containingMenuItem == None:
 		# Just add this menu item
 		daysItems.append(createMenuItemData(menuItem))
 		client.set(key,daysItems)
+	availableKey = MENU_ITEMS_FOR_DAY+ str(menuItem.day)
+	daysAvailableItems = client.get(availableKey)
+	#If we have something to update
+	if daysAvailableItems != None and containingMenuItem == None:
+		# Just add this menu item
+		daysAvailableItems.append(createMenuItemData(menuItem))
+		client.set(availableKey,daysAvailableItems)
 
 def modifyMenuItem(menuItem):
 	client = memcache.Client()
@@ -121,6 +156,21 @@ def modifyMenuItem(menuItem):
 			newItems.append(dayItem)
 		# Finally just add it to the cache 
 		client.set(key,newItems)
+
+	availableKey = MENU_ITEMS_FOR_DAY+ str(menuItem.day)
+	daysAvailableItems = client.get(availableKey)
+	#If we have something to update
+	if daysAvailableItems != None:
+		newItems = []
+		for dayItem in daysAvailableItems:
+			if (dayItem['key'] == menuItemKey):
+				# Find item by key
+				dayItem = createMenuItemData(menuItem)
+			# Add menu item to new array
+			newItems.append(dayItem)
+		# Finally just add it to the cache 
+		client.set(availableKey,newItems)
+
 
 def deleteMenuItem(menuItem):
 	client = memcache.Client()
