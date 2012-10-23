@@ -69,13 +69,13 @@
 									<div class="calendarElement">
 										<h3>{{menuItem.dish.title}}</h3>
 										<!-- References of components -->
-										{% if menuItem.dish.price == None%}0{% else %}{{ menuItem.dish.price }}{% endif %} This Ft
+										{% if menuItem.dish.price == None%}0{% else %}{{ menuItem.dish.price }}{% endif %} Ft
 										<br/>
 										{% for component in menuItem.components %}
 											{{ component.dish.title }}
 											{% if component.dish.price == None%}0{% else %}{{ component.dish.price }}{% endif %} Ft
 											{% if menuItem.alterable %}
-												<form action="/deleteComposit" method="post">
+												<form action="/deleteMenuItem" method="post">
 													<input type="hidden" name="menuItemKey" value="{{ component.key() }}"/>
 													<input type="hidden" name="formDay" value="{{ day.date }}"/>
 													<input type="submit" value="Törlés"/>

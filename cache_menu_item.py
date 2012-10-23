@@ -99,7 +99,7 @@ def addMenuItem(dishKey, day, containingMenuItem = None):
 	ret = ret + " KEY " + key + "<br/>"
 	daysItems = client.get(key)
 	#If we have something to update
-	if daysItems != None:
+	if daysItems != None and containingMenuItem != None:
 		# Just add this menu item
 		daysItems.append(createMenuItemData(menuItem))
 		client.set(key,daysItems)
@@ -124,7 +124,7 @@ def modifyMenuItem(menuItem):
 
 def deleteMenuItem(menuItem):
 	client = memcache.Client()
-	key = MENU_ITEMS_FOR_DAY+ str(menuItem.day) + "_" + str(menuItem.categoryKey)
+	key = MENU_ITEMS_FOR_DAY + str(menuItem.day) + "_" + str(menuItem.categoryKey)
 	daysItems = client.get(key)
 	menuItemKey=str(menuItem.key())
 	#If we have something to update

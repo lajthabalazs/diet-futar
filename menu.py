@@ -346,6 +346,11 @@ class DeleteMenuItem(BaseHandler):
 							sumprice = sumprice - menuItem.dish.price
 						menuItem.containingMenuItem.sumprice = sumprice
 						menuItem.containingMenuItem.put()
+						modifyMenuItem(menuItem.containingMenuItem)
+					if menuItem.components != None:
+						for component in menuItem.components:
+							component.delete()
+							deleteMenuItem(component)
 					menuItem.delete()
 					deleteMenuItem(menuItem)
 				else:
