@@ -35,19 +35,26 @@ def removeIngredientFromCategory(categoryKey, ingredientKey):
 	ingredient = client.get(ingredientKey)
 	# If not in memcache, does nothing
 	if ingredient != None:
+		ret = "Must remove from category"
+		ret = ret + "<br/>"
 		ingredient['category'] = None
-		client.set(ingredientKey, ingredient)
 		if category != None:
+			ret = ret + "Category found"
+			ret = ret + "<br/>"
 			ingredients=[]
-			for ingredient in category['ingredients']:
-				if ingredient['key'] != ingredientKey:
-					ingredients.append(ingredient)
+			for actualIngredient in category['ingredients']:
+				if actualIngredient['key'] != ingredientKey:
+					ingredients.append(actualIngredient)
+				else:
+					ret = ret + "Skipped"
 			categoryObject={
 				'key':category['key'],
 				'name':category['name'],
 				'ingredients':ingredients
 			}		
 			client.set(categoryKey, categoryObject)
+		client.set(ingredientKey, ingredient)
+	return ret
 
 def addIngredientToCategory(categoryKey, ingredientObject):
 	client = memcache.Client()
@@ -83,7 +90,6 @@ def getIngredient(key):
 		ingredientDb = Ingredient.get(key)
 		if ingredientDb != None:
 			ingredient = createIngredientDb(ingredientDb)
-			print ingredient
 			client.set(key, ingredient)
 	return client.get(key)
 
@@ -97,7 +103,6 @@ def getIngredients():
 		if ingredientsDb != None:
 			for ingredientDb in ingredientsDb:
 				ingredient = createIngredientDb(ingredientDb)
-				print ingredient
 				ingredients.append(ingredient)
 			client.set(INGREDIENTS_KEY, ingredients)
 	return ingredients
@@ -109,11 +114,17 @@ def modifyIngredient(ingredientDb):
 	# Update dishes old category
 	ingredientObject = getIngredient(key)
 	categoryKey = None
+	ret = "Modify "
+	ret += str(ingredientObject['category'])
 	if ingredientDb.category != None:
+		ret += "Had category"
+		ret = ret + "<br/>"
 		categoryKey = str(ingredientDb.category.key())
 	if ingredientObject != None and ingredientObject['category']!=None and ingredientObject['category']['key'] != categoryKey:
 		# Update category objects in cacge
-		removeIngredientFromCategory(ingredientObject['category']['key'], key)
+		ret = ret + "Must remove"
+		ret = ret + "<br/>"
+		ret = ret + removeIngredientFromCategory(ingredientObject['category']['key'], key)
 	# Create object
 	newIngredientObject=createIngredientDb(ingredientDb)
 	if ingredientObject == None or (categoryKey != None and (ingredientObject["category"] == None or ingredientObject["category"]['key'] != categoryKey)):
@@ -150,6 +161,7 @@ def modifyIngredient(ingredientDb):
 				ingredient = newIngredientObject
 			newIngredients.append(ingredient)
 		client.set(INGREDIENTS_KEY, newIngredients)
+	return ret
 
 # Adds a dish to the cache
 def addIngredient(ingredientDb):
@@ -166,10 +178,10 @@ def addIngredient(ingredientDb):
 	if ingredients != None:
 		newIngredients = []
 		found = False
-		for ingredient in ingredients:
-			if ingredient['key'] == key:
+		for actualIngredient in ingredients:
+			if actualIngredient['key'] == key:
 				found = True
-			newIngredients.append(ingredient)
+			newIngredients.append(actualIngredient)
 		if not found:
 			newIngredients.append(ingredient)
 		client.set(INGREDIENTS_KEY, newIngredients)
@@ -179,7 +191,10 @@ def deleteIngredient(key):
 	client = memcache.Client()
 	ingredientObject = client.get(key)
 	if ingredientObject != None:
-		removeIngredientFromCategory(ingredientObject.categoryKey, key)
+		try:
+			removeIngredientFromCategory(ingredientObject['categoryKey'], key)
+		except KeyError:
+			pass
 		client.delete(key)
 	ingredients = client.get(INGREDIENTS_KEY)
 	if ingredients != None:

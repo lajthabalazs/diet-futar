@@ -1,14 +1,9 @@
 ﻿<div class="mainBg">
 	<div class="container">
 		<h3>{{ dish.title }}</h3>
-		<h4>{{ dish.subTitle }}</h4>
-		<p>{{ dish.description }}</p>
 		<form method="post">
 			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
 			<input type="text" name="title" value="{{ dish.title }}"/><br/>
-			{% if dish.category != None %}
-					<a href="dishCategory?dishCategoryKey={{ dish.category.key }}">{{ dish.category.name }}</a>
-			{% else %}Nincs kategória{% endif %}<br/>
 			
 			<select name="dishCategoryKey">
 				<option value="">-- törlés a kategóriából --</option>
@@ -21,13 +16,11 @@
 				{% endfor %}
 		
 			</select><br/>
-			<strong>{% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %} Ft</strong><br/>
+			<strong>Bekerülési költség: {% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %} Ft</strong><br/>
 			<input type="text" name="subTitle" value="{{ dish.subTitle }}"/><br/>
-			<textarea name="description" cols="40">{{ dish.description }}</textarea><br/>
-			<td><input type="submit" value ="Mentés"/></td>
+			<textarea name="description" cols="40" rows="4" style="height: 40px">{{ dish.description }}</textarea><br/>
+			<input type="submit" value ="Mentés"/>
 		</form>
-		<br/>
-		<br/>
 			<!-- Add a new ingredient -->
 		<form action="{{ add_url }}" method="post">
 			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
