@@ -3,7 +3,6 @@ Created on Aug 11, 2012
 
 @author: lajthabalazs
 '''
-from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 
 def createIngredientCategoryDb(categoryDb):
 	if categoryDb == None:
@@ -68,17 +67,32 @@ def createDishObjectDb(dishDb):
 		return None
 	else:
 		price = 0
+		energy = 0
+		fat = 0
+		carbs = 0
+		fiber = 0
+		protein = 0
 		ingredients = []
 		for ingredientDb in dishDb.ingredients:
 			ingredient = createDishIngredientDb(ingredientDb)
 			if ingredientDb.ingredient.price != None and ingredientDb.quantity != None:
 				price = price + ingredientDb.quantity * ingredientDb.ingredient.price
+				energy = energy + ingredientDb.quantity * ingredientDb.ingredient.energy
+				fat = fat + ingredientDb.quantity * ingredientDb.ingredient.fat
+				carbs = carbs + ingredientDb.quantity * ingredientDb.ingredient.carbs
+				fiber = fiber + ingredientDb.quantity * ingredientDb.ingredient.fiber
+				protein = protein + ingredientDb.quantity * ingredientDb.ingredient.protein
 			ingredients.append(ingredient)
 		dish={
 			'key':str(dishDb.key()),
 			'title':dishDb.title,
 			'category':createDishCategoryObjectDb(dishDb.category),
 			'price':int(price / 100),
+			'energy':int(energy/100),
+			'fat':int(fat/100),
+			'carbs':int(carbs/100),
+			'fiber':int(fiber/100),
+			'protein':int(protein/100),
 			'ingredients':ingredients
 		}
 		return dish

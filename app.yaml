@@ -1,5 +1,5 @@
 application: diet-futar
-version: 23--extended-caching
+version: 24
 runtime: python27
 api_version: 1
 threadsafe: no
@@ -13,6 +13,8 @@ handlers:
   static_dir: img
 - url: /js
   static_dir: js
+- url: /static
+  static_dir: static
 - url: .*
   script: switch.app
 

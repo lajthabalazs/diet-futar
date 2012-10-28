@@ -11,8 +11,8 @@ from model import MenuItem, UserOrder, UserOrderItem, User,\
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import USER_KEY, getUser, isUserLoggedIn
 from timezone import USTimeZone
-from cache_menu_item import getDaysMenuItems
-from cache_composit import getDaysComposits
+from cache_menu_item import getDaysMenuItems, createMenuItemData, getMenuItem
+from cache_composit import getDaysComposits, createCompositData, getComposit
 from cache_dish_category import getDishCategories
 #from user_management import getUserBox
 
@@ -78,8 +78,8 @@ class MenuOrderPage(BaseHandler):
 				actualMenuItems=[]
 				actualComposits=[]
 				for menuItem in menuItems:
-					itemKey=menuItem['key']
-					itemKeyStr=str(itemKey)
+					menuItem = getMenuItem(menuItem['key'])
+					itemKeyStr=menuItem['key']
 					try:
 						if (actualOrder!=None) and (itemKeyStr in actualOrder):
 							menuItem['inCurrentOrder']=actualOrder[itemKeyStr]
@@ -90,9 +90,9 @@ class MenuOrderPage(BaseHandler):
 						else:
 							menuItem['inCurrentOrder']=0
 						try:
-							menuItem['orderedQuantity'] = userOrders[itemKey]
+							menuItem['orderedQuantity'] = userOrders[itemKeyStr]
 							try:
-								orderedPrice[i] = orderedPrice[i] + menuItem['price'] * int(userOrders[itemKey])
+								orderedPrice[i] = orderedPrice[i] + menuItem['price'] * int(userOrders[itemKeyStr])
 							except:
 								pass
 						except KeyError:
@@ -197,6 +197,26 @@ class ReviewPendingOrderPage(BaseHandler):
 						orderedItems.append(item)
 					else:
 						composits.append(item)
+			#Fetch user's previous orders. User orders is an object associating menu item keys with quantities
+			userOrders={}
+			userKey = self.session.get(USER_KEY,None)
+			if (userKey != None):
+				user = User.get(userKey)
+				for userOrder in user.userOrders:
+					for orderedItem in userOrder.items:
+						itemQuantity = 0
+						try: 
+							itemKey = ""
+							if orderedItem.orderedItem == None:
+								itemKey = str(orderedItem.orderedComposit.key())
+							else:	
+								itemKey = str(orderedItem.orderedItem.key())
+							if (userOrders.has_key(itemKey)):
+								itemQuantity = int(userOrders[itemKey])
+							if (orderedItem.itemCount != None):
+								userOrders[itemKey] = itemQuantity + orderedItem.itemCount
+						except ReferencePropertyResolveError:
+							pass
 			day=getBaseDate(self)
 			#Determine the week
 			calendar=day.isocalendar()
@@ -211,6 +231,7 @@ class ReviewPendingOrderPage(BaseHandler):
 				actualCategoryObject={}
 				actualCategoryObject['category']=category
 				items=[]
+				orderedPrice=[0,0,0,0,0,0,0]
 				itemsInRows=0
 				for i in range(0,5):
 					actualDay=monday+datetime.timedelta(days=i)
@@ -228,34 +249,53 @@ class ReviewPendingOrderPage(BaseHandler):
 						if str(menuItem.dish.category.key())==category['key'] and menuItem.day==actualDay:
 							try:
 								if (actualOrder!=None) and (str(menuItem.key()) in actualOrder) and int(actualOrder[str(menuItem.key())]) != 0:
-									menuItem.inCurrentOrder=actualOrder[str(menuItem.key())]
+									# Create an object to append to the UI
+									menuItemObject = getMenuItem(str(menuItem.key()))
+									menuItemObject['inCurrentOrder']=actualOrder[menuItemObject['key']]
 									try:
-										menuItem.basketprice = int(menuItem.inCurrentOrder) * menuItem.price
+										menuItemObject['basketprice'] = int(menuItemObject['inCurrentOrder']) * menuItemObject['price']
 									except TypeError:
-										menuItem.basketprice = 0
-									dayTotal[i] = dayTotal[i] + menuItem.basketprice
-									actualMenuItems.append(menuItem)
+										menuItemObject['basketprice'] = 0
+									try:
+										menuItemObject['orderedQuantity'] = userOrders[menuItemObject['key']]
+										try:
+											orderedPrice[i] = orderedPrice[i] + menuItem['price'] * int(userOrders[menuItemObject['key']])
+										except:
+											pass
+									except:
+										menuItemObject['orderedQuantity'] = 0
+									dayTotal[i] = dayTotal[i] + menuItemObject['basketprice']
+									menuItemObject['orderable']=True
+									actualMenuItems.append(menuItemObject)
 									itemsInRows=itemsInRows+1
-								else:
-									menuItem.inCurrentOrder=False
 							except ValueError:
-								menuItem.inCurrentOrder=False
+								pass	
 					for composit in composits:
 						if str(composit.category.key())==category['key'] and composit.day==actualDay:
 							try:
 								if (actualOrder!=None) and (str(composit.key()) in actualOrder) and int(actualOrder[str(composit.key())]) != 0:
-									composit.inCurrentOrder=actualOrder[str(composit.key())]
+									# Create an object to append to the UI
+									compositObject = getComposit(str(composit.key()))
+									compositObject['inCurrentOrder']=actualOrder[compositObject['key']]
 									try:
-										composit.basketprice = int(composit.inCurrentOrder) * composit.price
+										compositObject['basketprice'] = int(compositObject['inCurrentOrder']) * compositObject['price']
 									except TypeError:
-										composit.basketprice = 0
-									dayTotal[i] = dayTotal[i] + composit.basketprice
-									actualComposits.append(composit)
+										compositObject['basketprice'] = 0
+									dayTotal[i] = dayTotal[i] + compositObject['basketprice']
+									compositObject['orderable']=True
+									try:
+										compositObject['orderedQuantity'] = userOrders[compositObject['key']]
+										try:
+											orderedPrice[i] = orderedPrice[i] + menuItem['price'] * int(userOrders[compositObject['key']])
+										except:
+											pass
+									except:
+										compositObject['orderedQuantity'] = 0
+									
+									actualComposits.append(compositObject)
 									itemsInRows=itemsInRows+1
-								else:
-									composit.inCurrentOrder=False
 							except ValueError:
-								composit.inCurrentOrder=False
+								pass
 					actualDayObject["menuItems"]=actualMenuItems
 					actualDayObject["composits"]=actualComposits
 					items.append(actualDayObject)
@@ -297,7 +337,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			self.printPage(None, template.render(), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
-		day=getFormDate(self)
+		day=getBaseDate(self)
 		# Add order
 		for field in self.request.arguments():
 			if (field[:3]=="MIC"):
@@ -336,7 +376,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 						if (orderedItem.itemCount != None):
 							userOrders[itemKey] = itemQuantity + orderedItem.itemCount
 					except ReferencePropertyResolveError:
-						itemQuantity=0
+						pass
 		#Determine the week
 		calendar=day.isocalendar()
 		#Organize into days

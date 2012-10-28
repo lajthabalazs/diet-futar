@@ -26,6 +26,17 @@ def createCompositData(composit):
 	}
 	return compositObject
 
+def fetchMenuItemsForComposit(compositObject):
+	# Fetch menu item data for keys
+	menuItems=[]
+	i = 0
+	for menuItemKey in compositObject['menuItemKeys']:
+		menuItemObject = getMenuItem(menuItemKey)
+		menuItemObject['uid'] = compositObject['key'] + str(i)
+		i = i + 1
+		menuItems.append(menuItemObject)
+	return menuItems
+	
 def getComposit(key):
 	client = memcache.Client()
 	composit = client.get(key)
@@ -34,10 +45,7 @@ def getComposit(key):
 		composit = createCompositData(compositDb)
 		client.set(key,composit)
 	# Fetch menu item data for keys
-	menuItems=[]
-	for menuItemKey in composit.menuItemKeys:
-		menuItems.append(getMenuItem(menuItemKey))
-	composit['menuItems'] = menuItems
+	composit['components'] = fetchMenuItemsForComposit(composit)
 	return composit
 
 def getDaysComposits(day, categoryKey):
@@ -55,10 +63,7 @@ def getDaysComposits(day, categoryKey):
 	retItems = []
 	# Fetch menu item data for keys
 	for composit in daysItems:
-		menuItems=[]
-		for menuItemKey in composit['menuItemKeys']:
-			menuItems.append(getMenuItem(menuItemKey))
-		composit['components'] = menuItems
+		composit['components'] = fetchMenuItemsForComposit(composit)
 		retItems.append(composit)
 	return retItems
 

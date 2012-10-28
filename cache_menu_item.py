@@ -36,18 +36,54 @@ def getMenuItem(key):
 		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems
 	menuItem['dish']=getDish(menuItem['dishKey'])
-	sumprice = getDish(menuItem['dishKey'])['price']
+	dish = getDish(menuItem['dishKey'])
+	sumprice = dish['price']
 	if sumprice == None:
 		sumprice = 0
+	energy = dish['energy']
+	if energy == None:
+		energy=0
+	fat = dish['fat']
+	if fat == None:
+		fat=0
+	carbs = dish['carbs']
+	if carbs == None:
+		carbs=0
+	fiber = dish['fiber']
+	if fiber == None:
+		fiber=0
+	protein = dish['protein']
+	if protein == None:
+		protein=0
 	# Calculate sum price
 	components = []
 	for subItemKey in menuItem['componentKeys']:
 		component = getMenuItem(subItemKey)
 		components.append(component)
 		componentPrice = component['dish']['price']
+		componentEnergy = component['dish']['energy']
+		componentFat = component['dish']['fat']
+		componentCarbs = component['dish']['carbs']
+		componentFiber = component['dish']['fiber']
+		componentProtein = component['dish']['protein']
 		if componentPrice != None:
 			sumprice = sumprice + componentPrice
+		if componentEnergy != None:
+			energy = energy + componentEnergy
+		if componentFat != None:
+			fat = fat + componentFat
+		if componentCarbs != None:
+			carbs = carbs + componentCarbs
+		if componentFiber != None:
+			fiber = fiber + componentFiber
+		if componentProtein != None:
+			protein = protein + componentProtein
 	menuItem['sumprice'] = sumprice
+	menuItem['energy'] = energy
+	menuItem['fat'] = fat
+	menuItem['carbs'] = carbs
+	menuItem['fiber'] = fiber
+	menuItem['protein'] = protein
 	menuItem['components'] = components
 	return menuItem
 	

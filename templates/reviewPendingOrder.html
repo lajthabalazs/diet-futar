@@ -1,4 +1,5 @@
-﻿{% if user == None %}
+﻿{% from '/templates/macros.html' import menuItemToOrderMacro, compositToOrderMacro%}
+{% if user == None %}
 <div class="mainBg">
 	<div class="container">
 		<div class="span-24" align="center">
@@ -29,32 +30,10 @@
 							&nbsp;
 						{% endif %}
 						{% for menuItem in day.menuItems %}
-							<div class="calendarElement">
-								<h3>{{ menuItem.dish.title }}</h3>
-								<p>{% for component in menuItem.components %}
-									,{{ component.dish.title }}
-								{% endfor %}</p>
-								<strong>{% if menuItem.price == None%}0{% else %}{{ menuItem.price }}{% endif %} Ft</strong>
-								{% if menuItem.inCurrentOrder %}
-									<input type="text" name="MIC{{ menuItem.key() }}" value="{{ menuItem.inCurrentOrder}}"/>
-								{% else %}
-									<input type="text" name="MIC{{ menuItem.key() }}" value="0"/>
-								{% endif %}
-							</div>
+							{{ menuItemToOrderMacro (menuItem) }}
 						{% endfor %}
 						{% for composit in day.composits %}
-							<div class="calendarElement">
-								{% for component in composit.components%}
-									<h3>{{component.menuItem.dish.title}}</h3>
-									<p>{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}</p>
-								{% endfor %}
-								<strong>{% if composit.price == None%}0{% else %}{{ composit.price }}{% endif %} Ft</strong>
-								{% if composit.inCurrentOrder %}
-									<input type="text" name="MIC{{ composit.key() }}" value="{{ composit.inCurrentOrder}}"/>
-								{% else %}
-									<input type="text" name="MIC{{ composit.key() }}" value="0"/>
-								{% endif %}
-							</div>
+							{{ compositToOrderMacro(composit) }}
 						{% endfor %}
 					</div>
 				{% endfor %}

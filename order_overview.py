@@ -12,6 +12,9 @@ from model import MenuItem, DishCategory, Composit, UserOrderAddress, User,\
 from order import dayNames
 from user_management import isUserCook, isUserDelivery
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
+from cache_dish_category import getDishCategories
+from cache_menu_item import getDaysMenuItems
+from cache_composit import getDaysComposits
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -29,15 +32,13 @@ class ChefReviewOrdersPage(BaseHandler):
 		calendar=day.isocalendar()
 		#Organize into days
 		menu=[] #Contains menu items
-		dishCategories=DishCategory.gql("ORDER BY index")
+		dishCategories=getDishCategories()
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
-		originalItems=MenuItem.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
-		composits=Composit.gql("WHERE day>=DATE(:1,:2,:3) and day<DATE(:4,:5,:6)", monday.year, monday.month, monday.day, sunday.year, sunday.month, sunday.day)
-		menuItems=sorted(originalItems, key=lambda item:item.dish.title)
 		for category in dishCategories:
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
+			categoryKey=category['key']
 			items=[]
 			itemsInRows=0
 			for i in range(0,5):
@@ -45,29 +46,30 @@ class ChefReviewOrdersPage(BaseHandler):
 				actualDayObject={}
 				actualDayObject["day"]=dayNames[i]
 				actualDayObject["date"]=actualDay
+				menuItems = getDaysMenuItems(actualDay, categoryKey)
+				composits=getDaysComposits(actualDay, categoryKey)
 				#Filter menu items
 				actualMenuItems=[]
+				actualComposits=[]
 				for menuItem in menuItems:
+					itemKeyStr=menuItem['key']
 					try:
-						if menuItem.dish.category.key()==category.key() and menuItem.day==actualDay and menuItem.containingMenuItem == None:
-							menuItem.orderedQuantity = 0
-							for order in menuItem.occurrences:
-								menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
-							if menuItem.orderedQuantity > 0:
-								itemsInRows = itemsInRows + 1
-								actualMenuItems.append(menuItem)
+						menuItem.orderedQuantity = 0
+						for order in menuItem.occurrences:
+							menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
+						if menuItem.orderedQuantity > 0:
+							itemsInRows = itemsInRows + 1
+							actualMenuItems.append(menuItem)
 					except ReferencePropertyResolveError:
 						print "ReferencePropertyResolveError on "
 						print menuItem
-				actualComposits=[]
 				for composit in composits:
-					if composit.category.key()==category.key() and composit.day==actualDay:
-						composit.orderedQuantity = 0
-						for order in composit.occurrences:
-							composit.orderedQuantity = composit.orderedQuantity + order.itemCount
-						if composit.orderedQuantity > 0:
-							itemsInRows = itemsInRows + 1
-							actualComposits.append(composit)
+					composit.orderedQuantity = 0
+					for order in composit.occurrences:
+						composit.orderedQuantity = composit.orderedQuantity + order.itemCount
+					if composit.orderedQuantity > 0:
+						itemsInRows = itemsInRows + 1
+						actualComposits.append(composit)
 				actualDayObject["menuItems"]=actualMenuItems
 				actualDayObject["composits"]=actualComposits
 				items.append(actualDayObject)

@@ -1,0 +1,81 @@
+{% macro itemPrice(item)%}
+	<strong>{% if item.price == None%}0{% else %}{{ item.price }}{% endif %} Ft</strong>
+{% endmacro %}
+
+{% macro menuItemTitleAndContent(menuItem)%}
+		<h3 class='menuItamMainDish'>{{ menuItem.dish.title }}</h3>
+		<p class='menuItamSubDish'>{% for component in menuItem.components %}
+			{{ component.dish.title }} 
+		{% endfor %}</p>
+{% endmacro %}
+
+{% macro orderQuantityBox(item)%}
+			<div>
+				{% if item.orderedQuantity > 0 %}
+					<small>{{ item.orderedQuantity}} {% if item.orderable %}+{% else %}adag{% endif %} </small>
+				{% endif %}
+				{% if item.orderable %}
+					<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantity('MIC{{ item.key }}')"/>
+					<input onkeyup="validateQuantity('MIC{{ item.key }}')" type="text" id="MIC{{ item.key }}" name="MIC{{ item.key }}" value={% if item.inCurrentOrder %}"{{ item.inCurrentOrder}}"{% else %}"0"{% endif %}/>
+					<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('MIC{{ item.key }}')"/>
+				{% endif %}
+			</div>
+{% endmacro %}
+
+{% macro menuItemTooltip(menuItem) %}
+	{{ menuItemTitleAndContent(menuItem) }}
+	<table style='margin-bottom: 5px;'>
+		<tr><td class='menuItemNutrition'> Energia:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.enery != None %} {{ menuItem.energy }} {% endif %}</td><td class='menuItemNutrition'>kCal</td></tr>
+		<tr><td class='menuItemNutrition'> Szénhidrát:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.carbs != None %} {{ menuItem.carbs }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+		<tr><td class='menuItemNutrition'> Fehérje:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.protein != None %} {{ menuItem.protein }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+		<tr><td class='menuItemNutrition'> Rost:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.fiber != None %} {{ menuItem.fiber }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+		<tr><td class='menuItemNutrition'> Zsír:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.fat != None %} {{ menuItem.fat }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+	</table>
+{% endmacro %}
+
+{% macro menuItemToOrderMacro(menuItem) %}
+	<div class="calendarElement {% if (not menuItem.orderable ) and menuItem.orderedQuantity == 0 %}  inactive {% endif%}"
+	id="tooltip{{menuItem.key}}"
+	title=" {{ menuItemTooltip(menuItem) }} ">
+		<script type="text/javascript">
+		$(function() {
+		$("#tooltip{{menuItem.key}}").tooltip({
+			track: true,
+			delay: 0,
+			showURL: false,
+			top: -15,
+			left: 5
+		});
+		});
+		</script>
+		{{ menuItemTitleAndContent(menuItem) }}
+		{{ itemPrice(menuItem) }}
+		{{ orderQuantityBox(menuItem) }}
+	</div>
+{% endmacro %}
+
+{% macro compositToOrderMacro(composit) %}
+	<div
+		class="calendarElement {% if (not composit.orderable ) and composit.orderedQuantity == 0 %}  inactive {% endif%}">
+		{% for component in composit.components%}
+			<div class="componentMenuItem"
+				id="tooltip{{component.uid}}"
+				title=" {{ menuItemTooltip(component) }} ">
+				{{ menuItemTitleAndContent(component) }}
+				<script type="text/javascript">
+					$(function() {
+					$("#tooltip{{component.uid}}").tooltip({
+						track: true,
+						delay: 0,
+						showURL: false,
+						top: -15,
+						left: 5
+					});
+					});
+				</script>
+			</div>
+		{% endfor %}
+		{{ itemPrice(composit) }}
+		{{ orderQuantityBox(composit) }}
+	</div>
+{% endmacro %}

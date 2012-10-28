@@ -161,13 +161,27 @@ p {
 	font-size: 12px;
 }
 
-.calendarElement h3 {
+.menuItamMainDish {
 	margin: 0;
 	font-size: 14px;
 	font-weight: bold;
 	margin-left: -1px;
 	margin-bottom: 5px;
 	color: #333;
+}
+
+.menuItamSubDish {
+	line-height: 1;
+	margin: 0;
+	margin-bottom: 5px;
+	font-size: 12px;
+}
+
+.menuItemNutrition {
+	line-height: 1;
+	margin: 0;
+	margin-bottom: 5px;
+	font-size: 12px;
 }
 
 .calendarElement strong {
@@ -179,24 +193,36 @@ p {
 .calendarElement small {
 	font-size: 16px;
 	margin-right: 3px;
-	float: right;
+	vertical-align: middle;
 }
 
+
+.calendarElement div {
+	text-align: right;
+	margin-top: -3px;
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+	padding-bottom: 0px;
+}
+
+.calendarElement .componentMenuItem {
+	text-align: left;
+	margin: 0;
+	padding: 0;
+}
 
 .calendarElement input[type=text] {
 	height: 22px;
 	width: 25px;
 	box-shadow:inset 0px 2px 3px #DDDDDD;
 	border: solid 1px #BBBBBB;
-	margin-top: -3px;
-	float: right;
-	margin-right: 0;
-	margin-bottom: 0;
-	margin-left: 0;
 	text-align: center;
 	font-size: 16px;
+	vertical-align:middle;
 	font-family: "Arial Narrow", Arial, sans-serif;
 	font-weight: bold;
+	margin:0px;
 	color: #F60;
 }
 
