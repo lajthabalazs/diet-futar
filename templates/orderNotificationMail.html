@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+	<span>Kedves {{ user.familyName }} {{ user.givenName }}!</span><br/>
+	<p>Köszönjük, hogy megtisztelt bizalmával, és {{userOrder.orderDate.strftime('%Y-%m-%d %H:%M')}} -kor a következő rendelést adta föl:</p>
+	<table border="1">
+		<tr><th>Nap</th><th>Termék</th><th style="text-align: right">Darab</th><th style="text-align: right">Egységár</th><th style="text-align: right">Ár</th></tr>
+		{% for orderItem in userOrder.items %}
+			<tr>
+				{% if orderItem.orderedItem == None %}
+				{# Composit #}
+				<td>{{ orderItem.orderedComposit.day }}</td>
+				<td>{% for component in orderItem.orderedComposit.components%}{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}{% endfor %} </td>
+				<td style="text-align: right">{{orderItem.itemCount}}</td>
+				<td style="text-align: right">{{orderItem.orderedComposit.price}}</td>
+				<td style="text-align: right">{{orderItem.price}} Ft</td>
+				{% else %}
+				{# Menu item #}
+				<td>{{ orderItem.orderedItem.day }}</td>
+				<td>{{orderItem.orderedItem.dish.title}}</td>
+				<td style="text-align: right">{{orderItem.itemCount}}</td>
+				<td style="text-align: right">{{orderItem.orderedItem.price}}</td>
+				<td style="text-align: right">{{orderItem.price}} Ft</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	<tr><td colspan="4">Összesen</td><td style="text-align: right">{{userOrder.price}} Ft</td></tr>
+	</table>
+	<p>Amennyiben rendelését módosítani szeretné, látogasson el a szállítás napját megelőző nap 12:00 előtt oldalunkra a <a href="http://www.diet-futar.hu">http://www.diet-futar.hu</a> címre. Lemondáshoz rendeljen a korábbi rendeléseinek megfelelő negatív mennyiséget.</p>
+	<p>Üdvözlettel: Diet-futár</p>
+</body>
+</html>

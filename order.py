@@ -11,8 +11,9 @@ from model import MenuItem, UserOrder, UserOrderItem, User,\
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import USER_KEY, getUser, isUserLoggedIn
 from timezone import USTimeZone
-from cache_menu_item import getDaysMenuItems, createMenuItemData, getMenuItem
-from cache_composit import getDaysComposits, createCompositData, getComposit
+from cache_menu_item import getDaysMenuItems, getMenuItem
+from cache_composit import getDaysComposits, getComposit
+from google.appengine.api import mail
 from cache_dish_category import getDishCategories
 #from user_management import getUserBox
 
@@ -504,7 +505,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 
 class ConfirmOrder(BaseHandler):
 	def post(self):
-		#One step ordering - this is a trial
+		#One step ordering
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
 			return
@@ -607,7 +608,21 @@ class ConfirmOrder(BaseHandler):
 				except ValueError, ReferencePropertyResolveError:
 					continue
 			userOrder.put()
+			template_values = {
+				"userOrder":userOrder,
+				"user":user
+			}
+			# Send email notification to the user
+			messageTxtTemplate = jinja_environment.get_template('templates/orderNotificationMail.txt')
+			messageHtmlTemplate = jinja_environment.get_template('templates/orderNotificationMail.html')
+			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
+			message.subject="Diet-futar, rendeles visszaigazolasa"
+			message.to = user.email
+			message.body = messageTxtTemplate.render(template_values)
+			message.html = messageHtmlTemplate.render(template_values)
+			message.send()
 			self.session[ACTUAL_ORDER]={}
+			#self.response.out.write(messageTemplate.render(template_values));
 			self.redirect("/personalMenu")
 		else:
 			print "Nothing to confirm"

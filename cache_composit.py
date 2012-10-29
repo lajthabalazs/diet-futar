@@ -41,7 +41,7 @@ def getComposit(key):
 	client = memcache.Client()
 	composit = client.get(key)
 	if composit == None:
-		compositDb = MenuItem.get(key)
+		compositDb = Composit.get(key)
 		composit = createCompositData(compositDb)
 		client.set(key,composit)
 	# Fetch menu item data for keys

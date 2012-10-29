@@ -142,7 +142,7 @@ class RegisterPage(BaseHandler):
 			}
 			messageTemplate = jinja_environment.get_template('templates/activation_code.html')
 			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
-			message.subject="Sikeres regisztracio"
+			message.subject="Diet-futar, sikeres regisztracio"
 			message.to = email
 			message.body = messageTemplate.render(template_values)
 			message.send()

@@ -173,7 +173,7 @@ class BaseHandler(webapp2.RequestHandler):
 			ret=ret + "A tartalom nem jelenitheto meg"
 		ret=ret+"</div>"
 		ret=ret+jinja_environment.get_template('templates/footer.html').render()
-		self.response.out.write(ret);
+		self.response.out.write(ret)
 	@webapp2.cached_property
 	def session(self):
 		# Returns a session using the default cookie key.
