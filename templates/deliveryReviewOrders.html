@@ -3,10 +3,11 @@
 
 		{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
 		<br/>
-		{{day}}
+		{{ day.date }} <br/>
+		{{ day.day }}
 		<table border="1">
 			<tr>
-				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Futár</th><th></th>
+				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th><th>Futár</th><th></th>
 			</tr>
 			{% for order in orders%}
 			<form method="post">
@@ -17,6 +18,15 @@
 					<td>{{order.address.zipCode}}</td>
 					<td>{{order.address.street}} {{order.address.streetNumber}}</td>
 					<td><a href="/deliverable?orderAddressKey={{order.key()}}">{{order.user.familyName}} {{order.user.givenName}}</a></td>
+					<td>
+						{% for item in order.orderedItems %}
+							{{item.itemCount}}
+							{{ item.dish.title }}
+							{% for component in item.components %}
+								{{ component.dish.title }}
+							{% endfor %}<br/>
+						{% endfor %}
+					</td>
 					<td><select name="deliverer">
 						<option value="" label="-- Nincs kiválasztva"></option>
 						{% for user in deliverers%}

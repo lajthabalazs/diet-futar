@@ -46,23 +46,20 @@ class ChefReviewOrdersPage(BaseHandler):
 				actualDayObject={}
 				actualDayObject["day"]=dayNames[i]
 				actualDayObject["date"]=actualDay
-				menuItems = getDaysMenuItems(actualDay, categoryKey)
-				composits=getDaysComposits(actualDay, categoryKey)
+				#menuItems = getDaysMenuItems(actualDay, categoryKey)
+				#composits=getDaysComposits(actualDay, categoryKey)
+				menuItems = MenuItem.all().filter("day = ", actualDay).filter("categoryKey = ", categoryKey).filter("containingMenuItem = ", None);
+				composits = Composit.all().filter("day = ", actualDay).filter("categoryKey = ", categoryKey);
 				#Filter menu items
 				actualMenuItems=[]
 				actualComposits=[]
 				for menuItem in menuItems:
-					itemKeyStr=menuItem['key']
-					try:
-						menuItem.orderedQuantity = 0
-						for order in menuItem.occurrences:
-							menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
-						if menuItem.orderedQuantity > 0:
-							itemsInRows = itemsInRows + 1
-							actualMenuItems.append(menuItem)
-					except ReferencePropertyResolveError:
-						print "ReferencePropertyResolveError on "
-						print menuItem
+					menuItem.orderedQuantity = 0
+					for order in menuItem.occurrences:
+						menuItem.orderedQuantity = menuItem.orderedQuantity + order.itemCount
+					if menuItem.orderedQuantity > 0:
+						itemsInRows = itemsInRows + 1
+						actualMenuItems.append(menuItem)
 				for composit in composits:
 					composit.orderedQuantity = 0
 					for order in composit.occurrences:
@@ -221,6 +218,39 @@ class ChefReviewToMakePage(BaseHandler):
 		template = jinja_environment.get_template('templates/chefReviewDishes.html')
 		self.printPage(str(day), template.render(template_values), False, False)
 		
+
+def getOrderedItems (orderAddress):
+	filteredSet = orderAddress.user.orderedItems.filter("day = ", orderAddress.day)
+	# Aggregate filtered set
+	menuItemIndexes={}
+	menuItemOrders=[]
+	for orderedItem in filteredSet:
+		if orderedItem.orderedComposit == None:
+			menuItem=orderedItem.orderedItem
+			actualOrder=0
+			if menuItemIndexes.has_key(menuItem.key()):
+				itemIndex=menuItemIndexes.get(menuItem.key())
+				actualOrder=menuItemOrders[itemIndex].itemCount
+				menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
+			else:
+				menuItem.itemCount=orderedItem.itemCount
+				menuItemIndexes[menuItem.key()]=len(menuItemOrders)
+				menuItemOrders.append(menuItem)
+		else:
+			actualOrder=0
+			for compositItem in orderedItem.orderedComposit.components:
+				menuItem = compositItem.menuItem;
+				actualOrder=0
+				if menuItemIndexes.has_key(menuItem.key()):
+					itemIndex=menuItemIndexes.get(menuItem.key())
+					actualOrder=menuItemOrders[itemIndex].itemCount
+					menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
+				else:
+					menuItem.itemCount=orderedItem.itemCount
+					menuItemIndexes[menuItem.key()]=len(menuItemOrders)
+					menuItemOrders.append(menuItem)
+	return menuItemOrders
+
 		
 #An accumulated overview of every ordered item
 class DeliveryReviewOrdersPage(BaseHandler):
@@ -229,11 +259,21 @@ class DeliveryReviewOrdersPage(BaseHandler):
 			self.redirect("/")
 			return
 		day=getBaseDate(self)
+		calendar=day.isocalendar()
+		#Organize into days
+		dayObject={}
+		dayObject["day"]=dayNames[calendar[2]-1]
+		dayObject["date"]=day
 		prevDay=day+datetime.timedelta(days=-1)
 		nextDay=day+datetime.timedelta(days=1)
 		today=datetime.date.today()
 		orders=UserOrderAddress.gql("WHERE day=DATE(:1,:2,:3)", day.year, day.month, day.day)
 		sortedDeliveries=sorted(orders, key=lambda item:item.address.zipCode)
+		deliveries = []
+		for orderAddress in sortedDeliveries:
+			items = getOrderedItems(orderAddress)
+			orderAddress.orderedItems = items
+			deliveries.append(orderAddress)
 		admins=Role.all().filter("name = ", ROLE_ADMIN)[0].users
 		delivereryGuys=Role.all().filter("name = ", ROLE_DELIVERY_GUY)[0].users
 		deliverers=[]
@@ -244,8 +284,8 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		template_values = {
 			'next':nextDay,
 			'actual':today,
-			'orders':sortedDeliveries,
-			'day':day,
+			'orders':deliveries,
+			'day':dayObject,
 			'deliverers':deliverers
 		}
 		template_values['prev'] = prevDay
@@ -278,38 +318,10 @@ class DeliveryPage(BaseHandler):
 		orderAddressKey=self.request.get("orderAddressKey")
 		orderAddress=UserOrderAddress.get(orderAddressKey)
 		day=orderAddress.day
-		filteredSet = orderAddress.user.orderedItems.filter("day = ", day)
-		# Aggregate filtered set
-		menuItemIndexes={}
-		menuItemOrders=[]
-		for orderedItem in filteredSet:
-			if orderedItem.orderedComposit == None:
-				menuItem=orderedItem.orderedItem
-				actualOrder=0
-				if menuItemIndexes.has_key(menuItem.key()):
-					itemIndex=menuItemIndexes.get(menuItem.key())
-					actualOrder=menuItemOrders[itemIndex].itemCount
-					menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
-				else:
-					menuItem.itemCount=orderedItem.itemCount
-					menuItemIndexes[menuItem.key()]=len(menuItemOrders)
-					menuItemOrders.append(menuItem)
-			else:
-				actualOrder=0
-				for compositItem in orderedItem.orderedComposit.components:
-					menuItem = compositItem.menuItem;
-					actualOrder=0
-					if menuItemIndexes.has_key(menuItem.key()):
-						itemIndex=menuItemIndexes.get(menuItem.key())
-						actualOrder=menuItemOrders[itemIndex].itemCount
-						menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
-					else:
-						menuItem.itemCount=orderedItem.itemCount
-						menuItemIndexes[menuItem.key()]=len(menuItemOrders)
-						menuItemOrders.append(menuItem)
+		items = getOrderedItems(orderAddress)
 		template_values = {
 			'order':orderAddress,
-			'items':menuItemOrders
+			'items':items
 		}
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/delivery.html')
