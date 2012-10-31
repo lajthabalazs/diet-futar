@@ -5,7 +5,8 @@ Created on Aug 11, 2012
 '''
 import webapp2
 from webapp2_extras import sessions
-from user_management import getUserBox, isUserLoggedIn, isUserAdmin, isUserCook, isUserDelivery
+from user_management import getUserBox, isUserLoggedIn, isUserAdmin, isUserCook, isUserDelivery,\
+	isUserAgent
 import jinja2
 import os
 from keys import DISH_CATEGORY_URL
@@ -101,6 +102,10 @@ class BaseHandler(webapp2.RequestHandler):
 			userList["label"]="Felhasznalok"
 			userList["target"]="/userList"
 			topMenu.append(userList)
+			agent={}
+			agent["label"]="Ajanlott"
+			agent["target"]="/referred"
+			topMenu.append(agent)
 		elif isUserCook(self):
 			dailyMenu={}
 			dailyMenu["label"]="Menu osszeallitas"
@@ -138,8 +143,12 @@ class BaseHandler(webapp2.RequestHandler):
 			toDeliver={}
 			toDeliver["label"]="Szallitando"
 			toDeliver["target"]="/deliveryReviewOrders"
-			topMenu.append(toDeliver)			
-			
+			topMenu.append(toDeliver)
+		elif isUserAgent(self):
+			agent={}
+			agent["label"]="Ajanlott"
+			agent["target"]="/referred"
+			topMenu.append(agent)
 		if len(topMenu) > 0:
 			template_params={
 				"menuItems":topMenu

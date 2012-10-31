@@ -1,0 +1,38 @@
+﻿<div class="mainBg">
+	<div class="container">
+		<table border="1">
+			<tr>
+				<th>Regisztráció dátuma</th><th>Név</th><th>e-mail</th><th>Aktivált</th>
+			</tr>
+			{% for user in referred%}
+				<tr>
+					<td>{{ user.registrationDate }}</td>
+					<td>{{ user.familyName }} {{ user.givenName }}</td>
+					<td>{{ user.email }}</td>
+					<td>{% if user.activated %} Akitvált {% else %} Nem aktivált {% endif %}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

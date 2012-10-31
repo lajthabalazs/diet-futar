@@ -8,6 +8,7 @@ from google.appengine.ext import db
 ROLE_ADMIN="admin"
 ROLE_DELIVERY_GUY="fut&#225;r"
 ROLE_COOK="szak&#225;cs"
+ROLE_AGENT="agent"
 
 class Role(db.Model):
 	name = db.StringProperty()

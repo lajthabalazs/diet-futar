@@ -9,7 +9,7 @@ from ingredient import IngredientDeletePage, IngredientAddPage, IngredientPage
 from dish import DishPage, DeleteDishPage, DishIngredientAddPage, DishIngredientDeletePage
 from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage, UserProfilePage,\
-	ActivatePage, AddressPage, ChangePasswordPage, ActivationPendingPage
+	ActivatePage, AddressPage, ChangePasswordPage, ActivationPendingPage, Referals
 from menu import MenuEditPage, AddMenuItemComponent,\
 	ModifyMenuItem, CreateComposit, AddItemToComposit, DeleteItemFromComposit,\
 	ModifyComposit, DeleteMenuItem, DeleteComposit, MenuWeekEditPage
@@ -36,6 +36,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/login', LoginPage),
 										('/logout', LogoutPage),
 										('/registration', RegisterPage),
+										('/referred', Referals),
 										('/activate', ActivatePage),
 										('/activationPending', ActivationPendingPage),
 										('/changePassword', ChangePasswordPage),

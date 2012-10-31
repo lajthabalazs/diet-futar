@@ -10,7 +10,7 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler
-from model import User, Address, Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK
+from model import User, Address
 from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
@@ -116,16 +116,19 @@ class RegisterPage(BaseHandler):
 #			role = Role()
 #			role.name=ROLE_COOK
 #			role.put()
+		refererUrlPart = ""
+		if referer != None:
+			refererUrlPart = "?refererKey=" + str(referer.key())
 		self.session[USER]=user
 		if (users.count(1)>0):
 			self.session[REGISTRATION_ERROR_KEY]=REGISTRATION_ERROR_EXISTING_USER
-			self.redirect('/registration')
+			self.redirect('/registration' + refererUrlPart)
 		elif (passwordCheck != password):
 			self.session[REGISTRATION_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
-			self.redirect('/registration')
+			self.redirect('/registration' + refererUrlPart)
 		elif familyName==None or familyName=="" or givenName==None or givenName=="":
 			self.session[REGISTRATION_ERROR_KEY] = REGISTRATION_ERROR_USER_NAME_NOT_FILLED
-			self.redirect('/registration')
+			self.redirect('/registration' + refererUrlPart)
 		else:
 			#Everything went ok, create the user and log him in
 			user = User()
@@ -281,6 +284,22 @@ class AddressPage (BaseHandler):
 		address.put()
 		self.redirect("/profile")
 
+class Referals (BaseHandler):
+	def get(self):
+		if(not isUserLoggedIn(self)):
+			self.redirect("/registration")
+			return
+		user = None
+		userKey=self.session.get(USER_KEY,None)
+		if (userKey != None):
+			user = db.get(userKey)
+		referred = sorted(user.referred, key=lambda user:user.registrationDate)
+		template_values = {
+			'referred' : referred
+		}
+		template = jinja_environment.get_template('templates/referred.html')
+		self.printPage("Profil", template.render(template_values), False, True)
+		
 
 
 
