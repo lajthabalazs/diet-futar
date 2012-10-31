@@ -12,13 +12,18 @@
 							<label>Keresztnév<input type="text" name="givenName" value="{% if user != None%}{{user.givenName}}{% endif %}"/></label>
 							<label>Telefonszám<input type="text" name="phoneNumber"/></label>
 							{% if (registration_error) %}
-							<span style="color: 'RED'">{{registration_error}}</span><br/>
+							<span style="color: #F60;">{{registration_error}}</span><br/>
 							{% else %}
-							<span>Minden mező kitöltése kötelező</span><br/>
+							<span style="color: #F60;">Minden mező kitöltése kötelező</span><br/>
 							{% endif %}
 							<input type="submit" value="Regisztráció"/>
 					</form>	
 				</div>
+				{% if referer %}
+				<div class="span-5 prepend-1 profileColumn profileElement">
+					<p>Az oldalt {{ referer.familyName }} {{ referer.givenName }} ajánlotta Önnek.</p>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>

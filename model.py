@@ -13,6 +13,7 @@ class Role(db.Model):
 	name = db.StringProperty()
 
 class User(db.Model):
+	referNumber = db.IntegerProperty()
 	email = db.StringProperty()
 	password = db.StringProperty()
 	familyName = db.StringProperty()
@@ -21,6 +22,7 @@ class User(db.Model):
 	activated = db.BooleanProperty()
 	activationCode = db.StringProperty()
 	registrationDate=db.DateProperty()
+	referer = db.SelfReferenceProperty('The user who suggested this page', "referred")
 	role=db.ReferenceProperty(Role, collection_name='users')
 
 class Address (db.Model):

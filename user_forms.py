@@ -76,15 +76,22 @@ class LogoutPage(BaseHandler):
 		
 class RegisterPage(BaseHandler):
 	def get(self):
+		refererKey = self.request.get('refererKey')
 		template_params={
 			REGISTRATION_ERROR_KEY:self.session.get(REGISTRATION_ERROR_KEY,None),
 			USER:self.session.get(USER, None)
 		}
+		if refererKey != None and refererKey != "":
+			template_params['referer'] = User.get(refererKey)
 		clearRegistrationError(self)
 		template = jinja_environment.get_template('templates/register.html')
 		self.printPage("Regisztracio", template.render(template_params), True, True)
 		#self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render())
 	def post(self):
+		referer = None
+		refererKey = self.request.get('refererKey')
+		if refererKey != None and refererKey != "":
+			referer = User.get(refererKey)
 		email = self.request.get('email')
 		phoneNumber = self.request.get('phoneNumber')
 		password = self.request.get('password')
@@ -129,6 +136,7 @@ class RegisterPage(BaseHandler):
 			user.phoneNumber=phoneNumber
 			user.activated = False
 			user.registrationDate=datetime.date.today()
+			user.referer = referer
 			word = ''
 			random = Random()
 			for i in range(1,32):
