@@ -95,15 +95,12 @@ body {
 	background-image: url(../img/calendarBg.png);
 	background-repeat: repeat-y;
 	background-position: center top;
+	padding-top: 18px;
 }
 
 .calendarHeader {
 	padding-top: 25px;
 	padding-bottom: 23px;
-}
-
-.menuEditSelect {
-	width: 120px;
 }
 
 .calendarHeader div {
@@ -136,51 +133,19 @@ body {
 	color: #333;
 }
 
-.profileElement {
-	background-image: url(../img/profileElementBg.png);
-	background-repeat: no-repeat;
-	background-position: center bottom;
-	padding-top: 10px;
-	padding-right: 25px;
-	padding-bottom: 22px;
-	margin-bottom: 10px;
-	padding-left: 25px;
-	font-family: "Arial Narrow", Arial, sans-serif;
-	line-height: normal;
-}
-
-p {
-	font-size: 16px;
-}
-
 .calendarElement p {
 	line-height: 1;
 	margin: 0;
 	margin-bottom: 5px;
-	font-size: 12px;
 }
 
-.menuItamMainDish {
+.calendarElement h3 {
 	margin: 0;
 	font-size: 14px;
 	font-weight: bold;
 	margin-left: -1px;
 	margin-bottom: 5px;
 	color: #333;
-}
-
-.menuItamSubDish {
-	line-height: 1;
-	margin: 0;
-	margin-bottom: 5px;
-	font-size: 12px;
-}
-
-.menuItemNutrition {
-	line-height: 1;
-	margin: 0;
-	margin-bottom: 5px;
-	font-size: 12px;
 }
 
 .calendarElement strong {
@@ -192,44 +157,51 @@ p {
 .calendarElement small {
 	font-size: 16px;
 	margin-right: 3px;
-	vertical-align: middle;
+	float: right;
 }
 
-
-.calendarElement div {
-	text-align: right;
-	margin-top: -3px;
-	margin-right: 0;
-	margin-bottom: 0;
-	margin-left: 0;
-	padding-bottom: 0px;
-}
-
-.calendarElement .componentMenuItem {
-	text-align: left;
-	margin: 0;
-	padding: 0;
-}
 
 .calendarElement input[type=text] {
 	height: 22px;
 	width: 25px;
 	box-shadow:inset 0px 2px 3px #DDDDDD;
 	border: solid 1px #BBBBBB;
+	margin-top: -3px;
+	float: right;
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-left: 0;
 	text-align: center;
 	font-size: 16px;
-	vertical-align:middle;
 	font-family: "Arial Narrow", Arial, sans-serif;
 	font-weight: bold;
-	margin:0px;
 	color: #F60;
 }
 
 .calendarElement input[type=text]:focus {
 	border: solid 1px #F60;
-	}
+}
+	
+.calendarElement input[type=button] {
+	text-decoration: none;
+	background: none;
+	border: none;
+	background-color: none;
+	background-image: url(../img/delete.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	display: block;
+	height: 16px;
+	width: 16px;
+	position: absolute;
+	margin-left: 106px;
+}
+	
+.calendarElement input[type=button]:hover {
+	background-image: url(../img/deleteHover.png);
+}
 
-.inactive {
+.calendar .inactive {
 opacity:0.3;
 filter:alpha(opacity=30); /* For IE8 and earlier */
 }
@@ -255,7 +227,7 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	background-image: url(../img/subTotalTop.png);
 	background-repeat: no-repeat;
 	background-position: center top;
-	height: 80px;
+	height: 45px;
 	padding-top: 40px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	color: #333;
@@ -265,8 +237,8 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	background-image: url(../img/totalTop.png);
 	background-repeat: no-repeat;
 	background-position: center top;
-	height: 115px;
-	padding-top: 20px;
+	height: 100px;
+	padding-top: 35px;
 }
 
 .subTotal div {
@@ -282,7 +254,7 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 }
 .login input[type=text], .login input[type=password] {
 	width: 210px;
-	height: 25px;
+	height: 30px;
 	background: none;
 	background-color: none;
 	border: none;
@@ -290,12 +262,12 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	background-repeat: no-repeat;
 	background-position: center top;
 	font-family: FrutigerCn_PFL-Normal;
-	font-size: 18px;
+	font-size: 20px;
 	color: #333333;
 	margin: 0;
 	padding-right: 5px;
 	padding-left: 5px;
-	margin-bottom: 5px;
+	margin-bottom: 18px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 }
 
@@ -309,10 +281,9 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
         color:    #7c7467;
 }
 
-
-.login input[type=submit], .login input[type=button], .login a, a.adminMenu {
+.login input[type=submit], .login input[type=button], .login a {
 	font-family: GillSansMT-Condensed;
-	font-size: 20px;
+	font-size: 28px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	text-transform: uppercase;
 	background: none;
@@ -320,21 +291,17 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	margin: 0;
 	padding: 0;
 	color: #000;
-	cursor: hand;
-	text-decoration: none;
 }
 
-a.adminMenu {
-	margin-right: 20px;
-}
-
-.login input[type=button] {
+.login input[type=button], .login a {
 	color: #918777;
 	background-image: url(../img/loginSeparator.png);
 	background-repeat: no-repeat;
 	background-position: left center;
 	padding-left: 30px;
 	margin-left: 11px;
+	margin-right: -10px;
+	text-decoration: none;
 }
 
 .menu {
@@ -418,7 +385,7 @@ a.cart {
 	display: block;
 	height: 80px;
 	overflow: hidden;
-	margin-top: 85px;
+	margin-top: 67px;
 	margin-left: 40px;
 	margin-right: -40px;
 }
@@ -506,16 +473,15 @@ a.lastWeek {
 	font-size: 14px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	line-height: 35px;
-	color: #333333;
 }
 
 
-.profileColumn input[type=text], .profileColumn select, .profileColumn input[type=password], .profileColumn label span {
+.profileColumn input[type=text], .profileColumn input[type=password], .profileColumn label span {
 	float: right;
 	width: 210px;
 	height: 30px;
 	background: none;
-	background-color: #FFFFFF;
+	background-color: none;
 	border: none;
 	background-image: url(../img/loginBg.png);
 	background-repeat: no-repeat;
@@ -529,11 +495,6 @@ a.lastWeek {
 	margin-bottom: 5px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	font-weight: normal;
-}
-
-.profileColumn select {
-	width:220px;
-	padding-left: 8px;
 }
 
 .profileColumn input[type=checkbox] {
@@ -565,6 +526,54 @@ a.lastWeek {
 .profileColumn input[type=submit]:hover, .profileColumn input[type=button]:hover {
 	color: #399;
 	text-shadow: #FFFFFF 0px 1px 0px;
+}
+
+
+
+.mainBg {
+	background-image: url(../img/mainContainerBg.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	margin-top: -18px;
+}
+
+.total h2 {
+	float: right;
+	font-family: FrutigerLtCn_PFL-Normal;
+	font-size: 24px;
+	padding-right: 20px;
+	padding-top: 20px;
+	font-weight: bold;
+}
+
+.total h2 small {
+	font-size: 18px;
+	padding-right: 20px;
+	font-weight: normal;
+}
+
+.total input[type=button], .total input[type=submit] {
+	text-decoration: none;
+	background: none;
+	border: none;
+	background-color: none;
+	background-image: url(../img/toCartBg.png);
+	background-repeat: no-repeat;
+	background-position: left top;
+	display: block;
+	height: 80px;
+	float: right;
+	font-size: 40px;
+	text-transform: uppercase;
+	color: #5e7d7d;
+	text-shadow: #FFFFFF 0px 1px 0px;
+	font-family: 'GillSansMT-Condensed';
+	padding-right: 40px;
+	padding-left: 50px;
+}
+
+.total input[type=button]:hover, .total input[type=submit]:hover {
+	color: #000000;
 }
 
 /* Mobile */
