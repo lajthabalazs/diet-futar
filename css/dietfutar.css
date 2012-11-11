@@ -636,6 +636,12 @@ a.lastWeek {
 	border: none !important;
 }
 
+.addthis_toolbox  {
+	position: absolute;
+	margin-left: 878px;
+	margin-top: 15px;
+}
+
 /* Mobile */
 
 @media handheld, only screen and (max-width: 769px) {
