@@ -1,5 +1,5 @@
 application: diet-futar
-version: 33--hot-colors
+version: 34--facebook
 runtime: python27
 api_version: 1
 threadsafe: no
