@@ -1,5 +1,5 @@
 application: diet-futar
-version: 29--fixed-faulty-dish-adding
+version: 31
 runtime: python27
 api_version: 1
 threadsafe: no

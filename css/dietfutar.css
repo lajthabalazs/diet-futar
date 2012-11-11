@@ -291,6 +291,19 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	color: #000;
 }
 
+a.adminMenu {
+	margin-right: 20px;
+	font-family: GillSansMT-Condensed;
+	font-size: 18px;
+	text-shadow: #FFFFFF 0px 1px 0px;
+	text-transform: uppercase;
+	background: none;
+	border: none;
+	margin: 0;
+	padding: 0;
+	color: #000;
+}
+
 .login input[type=button], .login a {
 	color: #918777;
 	background-image: url(../img/loginSeparator.png);
