@@ -227,7 +227,6 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 	background-image: url(../img/subTotalTop.png);
 	background-repeat: no-repeat;
 	background-position: center top;
-	height: 45px;
 	padding-top: 40px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	color: #333;
@@ -552,12 +551,11 @@ a.lastWeek {
 	font-weight: normal;
 }
 
-.total input[type=button], .total input[type=submit] {
+.total button, input[type=button], .total input[type=submit] {
 	text-decoration: none;
 	background: none;
 	border: none;
 	background-color: none;
-	background-image: url(../img/toCartBg.png);
 	background-repeat: no-repeat;
 	background-position: left top;
 	display: block;
@@ -572,7 +570,22 @@ a.lastWeek {
 	padding-left: 50px;
 }
 
-.total input[type=button]:hover, .total input[type=submit]:hover {
+#toCartButton {
+	float: right;
+	background-image: url(../img/toCartBg.png);
+}
+
+#basketOrderButton {
+	float: right;
+	background-image: url(../img/sendOrderBg.png);	
+}
+
+#saveBasketButton {
+	float: right;
+	background-image: url(../img/saveCartBg.png);	
+}
+
+.total button:hover, input[type=button]:hover, .total input[type=submit]:hover {
 	color: #000000;
 }
 

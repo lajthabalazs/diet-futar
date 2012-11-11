@@ -39,21 +39,11 @@
 					</div>
 				{% endfor%}
 			</div>
-            
-            
-            <div class="span-24 last subTotal">
-            	<h2 class="span-2">Összesen</h2>
-            	<div class="span-4">5143 kCal  /  <strong>4560 Ft</strong></div>
-            	<div class="span-4">5143 kCal  /  <strong>4560 Ft</strong></div>
-            	<div class="span-4">5143 kCal  /  <strong>4560 Ft</strong></div>
-            	<div class="span-4">5143 kCal  /  <strong>4560 Ft</strong></div>
-            	<div class="span-4">5143 kCal  /  <strong>4560 Ft</strong></div>
-            </div>
-            
-            <div class="span-24 last total">
-                <input type="submit" value="Kosárba" />
-            	<h2><small><input type="hidden" name="formDay" value="{{ days[0].date }}"/></small></h2>
-            </div>
+			<div class="span-24 last total">
+				<input type="submit" id="toCartButton" value="Kosárba" />
+				<h2><small><input type="hidden" name="formDay" value="{{ days[0].date }}"/></small></h2>
+			</div>
+		</div>
 	</div>
-</div></div>
+</div>
 </form>
