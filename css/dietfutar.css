@@ -608,6 +608,26 @@ a.lastWeek {
 	color: #000000;
 }
 
+/* Static page */
+
+.staticPage {
+	background: none;
+	background-image: url(../img/calendarBg.png);
+	background-repeat: repeat-y;
+	background-position: center top;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 20px;
+	padding-bottom: 5px;
+}
+
+.staticPage h1 {
+	font-family: GillSansMT-Condensed;
+	font-size: 28px;
+	text-shadow: #FFFFFF 0px 1px 0px;
+	text-transform: uppercase;
+}
+
 /* Mobile */
 
 @media handheld, only screen and (max-width: 769px) {
