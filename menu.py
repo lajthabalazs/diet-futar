@@ -291,6 +291,8 @@ class AddMenuItemComponent(BaseHandler):
 				menuItem=db.get(menuItemKey)
 				if (menuItem != None) and menuItem.occurrences.count()==0:
 					sumprice = menuItem.dish.price
+					if sumprice == None:
+						sumprice = 0
 					#Get the dish
 					dishKey = self.request.get('componentDishKey')
 					#Create a menu item for the dish
@@ -315,12 +317,14 @@ class DeleteMenuItem(BaseHandler):
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
-				print "Menu item "
-				print menuItem.day
-				print  menuItem.occurrences.count() 
-				print  menuItem.composits.count()
+				#print "Menu item "
+				#print menuItem.day
+				#print  menuItem.occurrences.count() 
+				#print  menuItem.composits.count()
 				if menuItem != None and menuItem.occurrences.count() == 0 and menuItem.composits.count() == 0:
-					if menuItem.containingMenuItem != None:
+					containingMenuItem = menuItem.containingMenuItem
+					if containingMenuItem != None:
+						#print "Deleting sub item"
 						sumprice = menuItem.containingMenuItem.dish.price
 						if sumprice == None:
 							sumprice = 0
@@ -331,13 +335,14 @@ class DeleteMenuItem(BaseHandler):
 							sumprice = sumprice - menuItem.dish.price
 						menuItem.containingMenuItem.sumprice = sumprice
 						menuItem.containingMenuItem.put()
-						modifyMenuItem(menuItem.containingMenuItem)
 					if menuItem.components != None:
 						for component in menuItem.components:
 							component.delete()
 							deleteMenuItem(component)
 					menuItem.delete()
 					deleteMenuItem(menuItem)
+					if containingMenuItem != None:
+						modifyMenuItem(menuItem.containingMenuItem)
 				else:
 					menuItem.active = False
 					menuItem.put()

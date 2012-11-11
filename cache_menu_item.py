@@ -37,22 +37,46 @@ def getMenuItem(key):
 	# Fetch dish for menu item and fetch subitems
 	menuItem['dish']=getDish(menuItem['dishKey'])
 	dish = getDish(menuItem['dishKey'])
-	sumprice = dish['price']
+	sumprice = 0
+	try:
+		sumprice = dish['price']
+	except KeyError:
+		pass
 	if sumprice == None:
 		sumprice = 0
-	energy = dish['energy']
+	energy = 0
+	try:
+		energy = dish['energy']
+	except KeyError:
+		pass
 	if energy == None:
 		energy=0
-	fat = dish['fat']
+	fat = 0
+	try:
+		fat = dish['fat']
+	except KeyError:
+		pass
 	if fat == None:
 		fat=0
-	carbs = dish['carbs']
+	carbs = 0
+	try:
+		carbs = dish['carbs']
+	except KeyError:
+		pass
 	if carbs == None:
 		carbs=0
-	fiber = dish['fiber']
+	fiber = 0
+	try:
+		fiber = dish['fiber']
+	except KeyError:
+		pass
 	if fiber == None:
 		fiber=0
-	protein = dish['protein']
+	protein = 0
+	try:
+		protein = dish['protein']
+	except KeyError:
+		pass
 	if protein == None:
 		protein=0
 	# Calculate sum price
@@ -101,7 +125,11 @@ def getDaysMenuItems(day, categoryKey):
 	# Fetch dishes for menu items
 	ret = []
 	for menuItem in daysItems:
-		sumprice = getDish(menuItem['dishKey'])['price']
+		sumprice = 0
+		try:
+			sumprice = getDish(menuItem['dishKey'])['price']
+		except KeyError:
+			pass
 		if sumprice == None:
 			sumprice = 0
 		menuItem['dish']=getDish(menuItem['dishKey'])
@@ -131,7 +159,11 @@ def getDaysAvailableMenuItems(day):
 	# Fetch dishes for menu items
 	ret = []
 	for menuItem in daysItems:
-		sumprice = getDish(menuItem['dishKey'])['price']
+		sumprice = 0
+		try:
+			sumprice = getDish(menuItem['dishKey'])['price']
+		except KeyError:
+			pass
 		if sumprice == None:
 			sumprice = 0
 		menuItem['dish']=getDish(menuItem['dishKey'])
@@ -139,7 +171,11 @@ def getDaysAvailableMenuItems(day):
 		for subItemKey in menuItem['componentKeys']:
 			component = getMenuItem(subItemKey)
 			components.append(component)
-			componentPrice = getDish(component['dishKey'])['price']
+			componentPrice = 0
+			try:
+				componentPrice = getDish(component['dishKey'])['price']
+			except KeyError:
+				pass
 			if componentPrice != None:
 				sumprice = sumprice + componentPrice
 		menuItem['sumprice'] = sumprice
@@ -192,7 +228,6 @@ def modifyMenuItem(menuItem):
 			newItems.append(dayItem)
 		# Finally just add it to the cache 
 		client.set(key,newItems)
-
 	availableKey = MENU_ITEMS_FOR_DAY+ str(menuItem.day)
 	daysAvailableItems = client.get(availableKey)
 	#If we have something to update
@@ -206,7 +241,9 @@ def modifyMenuItem(menuItem):
 			newItems.append(dayItem)
 		# Finally just add it to the cache 
 		client.set(availableKey,newItems)
-
+	# Modify item
+	menuItemObject = createMenuItemData(menuItem)
+	client.set(menuItemKey, menuItemObject)
 
 def deleteMenuItem(menuItem):
 	client = memcache.Client()

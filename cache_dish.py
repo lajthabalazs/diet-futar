@@ -32,8 +32,8 @@ def addDishToCategory(categoryKey, dishKey):
 				dishKeys.append(key)
 				# Save modified value
 			dishKeys.append(dishKey)
-			category['dishKeys'] = dishKeys
-			client.set(key, category)
+		category['dishKeys'] = dishKeys
+		client.set(categoryKey, category)
 
 def getDish(key):
 	client = memcache.Client()
