@@ -124,7 +124,7 @@ body {
 	background-position: center bottom;
 	padding-top: 10px;
 	padding-right: 25px;
-	padding-bottom: 22px;
+	padding-bottom: 33px;
 	margin-bottom: 10px;
 	padding-left: 25px;
 	width: 120px;
@@ -186,7 +186,6 @@ body {
 	text-decoration: none;
 	background: none;
 	border: none;
-	background-color: none;
 	background-image: url(../img/delete.png);
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -536,6 +535,13 @@ a.lastWeek {
 	margin-top: -18px;
 }
 
+.review-ordered, .ordering-menu {
+	background-image: url(../img/mainContainerBlueBg.png);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	margin-top: -18px;
+}
+
 .total h2 {
 	float: right;
 	font-family: FrutigerLtCn_PFL-Normal;
@@ -551,7 +557,7 @@ a.lastWeek {
 	font-weight: normal;
 }
 
-.total button, input[type=button], .total input[type=submit] {
+.total button, input[type=button], .total input[type=submit], #saveAddress {
 	text-decoration: none;
 	background: none;
 	border: none;
@@ -570,7 +576,7 @@ a.lastWeek {
 	padding-left: 50px;
 }
 
-#toCartButton {
+#toCartButton, #saveAddress {
 	float: right;
 	background-image: url(../img/toCartBg.png);
 }

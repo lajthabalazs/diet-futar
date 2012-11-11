@@ -11,13 +11,13 @@
 
 {% macro orderQuantityBox(item)%}
 			<div>
-				{% if item.orderedQuantity > 0 %}
-					<small>{{ item.orderedQuantity}} {% if item.orderable %}+{% else %}adag{% endif %} </small>
-				{% endif %}
 				{% if item.orderable %}
 					<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantity('MIC{{ item.key }}')"/>
 					<input onkeyup="validateQuantity('MIC{{ item.key }}')" type="text" id="MIC{{ item.key }}" name="MIC{{ item.key }}" value={% if item.inCurrentOrder %}"{{ item.inCurrentOrder}}"{% else %}"0"{% endif %}/>
 					<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('MIC{{ item.key }}')"/>
+				{% endif %}
+				{% if item.orderedQuantity > 0 %}
+					<small>{{ item.orderedQuantity}} {% if item.orderable %}+{% else %}adag{% endif %} </small>
 				{% endif %}
 			</div>
 {% endmacro %}
@@ -43,8 +43,8 @@
 			track: true,
 			delay: 0,
 			showURL: false,
-			top: -15,
-			left: 5
+			top: 10,
+			left: 0
 		});
 		});
 		</script>

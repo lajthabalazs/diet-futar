@@ -1,5 +1,5 @@
 ﻿{% from '/templates/macros.html' import menuItemToOrderMacro, compositToOrderMacro%}
-<div class="mainBg">
+<div class="review-ordered">
 	<div class="container">
 		<div class="span-24 last calendar">
 			<div class="span-24 last calendarHeader">
@@ -9,59 +9,53 @@
 				{% endfor%}
 				{% if next %}<a href="/personalMenu?day={{ next }}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
 			</div>
-		</div>
-
-
-		{% for category in menu%}
-			<div class="span-24 last calendarRow">
-				<h2 class="span-2">{{ category.category.name }}</h2>
-				{% for day in category.days %}
-					<div class="span-4 calendarColumn">
-						{% if day.menuItems|length ==0 %}
-							&nbsp;
-						{% endif %}
-						{% for menuItem in day.menuItems %}
-							{{ menuItemToOrderMacro (menuItem) }}
-						{% endfor %}
-						{% for composit in day.composits %}
-							{{ compositToOrderMacro(composit) }}
-						{% endfor %}
-					</div>
-				{% endfor %}
-			</div>
-		{% endfor %}
-		<div class="span-24 last subTotal" style="height: 30px">
-			<h2 class="span-2">Összesen</h2>
-			{% for day in days %}
-				<div class="span-4">
-					<strong>{{ day.orderedPrice }} Ft</strong>
+			{% for category in menu%}
+				<div class="span-24 last calendarRow">
+					<h2 class="span-2">{{ category.category.name }}</h2>
+					{% for day in category.days %}
+						<div class="span-4 calendarColumn">
+							{% if day.menuItems|length ==0 %}
+								&nbsp;
+							{% endif %}
+							{% for menuItem in day.menuItems %}
+								{{ menuItemToOrderMacro (menuItem) }}
+							{% endfor %}
+							{% for composit in day.composits %}
+								{{ compositToOrderMacro(composit) }}
+							{% endfor %}
+						</div>
+					{% endfor %}
 				</div>
-			{% endfor%}
+			{% endfor %}
+			<div class="span-24 last subTotal">
+				<h2 class="span-2">Összesen</h2>
+				{% for day in days %}
+					<div class="span-4">
+						<strong>{{ day.orderedPrice }} Ft</strong>
+					</div>
+				{% endfor%}
+			</div>
+			<div class="span-24 last subTotal">
+				<h2 class="span-2">Szállítási cím</h2>
+				{% for day in days %}
+				<div class="span-4">
+					{% if day.has_key('address') %}
+						<select name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%}>
+							{% for address in addresses %}
+								<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
+							{% endfor %}
+						</select>
+					{% else %}
+						&nbsp;
+					{% endif %}
+				</div>
+				{% endfor%}
+			</div>
+			<form method="post">
+			<div class="span-24 total last">
+				<input id="saveAddress" type="submit" name="" value="Címek mentése" id=""/>
+			</div>
+			</form>
 		</div>
 	</div>
 </div>
-
-
-<form method="post">
-<div class="mainBg">
-	<div class="container">
-		<div class="span-24">
-			<h2 class="span-2">Szállítási cím</h2>
-			{% for day in days %}
-			<div class="span-4">
-				{% if day.has_key('address') %}
-					<select name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%}>
-						{% for address in addresses %}
-							<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
-						{% endfor %}
-					</select>
-				{% else %}
-					&nbsp;
-				{% endif %}
-			</div>
-			{% endfor%}
-			<div class="span-2 last nextWeek"><input  type="submit" name="" value="Címek mentése" id=""/></div>
-		</div>
-</div>
-</div>
-</form>
