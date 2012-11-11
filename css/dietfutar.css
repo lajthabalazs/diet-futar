@@ -625,6 +625,17 @@ a.lastWeek {
 	text-transform: uppercase;
 }
 
+.facebook {
+	background-image: url(../img/calendarBg.png);
+	background-repeat: repeat-y;
+	background-position: center top;
+	margin-bottom: 30px;
+}
+
+.fbConnectWidgetTopmost  {
+	border: none !important;
+}
+
 /* Mobile */
 
 @media handheld, only screen and (max-width: 769px) {
