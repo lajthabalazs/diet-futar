@@ -22,6 +22,7 @@ from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 	DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage
+from index import AboutPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -43,6 +44,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/profile', UserProfilePage),
 										('/address', AddressPage),
 										('/dish', DishPage),
+										('/about', AboutPage),
 										(DISH_CATEGORY_URL, DishCategoryPage),
 										(DISH_CATEGORY_DELETE_URL, DishCategoryDeletePage),
 										('/wish', WishPage),

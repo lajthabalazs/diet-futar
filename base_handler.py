@@ -189,7 +189,7 @@ class BaseHandler(webapp2.RequestHandler):
 			ownMenu["target"]="/personalMenu"
 			menuItems.append(ownMenu)
 		about={}
-		about["label"]="R&#243;lunk"
+		about["label"]="Rend&eacute;les"
 		about["target"]="/about"
 		menuItems.append(about)
 		template_params={
