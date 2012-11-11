@@ -612,9 +612,6 @@ a.lastWeek {
 
 .staticPage {
 	background: none;
-	background-image: url(../img/calendarBg.png);
-	background-repeat: repeat-y;
-	background-position: center top;
 	margin-top: 0px;
 	margin-bottom: 0px;
 	padding-top: 20px;
