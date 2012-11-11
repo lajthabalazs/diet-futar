@@ -636,7 +636,7 @@ a.lastWeek {
 	border: none !important;
 }
 
-.addthis_toolbox  {
+.addthis_toolbox, .facebookBadge  {
 	position: absolute;
 	margin-left: 878px;
 	margin-top: 15px;
