@@ -17,7 +17,7 @@
 		
 			</select><br/>
 			<strong>Bekerülési költség: {% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %} Ft</strong><br/>
-			<input type="text" name="subTitle" value="{{ dish.subTitle }}"/><br/>
+			<input type="text" name="subtitle" value="{{ dish.subtitle }}"/><br/>
 			<textarea name="description" cols="40" rows="4" style="height: 40px">{{ dish.description }}</textarea><br/>
 			<input type="submit" value ="Mentés"/>
 		</form>

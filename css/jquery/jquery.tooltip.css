@@ -3,7 +3,22 @@
 	z-index: 3000;
 	border: 1px solid #111;
 	background-color: #eee;
+	font-size: 12px;
 	padding: 5px;
+	width: 150px;
 	opacity: 0.85;
 }
 #tooltip h3, #tooltip div { margin: 0; }
+
+.tooltipMenuItemTitle {
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.tooltipMenuItemSubtitle {
+	font-size: 13px;
+}
+
+.menuItemNutrition {
+	font-size: 12px;
+}

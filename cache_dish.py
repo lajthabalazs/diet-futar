@@ -46,11 +46,11 @@ def getDish(key):
 	return dish
 
 # Modify dish
-def modifyDish(key, title, subTitle, description, dishCategoryDb):
+def modifyDish(key, title, subtitle, description, dishCategoryDb):
 	dishDb = Dish.get(key)
 	client = memcache.Client()
 	dishDb.title = title
-	dishDb.subTitle = subTitle
+	dishDb.subtitle = subtitle
 	dishDb.description = description
 	dishDb.category = dishCategoryDb
 	# Update dishes old category

@@ -10,7 +10,7 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler
-from model import User, Address
+from model import User, Address, Role
 from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
 	REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\

@@ -86,6 +86,8 @@ def createDishObjectDb(dishDb):
 		dish={
 			'key':str(dishDb.key()),
 			'title':dishDb.title,
+			'subtitle':dishDb.subtitle,
+			'description':dishDb.description,
 			'category':createDishCategoryObjectDb(dishDb.category),
 			'price':int(price / 100),
 			'energy':int(energy/100),

@@ -604,7 +604,7 @@ a.lastWeek {
 	background-image: url(../img/saveCartBg.png);	
 }
 
-.total button:hover, input[type=button]:hover, .total input[type=submit]:hover {
+.total button:hover, input[type=button]:hover, .total input[type=submit]:hover, #toCartButton:hover, #saveAddress:hover, #basketOrderButton:hover, #saveBasketButton:hover {
 	color: #000000;
 }
 

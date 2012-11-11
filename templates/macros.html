@@ -9,6 +9,14 @@
 		{% endfor %}</p>
 {% endmacro %}
 
+{% macro tooltipContent(menuItem)%}
+		<h3 class='tooltipMenuItemTitle'>{{ menuItem.dish.title }}</h3>
+		<p class='tooltipMenuItemSubtitle'>{{ menuItem.dish.subtitle }}</p>
+		<p class='tooltipMenuItemTitle'>{% for component in menuItem.components %}
+			{{ component.dish.title }} 
+		{% endfor %}</p>
+{% endmacro %}
+
 {% macro orderQuantityBox(item)%}
 			<div>
 				{% if item.orderable %}
@@ -23,14 +31,16 @@
 {% endmacro %}
 
 {% macro menuItemTooltip(menuItem) %}
-	{{ menuItemTitleAndContent(menuItem) }}
-	<table style='margin-bottom: 5px;'>
-		<tr><td class='menuItemNutrition'> Energia:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.enery != None %} {{ menuItem.energy }} {% endif %}</td><td class='menuItemNutrition'>kCal</td></tr>
-		<tr><td class='menuItemNutrition'> Szénhidrát:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.carbs != None %} {{ menuItem.carbs }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
-		<tr><td class='menuItemNutrition'> Fehérje:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.protein != None %} {{ menuItem.protein }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
-		<tr><td class='menuItemNutrition'> Rost:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.fiber != None %} {{ menuItem.fiber }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
-		<tr><td class='menuItemNutrition'> Zsír:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.fat != None %} {{ menuItem.fat }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
-	</table>
+	{{ tooltipContent(menuItem) }}
+	{% if menuItem.enery != None and menuItem.energy > 0%}
+		<table style='margin-bottom: 5px;'>
+			<tr><td class='menuItemNutrition'> Energia:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.enery != None %} {{ menuItem.energy }} {% endif %}</td><td class='menuItemNutrition'>kCal</td></tr>
+			<tr><td class='menuItemNutrition'> Szénhidrát:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.carbs != None %} {{ menuItem.carbs }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+			<tr><td class='menuItemNutrition'> Fehérje:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.protein != None %} {{ menuItem.protein }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+			<tr><td class='menuItemNutrition'> Rost:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.fiber != None %} {{ menuItem.fiber }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+			<tr><td class='menuItemNutrition'> Zsír:</td><td class='menuItemNutrition' style='text-align: right;'>{% if menuItem.fat != None %} {{ menuItem.fat }} {% endif %}</td><td class='menuItemNutrition'>g</td></tr>
+		</table>
+	{% endif %}
 {% endmacro %}
 
 {% macro menuItemToOrderMacro(menuItem) %}

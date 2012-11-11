@@ -4,7 +4,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, getBaseDate, getFormDate
+from base_handler import BaseHandler, getOrderBaseDate, getFormDate
 import datetime
 from model import MenuItem, UserOrder, UserOrderItem, User,\
 	UserOrderAddress, Address
@@ -19,6 +19,7 @@ from cache_dish_category import getDishCategories
 
 ACTUAL_ORDER="actualOrder"
 LAST_ORDER_HOUR=12
+FURTHEST_DAY_DISPLAYED=14
 dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
 timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
@@ -31,7 +32,7 @@ class MenuOrderPage(BaseHandler):
 		firstOrderableDay=today+datetime.timedelta(days=1)
 		if now.hour > LAST_ORDER_HOUR:
 			firstOrderableDay=today+datetime.timedelta(days=2)
-		day=getBaseDate(self)
+		day=getOrderBaseDate(self)
 		calendar=day.isocalendar()
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
 		sunday=day+datetime.timedelta(days=-calendar[2]+7)
@@ -155,7 +156,7 @@ class MenuOrderPage(BaseHandler):
 			'days':days,
 			'menu':menu
 		}
-		if nextMonday <= actualMonday + datetime.timedelta(days=7):
+		if nextMonday <= actualMonday + datetime.timedelta(days=FURTHEST_DAY_DISPLAYED):
 			template_values['next'] = nextMonday
 		if prevMonday >= actualMonday:
 			template_values['prev'] = prevMonday
@@ -218,7 +219,7 @@ class ReviewPendingOrderPage(BaseHandler):
 								userOrders[itemKey] = itemQuantity + orderedItem.itemCount
 						except ReferencePropertyResolveError:
 							pass
-			day=getBaseDate(self)
+			day=getOrderBaseDate(self)
 			#Determine the week
 			calendar=day.isocalendar()
 			#Organize into days
@@ -326,7 +327,7 @@ class ReviewPendingOrderPage(BaseHandler):
 				'user':user,
 				'menu':menu
 			}
-			if nextMonday <= actualMonday + datetime.timedelta(days=7):
+			if nextMonday <= actualMonday + datetime.timedelta(days=FURTHEST_DAY_DISPLAYED):
 				template_values['next'] = nextMonday
 			if prevMonday >= actualMonday:
 				template_values['prev'] = prevMonday
@@ -338,7 +339,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			self.printPage(None, template.render(), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
-		day=getBaseDate(self)
+		day=getOrderBaseDate(self)
 		# Add order
 		for field in self.request.arguments():
 			if (field[:3]=="MIC"):
@@ -352,7 +353,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/")
 			return
-		day=getBaseDate(self)
+		day=getOrderBaseDate(self)
 		now=datetime.datetime.now(timeZone)
 		today=datetime.date.today()
 		firstOrderableDay=today+datetime.timedelta(days=1)
@@ -461,7 +462,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 			'addresses':user.addresses,
 			'menu':menu
 		}
-		if nextMonday <= actualMonday + datetime.timedelta(days=7):
+		if nextMonday <= actualMonday + datetime.timedelta(days=FURTHEST_DAY_DISPLAYED):
 			template_values['next'] = nextMonday
 		if prevMonday >= actualMonday:
 			template_values['prev'] = prevMonday

@@ -3,18 +3,13 @@
 import jinja2
 import os
 
-from google.appengine.ext import db
-
 from base_handler import BaseHandler, getBaseDate
 import datetime
 from model import MenuItem, DishCategory, Composit, UserOrderAddress, User,\
 	ROLE_ADMIN, Role, ROLE_DELIVERY_GUY
 from order import dayNames
 from user_management import isUserCook, isUserDelivery
-from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from cache_dish_category import getDishCategories
-from cache_menu_item import getDaysMenuItems
-from cache_composit import getDaysComposits
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"

@@ -15,6 +15,26 @@ import datetime
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 # Returns the first date user can order or the date indicated by the request
+def getOrderBaseDate(handler):
+	day=datetime.date.today()	
+	requestDay=handler.request.get('day')
+	if ((requestDay != None) and (requestDay != "")):
+		parts=requestDay.rsplit("-")
+		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+	else:
+		calendar=day.isocalendar()
+		#Organize into days
+		if calendar[2]==4 and datetime.datetime.now().hour > 16:
+			day=day+datetime.timedelta(days=4)
+		elif calendar[2]==5:
+			day=day+datetime.timedelta(days=3)
+		elif calendar[2]==6:
+			day=day+datetime.timedelta(days=2)
+		elif calendar[2]==7:
+			day=day+datetime.timedelta(days=1)
+	return day
+
+# Returns the first date user can order or the date indicated by the request
 def getBaseDate(handler):
 	day=datetime.date.today()	
 	requestDay=handler.request.get('day')
@@ -24,7 +44,9 @@ def getBaseDate(handler):
 	else:
 		calendar=day.isocalendar()
 		#Organize into days
-		if calendar[2]==5 and datetime.datetime.now().hour > 12:
+		if calendar[2]==4 and datetime.datetime.now().hour > 16:
+			day=day+datetime.timedelta(days=4)
+		elif calendar[2]==5:
 			day=day+datetime.timedelta(days=3)
 		elif calendar[2]==6:
 			day=day+datetime.timedelta(days=2)
