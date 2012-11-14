@@ -8,4 +8,4 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 class AboutPage(BaseHandler):
 	def get(self):
 		template = jinja_environment.get_template('templates/about.html')
-		self.printPage("Alapanyagok", template.render(), False, False)
+		self.printPage("Rendelés", template.render(), True, True)
