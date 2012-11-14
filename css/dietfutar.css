@@ -281,7 +281,7 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 
 .login input[type=submit], .login input[type=button], .login a {
 	font-family: GillSansMT-Condensed;
-	font-size: 28px;
+	font-size: 20px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	text-transform: uppercase;
 	background: none;
@@ -306,10 +306,7 @@ a.adminMenu {
 
 .login input[type=button], .login a {
 	color: #918777;
-	background-image: url(../img/loginSeparator.png);
-	background-repeat: no-repeat;
-	background-position: left center;
-	padding-left: 30px;
+	padding-left: 0px;
 	margin-left: 11px;
 	margin-right: -10px;
 	text-decoration: none;
@@ -377,8 +374,9 @@ a.adminMenu {
 	height: 120px;
 	width: 325px;
 	overflow: hidden;
-	margin-top: 42px;
+	margin-top: 22px;
 	margin-left: -15px;
+	margin-bottom: -5px;
 }
 
 .cartBg {
