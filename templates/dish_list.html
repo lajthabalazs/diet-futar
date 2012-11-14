@@ -1,22 +1,22 @@
 ﻿<div class="mainBg">
 	<div class="container">
-		<table>
 		<form method="post">
-			<tr><td>Név</td><td><input type="text" name="title" cols="60"/></td>
-				<td align="right">
-				<select name="dishCategoryKey">
-					{% for availableCategory in availableCategories %}
-						<option value="{{ availableCategory.key() }}"
-						>{{ availableCategory.name }}</option>
-					{% endfor %}
-			
-				</select>
-			</td></tr>
-			<tr><td>Rövid leírás</td><td colspan="2"><textarea name="subtitle" cols="60"></textarea></td></tr>
-			<tr><td>Hosszú leírás</td><td colspan="2"><textarea name="description" cols="60"></textarea></td></tr>
-			<tr><td colspan="3" align="right"><input type="submit" value="Add dish"></td></tr>
+			Recept címe<br/>
+			<input type="text" name="title" cols="100" style="width: 400px;"/><br/>
+			Recept kategóriája<br/>
+			<select name="dishCategoryKey">
+				{% for availableCategory in availableCategories %}
+					<option value="{{ availableCategory.key() }}"
+					>{{ availableCategory.name }}</option>
+				{% endfor %}
+		
+			</select><br/>
+			Rövid leírás<br/>
+			<textarea name="subtitle" cols="40" rows="4" style="height: 40px"></textarea><br/>
+			Hosszú leírás<br/>
+			<textarea name="description" cols="40" rows="4" style="height: 40px"></textarea><br/>
+			<input type="submit" value="Recept hozzáadása"/><br/>
 		</form>
-		</table>
 		<table width="400px">
 		{% for dish in dishes %}
 			<tr><td><a href="?dishKey={{ dish.key() }}">{{ dish.title }}</a></td>

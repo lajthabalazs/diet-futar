@@ -3,7 +3,7 @@
 		<h3>{{ dish.title }}</h3>
 		<form method="post">
 			<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
-			<input type="text" name="title" value="{{ dish.title }}"/><br/>
+			<input type="text" name="title" value="{{ dish.title }}" style="width: 400px;"/><br/>
 			
 			<select name="dishCategoryKey">
 				<option value="">-- törlés a kategóriából --</option>
@@ -17,7 +17,7 @@
 		
 			</select><br/>
 			<strong>Bekerülési költség: {% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %} Ft</strong><br/>
-			<input type="text" name="subtitle" value="{{ dish.subtitle }}"/><br/>
+			<textarea name="subtitle" cols="40" rows="4" style="height: 40px">{{ dish.subtitle }}</textarea><br/>
 			<textarea name="description" cols="40" rows="4" style="height: 40px">{{ dish.description }}</textarea><br/>
 			<input type="submit" value ="Mentés"/>
 		</form>

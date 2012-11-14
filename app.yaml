@@ -1,5 +1,5 @@
 application: diet-futar
-version: 34--facebook
+version: 36--facebook-experiment
 runtime: python27
 api_version: 1
 threadsafe: no
