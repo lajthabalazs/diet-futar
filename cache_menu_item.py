@@ -125,24 +125,8 @@ def getDaysMenuItems(day, categoryKey):
 	# Fetch dishes for menu items
 	ret = []
 	for menuItem in daysItems:
-		sumprice = 0
-		try:
-			sumprice = getDish(menuItem['dishKey'])['price']
-		except KeyError:
-			pass
-		if sumprice == None:
-			sumprice = 0
-		menuItem['dish']=getDish(menuItem['dishKey'])
-		components = []
-		for subItemKey in menuItem['componentKeys']:
-			component = getMenuItem(subItemKey)
-			components.append(component)
-			componentPrice = getDish(component['dishKey'])['price']
-			if componentPrice != None:
-				sumprice = sumprice + componentPrice
-		menuItem['sumprice'] = sumprice
-		menuItem['components'] = components
-		ret.append(menuItem)
+		menuItemObject=getMenuItem(menuItem['key']);
+		ret.append(menuItemObject)
 	return ret
 
 def getDaysAvailableMenuItems(day):
