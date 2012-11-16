@@ -8,4 +8,9 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 class AboutPage(BaseHandler):
 	def get(self):
 		template = jinja_environment.get_template('templates/about.html')
-		self.printPage("Rendelés", template.render(), True, True)
+		self.printPage("Rendel&eacute;s", template.render(), True, True)
+		
+class CaloryCalculator(BaseHandler):
+	def get(self):
+		template = jinja_environment.get_template('templates/caloryCalculator.html')
+		self.printPage("Kaloria szamito", template.render(), True, True)

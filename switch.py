@@ -22,7 +22,7 @@ from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 	DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage
-from index import AboutPage
+from index import AboutPage, CaloryCalculator
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -43,11 +43,21 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/changePassword', ChangePasswordPage),
 										('/profile', UserProfilePage),
 										('/address', AddressPage),
-										('/dish', DishPage),
+
+										('/confirmOrder', ConfirmOrder),
+										('/previousOrders', PreviousOrders),
+										('/previousOrder', PreviousOrder),
+										('/order', MenuOrderPage),
+										('/clearOrder', ClearOrderPage),
+										('/pendingOrder', ReviewPendingOrderPage),
+										('/personalMenu', ReviewOrderedMenuPage),
+
 										('/about', AboutPage),
+										('/caloryCalculator', CaloryCalculator),
+
+										('/dish', DishPage),
 										(DISH_CATEGORY_URL, DishCategoryPage),
 										(DISH_CATEGORY_DELETE_URL, DishCategoryDeletePage),
-										('/wish', WishPage),
 										('/menuEdit', MenuEditPage),
 										('/menuWeekEdit', MenuWeekEditPage),
 										('/modifyMenuItem', ModifyMenuItem),
@@ -58,11 +68,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/addItemToComposit',AddItemToComposit),
 										('/modifyComposit',ModifyComposit),
 										('/deleteComposit',DeleteComposit),
-										('/order', MenuOrderPage),
-										('/clearOrder', ClearOrderPage),
-										('/pendingOrder', ReviewPendingOrderPage),
-										('/personalMenu', ReviewOrderedMenuPage),
-										('/clearOrder', ClearOrderPage),
+										
 										('/deleteDish', DeleteDishPage),
 										('/deleteWish', DeleteWishPage),
 										('/addIngredientToDish', DishIngredientAddPage),
@@ -74,12 +80,11 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/deleteIngredientCategory', IngredientCategoryDeletePage),
 										('/userList', UserListPage),
 										('/user', UserListPage),
-										('/confirmOrder', ConfirmOrder),
-										('/previousOrders', PreviousOrders),
-										('/previousOrder', PreviousOrder),
 										('/ingredientCategory', IngredientCategoryPage),
 										('/chefReviewToMake', ChefReviewToMakePage),
 										('/deliveryReviewOrders', DeliveryReviewOrdersPage),
 										('/deliverable', DeliveryPage),
-										('/chefReviewOrders', ChefReviewOrdersPage)],
+										('/chefReviewOrders', ChefReviewOrdersPage),
+										('/wish', WishPage),
+										],
 										debug=True, config=config)
