@@ -31,7 +31,7 @@ def addDishToCategory(categoryKey, dishKey):
 			if key != dishKey:
 				dishKeys.append(key)
 				# Save modified value
-			dishKeys.append(dishKey)
+		dishKeys.append(dishKey)
 		category['dishKeys'] = dishKeys
 		client.set(categoryKey, category)
 
