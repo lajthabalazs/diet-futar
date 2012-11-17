@@ -14,7 +14,7 @@ import datetime
 from timezone import USTimeZone
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-LAST_ORDER_HOUR=12
+LAST_ORDER_HOUR=11
 timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
 def getFirstOrderableDate(handler):
