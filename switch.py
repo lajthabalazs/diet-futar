@@ -22,7 +22,7 @@ from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 	DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage
-from index import AboutPage, CaloryCalculator
+from index import AboutDeliveryPage, CaloryCalculator
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -34,6 +34,7 @@ config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key',
 
 
 app = webapp2.WSGIApplication([('/', MenuOrderPage),
+										('/google24f0feb13afae7e0.html', GooglePage),
 										('/login', LoginPage),
 										('/logout', LogoutPage),
 										('/registration', RegisterPage),
@@ -52,7 +53,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/pendingOrder', ReviewPendingOrderPage),
 										('/personalMenu', ReviewOrderedMenuPage),
 
-										('/about', AboutPage),
+										('/aboutDelivery', AboutDeliveryPage),
 										('/caloryCalculator', CaloryCalculator),
 
 										('/dish', DishPage),
