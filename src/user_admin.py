@@ -6,6 +6,7 @@ import os
 from base_handler import BaseHandler
 from model import User, Role, ROLE_ADMIN
 from user_management import isUserAdmin, getUser
+from google.appengine.api.datastore_errors import BadKeyError
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -81,7 +82,11 @@ class UserOverviewPage(BaseHandler):
 			return
 		userKey = self.request.get("userKey")
 		if (userKey != None and userKey != ""):
-			user = User.get(userKey)
+			user = None
+			try:
+				user = User.get(userKey)
+			except BadKeyError:
+				pass
 			if user != None:
 				template_values = {
 					"user":user,
@@ -89,4 +94,9 @@ class UserOverviewPage(BaseHandler):
 				template = jinja_environment.get_template('templates/userOverview.html')
 				self.printPage(user.familyName + " " + user.givenName, template.render(template_values), False, False)
 			else:
-				self.printPage("User hiba", "Nincs ilyen felhasznalo.", False, False)
+				template_values = {
+					"title":"Nincs ilyen felhasznalo",
+					"message":"Menj vissza, probald meg megegyszer."
+				}
+				template = jinja_environment.get_template('templates/staticMessage.html')
+				self.printPage("User hiba", template.render(template_values), False, False)
