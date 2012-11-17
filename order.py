@@ -4,13 +4,13 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, getOrderBaseDate, getFormDate
+from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
+	getFirstOrderableDate, timeZone
 import datetime
 from model import MenuItem, UserOrder, UserOrderItem, User,\
 	UserOrderAddress, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import USER_KEY, getUser, isUserLoggedIn
-from timezone import USTimeZone
 from cache_menu_item import getDaysMenuItems, getMenuItem
 from cache_composit import getDaysComposits, getComposit
 from google.appengine.api import mail
@@ -18,20 +18,14 @@ from cache_dish_category import getDishCategories
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
-LAST_ORDER_HOUR=12
 FURTHEST_DAY_DISPLAYED=14
 dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
-timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class MenuOrderPage(BaseHandler):
 	def get(self):
-		today=datetime.date.today()
-		now=datetime.datetime.now(timeZone)
-		firstOrderableDay=today+datetime.timedelta(days=1)
-		if now.hour > LAST_ORDER_HOUR:
-			firstOrderableDay=today+datetime.timedelta(days=2)
+		firstOrderableDay=getFirstOrderableDate(self)
 		day=getOrderBaseDate(self)
 		calendar=day.isocalendar()
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
@@ -354,11 +348,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 			self.redirect("/")
 			return
 		day=getOrderBaseDate(self)
-		now=datetime.datetime.now(timeZone)
-		today=datetime.date.today()
-		firstOrderableDay=today+datetime.timedelta(days=1)
-		if now.hour > LAST_ORDER_HOUR:
-			firstOrderableDay=today+datetime.timedelta(days=2)
+		firstOrderableDay=getFirstOrderableDate(self);
 		#Fetch user's previous orders. User orders is an object associating menu item keys with quantities
 		userOrders={}
 		userKey = self.session.get(USER_KEY,None)
@@ -474,11 +464,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/")
 			return
-		now=datetime.datetime.now(timeZone)
-		today=datetime.date.today()
-		firstOrderableDay=today+datetime.timedelta(days=1)
-		if now.hour > LAST_ORDER_HOUR:
-			firstOrderableDay=today+datetime.timedelta(days=2)
+		firstOrderableDay=getFirstOrderableDate(self);
 		for field in self.request.arguments():
 			if (field[:8]=="address_"):
 				day=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
@@ -522,10 +508,7 @@ class ConfirmOrder(BaseHandler):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
 		now=datetime.datetime.now(timeZone)
 		orderDate=now
-		today=datetime.date.today()
-		firstOrderableDay=today+datetime.timedelta(days=1)
-		if now.hour > LAST_ORDER_HOUR:
-			firstOrderableDay=today+datetime.timedelta(days=2)
+		firstOrderableDay=getFirstOrderableDate(self);
 		#Save order
 		if (len(actualOrder) > 0):
 			userOrder = UserOrder()

@@ -22,7 +22,7 @@ from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 	DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage
-from index import AboutDeliveryPage, CaloryCalculator
+from index import AboutDeliveryPage, CaloryCalculator, GooglePage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 

@@ -11,10 +11,20 @@ import jinja2
 import os
 from keys import DISH_CATEGORY_URL
 import datetime
+from timezone import USTimeZone
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+LAST_ORDER_HOUR=12
+timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
-# Returns the first date user can order or the date indicated by the request
+def getFirstOrderableDate(handler):
+	today=datetime.date.today()
+	now=datetime.datetime.now(timeZone)
+	firstOrderableDay = today
+	if now.hour > LAST_ORDER_HOUR:
+		firstOrderableDay=today+datetime.timedelta(days=1)
+	return firstOrderableDay;
+# Returns the first date user can order
 def getOrderBaseDate(handler):
 	day=datetime.date.today()	
 	requestDay=handler.request.get('day')
