@@ -1,0 +1,28 @@
+<div class="mainBg">
+	<div class="container">
+		<div class="span-24 last profile">
+			<div class="span-24 last profileRow">
+				<h2 style="text-align: left;">{{user.familyName}} {{user.givenName}}</h2>
+				<p>
+					<label>E-mail <strong>{{ user.email }}</strong></label><br/>
+					<label>Telefonszám <strong>{{user.phoneNumber}}</strong></label>
+				</p>
+				<h2 style="text-align: left;">Ajánló link</h2>
+				<p><a href="http://diet-futar.hu/registration?refererKey={{ user.key() }}">http://diet-futar.hu/registration?refererKey={{ user.key() }}</a></p>
+			</div>
+			<div class="span-24 profileRow">
+				<h2 class="span-2">Címek</h2>
+				<div class="span-22">
+					{% for address in user.addresses%}
+						<div class="span-9 prepend-1 profileColumn profileElement">
+							<label>Kerület <span>{{address.district}}</span></label>
+							<label>Irányítószám<span>{{address.zipCode}}</span></label>
+							<label>Utca név<span>{{address.street}}</span></label>
+							<label>Házszám, emelet<span>{{address.streetNumber}}</span></label>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -76,4 +76,17 @@ class UserListPage(BaseHandler):
 #An accumulated overview of every ordered item
 class UserOverviewPage(BaseHandler):
 	def get(self):
-		pass
+		if(not isUserAdmin(self)):
+			self.redirect("/")
+			return
+		userKey = self.request.get("userKey")
+		if (userKey != None and userKey != ""):
+			user = User.get(userKey)
+			if user != None:
+				template_values = {
+					"user":user,
+				}
+				template = jinja_environment.get_template('templates/userOverview.html')
+				self.printPage(user.familyName + " " + user.givenName, template.render(template_values), False, False)
+			else:
+				self.printPage("User hiba", "Nincs ilyen felhasznalo.", False, False)

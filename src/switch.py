@@ -21,7 +21,7 @@ from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 	DeliveryReviewOrdersPage, DeliveryPage
-from user_admin import UserListPage
+from user_admin import UserListPage, UserOverviewPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -80,7 +80,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/ingredient', IngredientPage),
 										('/deleteIngredientCategory', IngredientCategoryDeletePage),
 										('/userList', UserListPage),
-										('/user', UserListPage),
+										('/userOverview', UserOverviewPage),
 										('/ingredientCategory', IngredientCategoryPage),
 										('/chefReviewToMake', ChefReviewToMakePage),
 										('/deliveryReviewOrders', DeliveryReviewOrdersPage),

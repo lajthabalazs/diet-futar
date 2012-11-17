@@ -26,7 +26,7 @@
 			<input type="hidden" name="userKey" value="{{user.key()}}"/>
 			<tr>
 			<td>{{ user.registrationDate}}</td>
-			<td>{{ user.familyName }} {{user.givenName}}</td>
+			<td><a href="/userOverview?userKey={{user.key()}}">{{ user.familyName }} {{user.givenName}}</a></td>
 			<td>{{ user.email }}</td>
 			<td><input type="checkbox" name="activated" {% if user.activated%} checked="checked" {% endif %}/></td>
 			<td>
