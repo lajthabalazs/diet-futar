@@ -104,7 +104,7 @@ class ForgotPassword(BaseHandler):
 			}
 			messageTemplate = jinja_environment.get_template('templates/changePassMail.html')
 			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
-			message.subject="Diet-futar, sikeres regisztracio"
+			message.subject="Diet-futar, uj jelszo"
 			message.to = email
 			message.body = messageTemplate.render(template_values)
 			message.send()
