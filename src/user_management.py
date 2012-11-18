@@ -11,10 +11,8 @@ from model import User, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT
 USER_KEY="dietUserKey"
 USER="user"
 
+EMAIL_KEY="email"
 LOGIN_ERROR_KEY="login_error"
-LOGIN_ERROR_UNKNOWN_USER="Ismeretlen felhasznalo"
-LOGIN_ERROR_WRONG_PASSWORD="Hiba jelsz"
-LOGIN_ERROR_NOT_ACTIVATED="Nem aktivalt felhasznalo"
 REGISTRATION_ERROR_KEY="registration_error"
 REGISTRATION_ERROR_EXISTING_USER="Letezo felhasznalo"
 REGISTRATION_ERROR_WEAK_PASSWORD="Gyenge jelszo"
@@ -122,6 +120,7 @@ def getUserBox(handler):
 		return(template.render(template_values))
 	elif(LOGIN_ERROR_KEY in handler.session):
 		template_values = {
+			EMAIL_KEY: handler.session[EMAIL_KEY],
 			LOGIN_ERROR_KEY: handler.session[LOGIN_ERROR_KEY]
 		}
 		clearLoginError(handler)

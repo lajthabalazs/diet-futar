@@ -6,14 +6,18 @@
 		<a href="/logout">Kilépés</a>
 	{% else %}
 		<form action="/login" method="post">
-				<input type="text" name="email"  placeholder="E-mail" />
+				<input type="text" name="email"  placeholder="E-mail" {% if (email != None)%} value="{{email}}"{% endif %} />
 				<input type="password" name="password" placeholder="Jelszó"/>
-				{% if (login_error) %}
-				<span style="color: 'RED'">{{ login_error }}</span><br/>
-				{% else %}
+				{% if (login_error=="PASS") %}
+					<span style="color: RED;">Hibás jelszó.<a id="new_pass" style="color: RED;" href="/forgotPassword?email={{email}}"> Új jelszó kérése.</a></span>
+				{% elif (login_error=="USER") %}
+					<span style="color: RED;">Ismeretlen felhasználó.</span>
+				{% elif (login_error=="ACTIVATE") %}
+					<span style="color: RED;">Még nem aktiválta fiókját.</span>
 				{% endif %}
-				<input type="submit" value="Belépés"/>
-                <a href="/registration">Regisztráció</a>
+				<br/>
+				<input class="userMenu" type="submit" value="Belépés"/>
+				<a class="userMenu" style="margin-left: 25px;" href="/registration">Regisztráció</a>
 		</form> 
 	{% endif %}
 </div>

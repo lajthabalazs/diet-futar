@@ -1,0 +1,12 @@
+<div class="mainBg staticPage">
+	<div class="container">
+		{% if email != None %}
+		<h2>Jelszó módosítása sikeres volt</h2>
+		<p>Új jelszavát elküldtük a megadott {{email}} címre.</p>
+		<br />
+		{% else %}
+		<h2>Sikertelen jelszómódosítás</h2>
+		<p>A {{ email }} címet rendszerünk nem tartja számon. Kérjük ellenőrízze az címet, és ha biztos benne, hogy ezzel a címmel regisztrált, kérjük vegye fel velünk a kapcsolatot emailen vagy telefonon. Elnézést kérünk a kellemetlenségekért.</p>
+		{% endif %}
+	</div>
+</div>

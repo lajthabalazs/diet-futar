@@ -16,9 +16,6 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 #An accumulated overview of every ordered item
 class UserListPage(BaseHandler):
 	def get(self):
-		#user=getUser(self)
-		#user.role=Role.all().filter("name = ", ROLE_ADMIN)[0]
-		#user.put()
 		if(not isUserAdmin(self)):
 			self.redirect("/")
 			return
@@ -29,7 +26,7 @@ class UserListPage(BaseHandler):
 			actualPage=int(pageText)-1
 		orderByText=self.request.get("order")
 		if (orderByText==None or orderByText==""):
-			orderByText='email'
+			orderByText='registrationDate'
 		userCount=User.all().count()
 		roles=Role.all().order("name")
 		usersToDisplay=User.all().order(orderByText).run(offset=actualPage*pageSize, limit=pageSize)

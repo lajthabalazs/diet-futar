@@ -11,11 +11,10 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 from model import User, Address, Role
-from user_management import LOGIN_ERROR_KEY, LOGIN_ERROR_UNKNOWN_USER,\
-	REGISTRATION_ERROR_EXISTING_USER,\
+from user_management import LOGIN_ERROR_KEY, REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
-	LOGIN_ERROR_WRONG_PASSWORD, REGISTRATION_ERROR_KEY, clearRegistrationError, clearLoginError, LOGIN_ERROR_NOT_ACTIVATED, USER,\
-	REGISTRATION_ERROR_USER_NAME_NOT_FILLED, isUserLoggedIn
+	REGISTRATION_ERROR_KEY, clearRegistrationError, clearLoginError, USER,\
+	REGISTRATION_ERROR_USER_NAME_NOT_FILLED, isUserLoggedIn, EMAIL_KEY
 from random import Random
 from xmlrpclib import datetime
 from google.appengine.api import mail
@@ -55,13 +54,16 @@ class LoginPage(BaseHandler):
 		password = self.request.get('password')
 		users= User.gql('WHERE email = :1', email)
 		if (users.count(1)==0):
-			self.session[LOGIN_ERROR_KEY]=LOGIN_ERROR_UNKNOWN_USER
+			self.session[EMAIL_KEY]=email
+			self.session[LOGIN_ERROR_KEY]="USER"
 			self.redirect(clearNextPage(self))
 		elif (users[0].password != password):
-			self.session[LOGIN_ERROR_KEY] = LOGIN_ERROR_WRONG_PASSWORD
+			self.session[EMAIL_KEY]=email
+			self.session[LOGIN_ERROR_KEY] = "PASS"
 			self.redirect(clearNextPage(self))
 		elif users[0].activated != True:
-			self.session[LOGIN_ERROR_KEY] = LOGIN_ERROR_NOT_ACTIVATED
+			self.session[EMAIL_KEY]=email
+			self.session[LOGIN_ERROR_KEY] = "ACTIVATE"
 			self.redirect(clearNextPage(self))
 		else:
 			#Log the user in
@@ -73,6 +75,43 @@ class LogoutPage(BaseHandler):
 		if (USER_KEY in self.session):
 			del self.session[USER_KEY]
 		self.redirect(clearNextPage(self))
+
+class ForgotPassword(BaseHandler):
+	def get(self):
+		email = self.session.get(EMAIL_KEY)
+		users = User.gql('WHERE email = :1', email)
+		template_params={
+		}
+		if (users.count(1) == 1):
+			template_params[EMAIL_KEY] = email
+		template = jinja_environment.get_template('templates/changePass.html')
+		self.printPage("Uj jelszo", template.render(template_params), True, True)
+	def post(self):
+		email = self.session.get(EMAIL_KEY)
+		users = User.gql('WHERE email = :1', email)
+		template_params={
+		}
+		if (users.count(1) == 1):
+			word = ''
+			random = Random()
+			for i in range(1,8):
+				word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
+			user = users.get()
+			user.password = word
+			# TODO send mail
+			template_values = {
+				"password":word
+			}
+			messageTemplate = jinja_environment.get_template('templates/changePassMail.html')
+			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
+			message.subject="Diet-futar, sikeres regisztracio"
+			message.to = email
+			message.body = messageTemplate.render(template_values)
+			message.send()
+			user.put()
+			template_params[EMAIL_KEY] = email
+		template = jinja_environment.get_template('templates/changePassSuccess.html')
+		self.printPage("Uj jelszo", template.render(template_params), True, True)
 		
 class RegisterPage(BaseHandler):
 	def get(self):
@@ -211,7 +250,7 @@ class ChangePasswordPage (BaseHandler):
 				else:
 					self.session[LOGIN_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
 			else:
-				self.session[LOGIN_ERROR_KEY] = LOGIN_ERROR_WRONG_PASSWORD
+				self.session[LOGIN_ERROR_KEY] = "Hibas jelsz&oacute;"
 		self.redirect("/profile")
 
 

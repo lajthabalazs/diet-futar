@@ -1,0 +1,16 @@
+<div class="mainBg staticPage">
+	<div class="container">
+		{% if email != None %}
+		<h2>Jelszó módosítása</h2>
+		<p>Az alábbi gombra kattintva új jelszót küldünk az ön által megadott {{email}} címre.</p>
+		<br />
+		<form method="post">
+			<input type="hidden" name="email" value="{{ email }}" />
+			<input type="submit" value="Új jelszót kérek"/>
+		</form>
+		{% else %}
+		<h2>Ismeretlen e-mail cím</h2>
+		<p>A {{ email }} címet rendszerünk nem tartja számon. Kérjük ellenőrízze az címet, és ha biztos benne, hogy ezzel a címmel regisztrált, kérjük vegye fel velünk a kapcsolatot emailen vagy telefonon. Elnézést kérünk a kellemetlenségekért.</p>
+		{% endif %}
+	</div>
+</div>

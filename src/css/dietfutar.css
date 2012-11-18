@@ -279,18 +279,6 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
         color:    #7c7467;
 }
 
-.login input[type=submit], .login input[type=button], .login a {
-	font-family: GillSansMT-Condensed;
-	font-size: 20px;
-	text-shadow: #FFFFFF 0px 1px 0px;
-	text-transform: uppercase;
-	background: none;
-	border: none;
-	margin: 0;
-	padding: 0;
-	color: #000;
-}
-
 a.adminMenu {
 	margin-right: 20px;
 	font-family: GillSansMT-Condensed;
@@ -302,14 +290,6 @@ a.adminMenu {
 	margin: 0;
 	padding: 0;
 	color: #000;
-}
-
-.login input[type=button], .login a {
-	color: #918777;
-	padding-left: 0px;
-	margin-left: 11px;
-	margin-right: -10px;
-	text-decoration: none;
 }
 
 .menu {
@@ -422,18 +402,9 @@ a.lastWeek {
 	margin-right: -8px;
 }
 
-
-.userMenu li {
-	display: block;
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	margin-bottom: 9px;
-}
-
-.userMenu li a {
+.userMenu {
 	font-family: GillSansMT-Condensed;
-	font-size: 28px;
+	font-size: 20px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	text-transform: uppercase;
 	background: none;
@@ -442,17 +413,15 @@ a.lastWeek {
 	padding: 0;
 	color: #000;
 	text-decoration: none;
-	background-image: url(../img/loginSeparator.png);
 	background-repeat: no-repeat;
 	background-position: left center;
-	padding-left: 25px;
 }
 
-.userMenu li a:hover {
+.userMenu:hover {
 	color: #918777;
 }
 
-.userMenu li a.active {
+.userMenu:active {
 	color: #399;
 	text-shadow: #FFFFFF 0px 1px 0px;
 }
@@ -602,7 +571,7 @@ a.lastWeek {
 	background-image: url(../img/saveCartBg.png);	
 }
 
-.total button:hover, input[type=button]:hover, .total input[type=submit]:hover, #toCartButton:hover, #saveAddress:hover, #basketOrderButton:hover, #saveBasketButton:hover {
+.total button:hover, .total input[type=button]:hover, .total input[type=submit]:hover, #toCartButton:hover, #saveAddress:hover, #basketOrderButton:hover, #saveBasketButton:hover {
 	color: #000000;
 }
 
