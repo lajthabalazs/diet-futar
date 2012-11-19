@@ -106,7 +106,7 @@ class ForgotPassword(BaseHandler):
 			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
 			message.subject="Diet-futar, uj jelszo"
 			message.to = email
-			message.body = messageTemplate.render(template_values)
+			message.html = messageTemplate.render(template_values)
 			message.send()
 			user.put()
 			template_params[EMAIL_KEY] = email
