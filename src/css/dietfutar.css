@@ -332,20 +332,6 @@ a.adminMenu {
 	text-shadow: #FFFFFF 0px 1px 0px;
 }
 
-/*.logo {
-	text-decoration: none;
-	background-image: url(../img/logo1.png);
-	text-indent: -1000px;
-	display: block;
-	height: 160px;
-	width: 160px;
-	margin-top: 17px;
-	overflow: hidden;
-	padding-left: 0px;
-	margin-left: 75px;
-	margin-right: 5px;
-}*/
-
 .logo {
 	text-decoration: none;
 	background-image: url(../img/logo2.png);
@@ -397,12 +383,12 @@ a.lastWeek {
 	height: 30px;
 }
 
-.userMenu {
+a.userMenu, input.userMenu {
 	padding-top: 30px;
 	margin-right: -8px;
 }
 
-.userMenu {
+a.userMenu, input.userMenu  {
 	font-family: GillSansMT-Condensed;
 	font-size: 20px;
 	text-shadow: #FFFFFF 0px 1px 0px;
@@ -417,7 +403,7 @@ a.lastWeek {
 	background-position: left center;
 }
 
-.userMenu:hover {
+a.userMenu:hover, input.userMenu:hover {
 	color: #918777;
 }
 

@@ -1,9 +1,9 @@
 ﻿<div class="span-6 login">
 	{% if user %}
 		<h3>{{ user.email }}</h3>
-		<a href="/profile">Profil</a><br/>
-		<a href="/previousOrders">Korábbi rendelések</a><br/>
-		<a href="/logout">Kilépés</a>
+		<a class="userMenu" href="/profile">Profil</a><br/>
+		<a class="userMenu" href="/previousOrders">Korábbi rendelések</a><br/>
+		<a class="userMenu" href="/logout">Kilépés</a>
 	{% else %}
 		<form action="/login" method="post">
 				<input type="text" name="email"  placeholder="E-mail" {% if (email != None)%} value="{{email}}"{% endif %} />

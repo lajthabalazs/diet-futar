@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="span-24 last profile">
 			<div class="span-24 last profileRow">
-				<h2 class="span-2">Profil</h2>
+				<h2 class="span-2 prepend-1 profileColumn profileElement">Profil</h2>
 				<div class="span-9 prepend-1 profileColumn profileElement">
 					<form method="post">
 						<label>E-mail <span>{{ user.email }}</span></label>
@@ -27,14 +27,14 @@
 						<label><input type="submit" value="Jelszó módosítás"/></label>
 					</form>
 				</div>
-				<h2 class="span-2">Ajánló link</h2>
+				<h2 class="span-2 prepend-1 profileColumn profileElement">Ajánló link</h2>
 				<div class="span-9 prepend-1 profileColumn profileElement">
 					<p><a href="http://diet-futar.hu/registration?refererKey={{ user.key() }}">http://diet-futar.hu/registration?refererKey={{ user.key() }}</a></p>
 				</div>
 			</div>
 			<div class="span-24 profileRow">
-				<h2 class="span-2">Címek</h2>
-				<div class="span-22">
+				<h2 class="span-2 prepend-1 profileColumn profileElement">Címek</h2>
+				<div class="span-21">
 					<div class="span-9 prepend-1 profileColumn profileElement">
 						<form action="/address" method="post">
 							<label>Kerület <select name="district">
