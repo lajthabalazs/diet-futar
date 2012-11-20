@@ -5,7 +5,6 @@
 			function addressChangeListener(day, orderedPrice) {
 				var addressCosts = [{% for address in addresses %}{{ address.deliveryCost }},{% endfor %}];
 				var addressLimits = [{% for address in addresses %}{{ address.deliveryLimit }},{% endfor %}];
-				alert (addressCosts);
 				var selectedIndex = document.getElementById('address_' + day).selectedIndex;
 				var deliveryCost = addressCosts[selectedIndex];
 				if (orderedPrice > addressLimits[selectedIndex]){
