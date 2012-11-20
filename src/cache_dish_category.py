@@ -19,6 +19,7 @@ def getDishCategories():
 			categoryObject={
 				'key':str(category.key()),
 				'name':category.name,
+				'basePrice':category.basePrice,
 				'isMenu':category.isMenu,
 				'index':category.index
 			}
@@ -34,6 +35,7 @@ def addCategory(category):
 		categoryObject={
 			'key':str(category.key()),
 			'name':category.name,
+			'basePrice':category.basePrice,
 			'isMenu':category.isMenu,
 			'index':category.index
 		}
@@ -65,6 +67,7 @@ def modifyCategory(category):
 				categoryObject['name'] = category.name
 				categoryObject['isMenu'] = category.isMenu
 				categoryObject['index'] = category.index
+				categoryObject['basePrice'] = category.basePrice
 				categoryObject['dishKeys'] = categoryObject.dishKeys
 			categoryList.append(categoryObject)
 		client.set(CATEGORIES_KEY, categoryList)
@@ -83,6 +86,7 @@ def getCategoryWithDishes(key):
 				'name':categoryDb.name,
 				'isMenu':categoryDb.isMenu,
 				'index':categoryDb.index,
+				'basePrice':category.basePrice,
 				'dishKeys':dishKeys
 			}
 			client.set(key, category)
@@ -94,4 +98,3 @@ def getCategoryWithDishes(key):
 		dishes.append(getDish(dishKey))
 	category['dishes'] = dishes
 	return category
-

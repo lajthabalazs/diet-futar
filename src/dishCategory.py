@@ -33,9 +33,13 @@ class DishCategoryPage(BaseHandler):
 			dishCategory.name = self.request.get(DISH_CATEGORY_NAME)
 		try:
 			dishCategory.index = int(self.request.get(DISH_CATEGORY_INDEX))
-			dishCategory.isMenu = self.request.get('isMenuCategory', default_value="no")=='yes'
 		except ValueError:
-			dishCategory.index=0
+			dishCategory.index = 0
+		try:
+			dishCategory.basePrice = int(self.request.get('basePrice'))
+		except ValueError:
+			dishCategory.basePrice = 0
+		dishCategory.isMenu = self.request.get('isMenuCategory', default_value="no")=='yes'
 		dishCategory.put()
 		self.redirect(DISH_CATEGORY_URL)
 	def get(self):

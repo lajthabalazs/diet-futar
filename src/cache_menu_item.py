@@ -173,7 +173,7 @@ def addMenuItem(dishKey, day, containingMenuItem = None):
 	menuItem=MenuItem()
 	menuItem.day=day
 	menuItem.dish=dish
-	menuItem.price = dish.price
+	menuItem.price = dish.category.basePrice
 	menuItem.categoryKey=str(dish.category.key())
 	menuItem.containingMenuItem = containingMenuItem
 	menuItem.put()

@@ -72,6 +72,7 @@ def addComposit(categoryKey, day):
 	composit = Composit()
 	composit.day=day
 	composit.category=DishCategory.get(categoryKey)
+	composit.price = composit.category.basePrice
 	composit.categoryKey=str(categoryKey)
 	composit.put()
 	# Adds it to cache
