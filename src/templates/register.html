@@ -1,30 +1,45 @@
 ﻿<div class="mainBg staticPage">
-	<div class="container">
-		<div class="span-24 last profile">
-			<div class="span-24 last profileRow">
-				<h2 class="span-4">Regisztráció</h2>
-				<div class="span-9 prepend-1 profileColumn profileElement">
-					<form method="post">
-							<label>E-mail cím<input type="text" name="email" value="{% if user != None%}{{user.email}}{% endif %}"/></label>
-							<label>Jelszó<input type="password" name="password"/></label>
-							<label>Jelszó mégegyszer<input type="password" name="passwordCheck"/></label>
-							<label>Vezetéknév<input type="text" name="familyName" value="{% if user != None%}{{user.familyName}}{% endif %}"/></label>
-							<label>Keresztnév<input type="text" name="givenName" value="{% if user != None%}{{user.givenName}}{% endif %}"/></label>
-							<label>Telefonszám<input type="text" name="phoneNumber"/></label>
-							{% if (registration_error) %}
-							<span style="color: #F60;">{{registration_error}}</span><br/>
-							{% else %}
-							<span style="color: #F60;">Minden mező kitöltése kötelező</span><br/>
-							{% endif %}
-							<input type="submit" value="Regisztráció"/>
-					</form>	
+	<form method="post">
+		<div class="container">
+			<div class="span-24 last profile">
+				<div class="span-24 last profileRow">
+					<h2 class="span-4">Regisztráció</h2>
+					<div class="span-9 prepend-1 profileColumn profileElement">
+						<label>E-mail cím<input type="text" name="email" value="{% if user != None%}{{user.email}}{% endif %}"/></label>
+						<label>Jelszó<input type="password" name="password"/></label>
+						<label>Jelszó mégegyszer<input type="password" name="passwordCheck"/></label>
+						<label>Vezetéknév<input type="text" name="familyName" value="{% if user != None%}{{user.familyName}}{% endif %}"/></label>
+						<label>Keresztnév<input type="text" name="givenName" value="{% if user != None%}{{user.givenName}}{% endif %}"/></label>
+						<label>Telefonszám<input type="text" name="phoneNumber"/></label>
+						{% if (registration_error) %}
+						<span style="color: #F60;">{{registration_error}}</span><br/>
+						{% else %}
+						<span style="color: #F60;">Minden mező kitöltése kötelező</span><br/>
+						{% endif %}
+						<input type="submit" value="Regisztráció"/>
+					</div>
+					{% if referer %}
+					<div class="span-5 prepend-1 profileColumn profileElement">
+						<p>Az oldalt {{ referer.familyName }} {{ referer.givenName }} ajánlotta Önnek.</p>
+					</div>
+					{% else%}
+					<strong style="margin-left: 20px;">Honnan ismeri oldalunkat?</strong><br/>
+					<select name="sourceOfInfo" style="margin-left: 20px;">
+						<option value="None">--</option>
+						<option value="Friend" {% if user != None and user.sourceOfInfo == 'Friend'%}selected="true"{% endif %}>Jó barátom a tulajdonos</option>
+						<option value="Search" {% if user != None and user.sourceOfInfo == 'Search'%}selected="true"{% endif %}>Interneten keresve találtam meg</option>
+						<option value="Print" {% if user != None and user.sourceOfInfo == 'Print'%}selected="true"{% endif %}>Szórólapon láttam</option>
+						<option value="Referred" {% if user != None and user.sourceOfInfo == 'Referred'%}selected="true"{% endif %}>Ismerősöm ajánlotta</option>
+						<option value="Facebook-search" {% if user != None and user.sourceOfInfo == 'Facebook-search'%}selected="true"{% endif %}>A Facebookon keresve találtam meg</option>
+						<option value="Group" {% if user != None and user.sourceOfInfo == 'Group'%}selected="true"{% endif %}>Egy blogon, Facebook-csoportban olvastam róla</option>
+						<option value="Facebook-friend" {% if user != None and user.sourceOfInfo == 'Facebook-friend'%}selected="true"{% endif %}>Ismerősöm falán láttam</option>
+						<option value="Facebook-ad" {% if user != None and user.sourceOfInfo == 'Facebook-ad'%}selected="true"{% endif %}>Facebook reklámban láttam</option>
+						<option value="Random" {% if user != None and user.sourceOfInfo == 'Random'%}selected="true"{% endif %}>Véletlenül gépeltem be a címet</option>
+					</select>
+					
+					{% endif %}
 				</div>
-				{% if referer %}
-				<div class="span-5 prepend-1 profileColumn profileElement">
-					<p>Az oldalt {{ referer.familyName }} {{ referer.givenName }} ajánlotta Önnek.</p>
-				</div>
-				{% endif %}
 			</div>
 		</div>
-	</div>
+	</form>
 </div>

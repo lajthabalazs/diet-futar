@@ -137,11 +137,13 @@ class RegisterPage(BaseHandler):
 		passwordCheck = self.request.get('passwordCheck')
 		familyName= self.request.get('familyName')
 		givenName= self.request.get('givenName')
+		sourceOfInfo=self.request.get('sourceOfInfo')
 		user = {}
 		user["email"]= email
 		user["familyName"]=familyName
 		user["givenName"]=givenName
 		user["phoneNumber"]=phoneNumber
+		user["sourceOfInfo"]=sourceOfInfo
 		users = User.gql('WHERE email = :1', email)
 		# Check if roles are set up properly
 #		roles=Role.all()
@@ -179,6 +181,7 @@ class RegisterPage(BaseHandler):
 			user.activated = False
 			user.registrationDate=datetime.date.today()
 			user.referer = referer
+			user.sourceOfInfo = sourceOfInfo
 			word = ''
 			random = Random()
 			for i in range(1,32):

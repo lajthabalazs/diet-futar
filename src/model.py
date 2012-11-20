@@ -24,6 +24,7 @@ class User(db.Model):
 	activationCode = db.StringProperty()
 	registrationDate=db.DateProperty()
 	referer = db.SelfReferenceProperty('The user who suggested this page', "referred")
+	sourceOfInfo = db.StringProperty()
 	role=db.ReferenceProperty(Role, collection_name='users')
 
 class Address (db.Model):
