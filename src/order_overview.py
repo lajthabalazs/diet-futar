@@ -226,10 +226,10 @@ def getOrderedItems (orderAddress):
 			if menuItemIndexes.has_key(menuItem.key()):
 				itemIndex=menuItemIndexes.get(menuItem.key())
 				actualOrder=menuItemOrders[itemIndex].itemCount
-				menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
+				menuItemOrders[itemIndex].itemCount = actualOrder + orderedItem.itemCount
 			else:
 				menuItem.itemCount=orderedItem.itemCount
-				menuItemIndexes[menuItem.key()]=len(menuItemOrders)
+				menuItemIndexes[menuItem.key()] = len(menuItemOrders)
 				menuItemOrders.append(menuItem)
 		else:
 			actualOrder=0
@@ -239,12 +239,16 @@ def getOrderedItems (orderAddress):
 				if menuItemIndexes.has_key(menuItem.key()):
 					itemIndex=menuItemIndexes.get(menuItem.key())
 					actualOrder=menuItemOrders[itemIndex].itemCount
-					menuItemOrders[itemIndex].itemCount=actualOrder+orderedItem.itemCount
+					menuItemOrders[itemIndex].itemCount = actualOrder + orderedItem.itemCount
 				else:
 					menuItem.itemCount=orderedItem.itemCount
-					menuItemIndexes[menuItem.key()]=len(menuItemOrders)
+					menuItemIndexes[menuItem.key()] = len(menuItemOrders)
 					menuItemOrders.append(menuItem)
-	return menuItemOrders
+	notNulItemOrders = []
+	for itemOrder in menuItemOrders:
+		if itemOrder.itemCount > 0:
+			notNulItemOrders.append(itemOrder)
+	return notNulItemOrders
 
 		
 #An accumulated overview of every ordered item
