@@ -22,7 +22,7 @@
 											<h3>{{component.dish.title}}</h3>{% for subItem in component.components%}, {{subItem.dish.title}}{% endfor %} {{component.sumprice}} Ft<br/>
 											{% if composit.alterable %}
 												<form action="/deleteItemFromComposit" method="post">
-													<input type="hidden" name="componentKey" value="{{ component.key }}"/>
+													<input type="hidden" name="componentKey" value="{{ component.componentKey }}"/>
 													<input type="hidden" name="formDay" value="{{ day.date }}"/>
 													<input type="submit" value="Törlés"/>
 												</form>

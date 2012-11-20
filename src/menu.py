@@ -32,7 +32,7 @@ def getDaysItemsForCategory(categoryKey, actualDay, dayIndex, availableMenuItems
 	actualDayObject["day"]=dayNames[dayIndex]
 	actualDayObject["date"]=actualDay
 	menuItems = getDaysMenuItems(actualDay, categoryKey)
-	composits= getDaysComposits(actualDay, categoryKey)
+	composits = getDaysComposits(actualDay, categoryKey)
 	#Filter menu items
 	actualMenuItems=[]
 	actualComposits=[]
@@ -204,7 +204,7 @@ class AddItemToComposit(BaseHandler):
 			compositKey = self.request.get("compositKey")
 			menuItemKey = self.request.get("menuItem")
 			addMenuItemToComposit(compositKey, menuItemKey)
-			self.redirect("/menuEdit?day="+str(day))
+			self.redirect("/menuEdit?day="+ str(day))
 
 class DeleteItemFromComposit(BaseHandler):
 	def post(self):
@@ -317,14 +317,10 @@ class DeleteMenuItem(BaseHandler):
 			menuItemKey=self.request.get('menuItemKey')
 			if ((menuItemKey != None) and (menuItemKey != "")):
 				menuItem=db.get(menuItemKey)
-				#print "Menu item "
-				#print menuItem.day
-				#print  menuItem.occurrences.count() 
-				#print  menuItem.composits.count()
 				if menuItem != None and menuItem.occurrences.count() == 0 and menuItem.composits.count() == 0:
 					containingMenuItem = menuItem.containingMenuItem
 					if containingMenuItem != None:
-						#print "Deleting sub item"
+						#"Deleting sub item"
 						sumprice = menuItem.containingMenuItem.dish.price
 						if sumprice == None:
 							sumprice = 0
