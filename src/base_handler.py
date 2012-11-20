@@ -17,6 +17,56 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 LAST_ORDER_HOUR=12
 timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
+def getDeliveryCost(district, price):
+	costs = {
+		"I":500,
+		"II":500,
+		"III":500,
+		"IV":0,
+		"V":300,
+		"VI":300,
+		"VII":300,
+		"VIII":300,
+		"IX":500,
+		"X":500,
+		"XIII":0,
+		"XIV":0,
+		"XV":0,
+		"XVI":300
+	}
+	if costs.has_key(district):
+		if (price < getDeliveryLimit(district)):
+			return costs.get(district)
+		else:
+			return 0
+	else:
+		if (price < getDeliveryLimit(district)):
+			return 1000
+		else:
+			return 0
+	
+def getDeliveryLimit(district):
+	limit = {
+		"I":4000,
+		"II":4000,
+		"III":4000,
+		"IV":0,
+		"V":3000,
+		"VI":3000,
+		"VII":3000,
+		"VIII":3000,
+		"IX":4000,
+		"X":4000,
+		"XIII":0,
+		"XIV":0,
+		"XV":0,
+		"XVI":3000
+	}
+	if limit.has_key(district):
+		return limit.get(district)
+	else:
+		return 5000
+	
 def getFirstOrderableDate(handler):
 	today=datetime.date.today()
 	now=datetime.datetime.now(timeZone)

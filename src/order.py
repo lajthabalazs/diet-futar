@@ -5,7 +5,7 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
-	getFirstOrderableDate, timeZone
+	getFirstOrderableDate, timeZone, getDeliveryCost, getDeliveryLimit
 import datetime
 from model import MenuItem, UserOrder, UserOrderItem, User,\
 	UserOrderAddress, Address
@@ -440,6 +440,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 			addresses=user.deliveryAddresses.filter("day = ", actualDate)
 			if addresses.count() > 0:
 				actualDayObject["address"]=addresses[0].address
+				actualDayObject["deliveryCost"] = getDeliveryCost(addresses[0].address.district, orderedPrice[i]) 
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
@@ -447,9 +448,14 @@ class ReviewOrderedMenuPage(BaseHandler):
 		today=datetime.date.today()
 		todayCalendat=today.isocalendar()
 		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
+		availableAddresses = []
+		for address in user.addresses:
+			address.deliveryCost = getDeliveryCost(address.district,0)
+			address.deliveryLimit = getDeliveryLimit(address.district)
+			availableAddresses.append(address)
 		template_values = {
 			'days':days,
-			'addresses':user.addresses,
+			'addresses':availableAddresses,
 			'menu':menu
 		}
 		if nextMonday <= actualMonday + datetime.timedelta(days=FURTHEST_DAY_DISPLAYED):

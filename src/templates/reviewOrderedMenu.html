@@ -1,6 +1,20 @@
 ﻿{% from '/templates/macros.html' import menuItemToOrderMacro, compositToOrderMacro%}
 <div class="review-ordered">
 	<div class="container">
+		<script  type="text/javascript">
+			function addressChangeListener(day, orderedPrice) {
+				var addressCosts = [{% for address in addresses %}{{ address.deliveryCost }},{% endfor %}];
+				var addressLimits = [{% for address in addresses %}{{ address.deliveryLimit }},{% endfor %}];
+				alert (addressCosts);
+				var selectedIndex = document.getElementById('address_' + day).selectedIndex;
+				var deliveryCost = addressCosts[selectedIndex];
+				if (orderedPrice > addressLimits[selectedIndex]){
+					deliveryCost = 0;
+				}
+				document.getElementById('deliveryCost' + day).innerHTML = deliveryCost;
+			}
+		
+		</script>
 		<div class="span-24 last calendar">
 			<div class="span-24 last calendarHeader">
 				{% if prev %}<a href="/personalMenu?day={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
@@ -40,11 +54,12 @@
 				{% for day in days %}
 				<div class="span-4">
 					{% if day.has_key('address') %}
-						<select name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%}>
+						<select onchange="addressChangeListener('{{day.date}}',{{day.orderedPrice}} );" name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%} style="width: 120px">
 							{% for address in addresses %}
 								<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
 							{% endfor %}
-						</select>
+						</select><br/>
+						<strong>Szállítási költség:</strong> <strong id="deliveryCost{{day.date}}">{{ day.deliveryCost }}</strong> <strong>Ft</strong>
 					{% else %}
 						&nbsp;
 					{% endif %}
