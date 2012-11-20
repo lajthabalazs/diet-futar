@@ -18,6 +18,14 @@ Köszönjük, hogy megtisztelt bizalmával, és {{userOrder.orderDate.strftime('
 		{% endfor %}
 		
 		Összesen{{userOrder.price}} Ft
+		
+	Szállítási feltételek
+	
+	IV., XIII., XIV és XV. kerületben ingyenes.
+	V., VI., VII, VIII., és XVI. kerületekben a házhozszállítás300 Ft, vagy 3000 ft feletti rendelés esetén ingyenes.
+	I., II., III., IX., X. kerületekben 500 Ft, vagy ingyenes 4000 ft feletti rendelés esetén.
+	Budapest többi kerületébe 1000 Ft, vagy ingyenes 5000 ft feletti rendelés esetén.
+
 Amennyiben rendelését módosítani szeretné, látogasson el a szállítás napját megelőző nap 12:00 előtt oldalunkra a http://www.diet-futar.hu címre. Lemondáshoz rendeljen a korábbi rendeléseinek megfelelő negatív mennyiséget.
 
 Üdvözlettel: Diet-futár
