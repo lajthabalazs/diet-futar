@@ -86,7 +86,7 @@ def getCategoryWithDishes(key):
 				'name':categoryDb.name,
 				'isMenu':categoryDb.isMenu,
 				'index':categoryDb.index,
-				'basePrice':category.basePrice,
+				'basePrice':categoryDb.basePrice,
 				'dishKeys':dishKeys
 			}
 			client.set(key, category)
