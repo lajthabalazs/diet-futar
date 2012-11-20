@@ -23,7 +23,8 @@ from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 	DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage, UserOverviewPage
-from index import AboutDeliveryPage, CaloryCalculator, GooglePage
+from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
+	ContactsPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -55,6 +56,8 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/pendingOrder', ReviewPendingOrderPage),
 										('/personalMenu', ReviewOrderedMenuPage),
 
+										('/about', AboutPage),
+										('/contacts', ContactsPage),
 										('/aboutDelivery', AboutDeliveryPage),
 										('/caloryCalculator', CaloryCalculator),
 

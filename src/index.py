@@ -10,6 +10,16 @@ class AboutDeliveryPage(BaseHandler):
 	def get(self):
 		template = jinja_environment.get_template('templates/aboutDelivery.html')
 		self.printPage("Rendel&eacute;s", template.render(), True, True)
+
+class AboutPage(BaseHandler):
+	def get(self):
+		template = jinja_environment.get_template('templates/about.html')
+		self.printPage("R&oacute;lunk", template.render(), True, True)
+
+class ContactsPage(BaseHandler):
+	def get(self):
+		template = jinja_environment.get_template('templates/contacts.html')
+		self.printPage("Kapcsolat", template.render(), True, True)
 		
 class CaloryCalculator(BaseHandler):
 	def get(self):
