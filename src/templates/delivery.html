@@ -1,7 +1,7 @@
 ﻿<div class="mainBg">
 	<div class="container">
-	{{order.delivered}}<br/>
 	{{order.user.familyName}} {{order.user.givenName}}<br/>
+	{{order.user.email}} {{order.user.phoneNumber}}<br/>
 	{{order.address.district}} {{order.address.zipCode}} {{order.address.street}} {{order.address.streetNumber}}<br/>
 	<table>
 	{% for item in items%}
