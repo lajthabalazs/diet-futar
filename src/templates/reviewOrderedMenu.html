@@ -48,27 +48,27 @@
 					</div>
 				{% endfor%}
 			</div>
-			<div class="span-24 last subTotal">
-				<h2 class="span-2">Szállítási cím</h2>
-				{% for day in days %}
-				<div class="span-4">
-					{% if day.has_key('address') %}
-						<select onchange="addressChangeListener('{{day.date}}',{{day.orderedPrice}} );" name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%} style="width: 120px">
-							{% for address in addresses %}
-								<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
-							{% endfor %}
-						</select><br/>
-						<strong>Szállítási költség:</strong> <strong id="deliveryCost{{day.date}}">{{ day.deliveryCost }}</strong> <strong>Ft</strong>
-					{% else %}
-						&nbsp;
-					{% endif %}
-				</div>
-				{% endfor%}
-			</div>
 			<form method="post">
-			<div class="span-24 total last">
-				<input id="saveAddress" type="submit" name="" value="Címek mentése" id=""/>
-			</div>
+				<div class="span-24 last subTotal">
+					<h2 class="span-2">Szállítási cím</h2>
+					{% for day in days %}
+					<div class="span-4">
+						{% if day.has_key('address') %}
+							<select onchange="addressChangeListener('{{day.date}}',{{day.orderedPrice}} );" name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%} style="width: 120px">
+								{% for address in addresses %}
+									<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
+								{% endfor %}
+							</select><br/>
+							<strong>Szállítási költség:</strong> <strong id="deliveryCost{{day.date}}">{{ day.deliveryCost }}</strong> <strong>Ft</strong>
+						{% else %}
+							&nbsp;
+						{% endif %}
+					</div>
+					{% endfor%}
+				</div>
+				<div class="span-24 total last">
+					<input id="saveAddress" type="submit" name="" value="Címek mentése" id=""/>
+				</div>
 			</form>
 		</div>
 	</div>
