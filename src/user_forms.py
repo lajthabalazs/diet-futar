@@ -31,23 +31,6 @@ def clearNextPage(handler):
 	return nextPage
 
 class LoginPage(BaseHandler):
-	def get(self):
-		userKey = self.session.get(USER_KEY,None)
-		if (userKey != None):
-		#If session has a user key, than return logged in
-			user = db.get(userKey)
-			template_values = {
-				'user': user
-			}
-			template = jinja_environment.get_template('templates/loggedIn.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
-		else:
-			#Show login form
-			template_values = {
-				LOGIN_ERROR_KEY:self.session.get(LOGIN_ERROR_KEY,0)
-			}
-			template = jinja_environment.get_template('templates/login.html')
-			self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render(template_values))
 	def post(self):
 		#Check login
 		email = self.request.get('email')

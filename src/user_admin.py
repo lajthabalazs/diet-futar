@@ -5,7 +5,7 @@ import os
 
 from base_handler import BaseHandler
 from model import User, Role, ROLE_ADMIN
-from user_management import isUserAdmin, getUser
+from user_management import isUserAdmin, getUser, USER_KEY
 from google.appengine.api.datastore_errors import BadKeyError
 #from user_management import getUserBox
 
@@ -71,6 +71,24 @@ class UserListPage(BaseHandler):
 					userToChange.role=None
 				userToChange.put()
 		self.redirect("/userList")
+
+class SwitchToUserPage(BaseHandler):
+	def post(self):
+		if(not isUserAdmin(self)):
+			self.redirect("/")
+			return
+		userKey = self.request.get("userKey")
+		if (userKey != None and userKey != ""):
+			user = None
+			try:
+				user = User.get(userKey)
+			except BadKeyError:
+				pass
+			if user != None:
+				self.session[USER_KEY]=str(userKey)
+				self.redirect("/");
+
+				
 #An accumulated overview of every ordered item
 class UserOverviewPage(BaseHandler):
 	def get(self):

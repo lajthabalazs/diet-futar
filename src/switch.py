@@ -22,7 +22,7 @@ from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 	DeliveryReviewOrdersPage, DeliveryPage
-from user_admin import UserListPage, UserOverviewPage
+from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage
 from setup import SetupPage
@@ -87,13 +87,15 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/addIngredientToCategory', IngredientAddPage),
 										('/ingredient', IngredientPage),
 										('/deleteIngredientCategory', IngredientCategoryDeletePage),
-										('/userList', UserListPage),
-										('/userOverview', UserOverviewPage),
 										('/ingredientCategory', IngredientCategoryPage),
 										('/chefReviewToMake', ChefReviewToMakePage),
 										('/deliveryReviewOrders', DeliveryReviewOrdersPage),
 										('/deliverable', DeliveryPage),
 										('/chefReviewOrders', ChefReviewOrdersPage),
 										('/wish', WishPage),
+
+										('/userList', UserListPage),
+										('/userOverview', UserOverviewPage),
+										('/switchToUser', SwitchToUserPage),
 										],
 										debug=True, config=config)

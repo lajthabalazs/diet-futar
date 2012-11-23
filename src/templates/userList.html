@@ -17,34 +17,39 @@
 			<th><a href="?order=registrationDate">Regisztráció</a></th>
 			<th><a href="?order=familyName">Név</a></th>
 			<th><a href="?order=email">E-mail cím</a></th>
+			<th>Felhasználó váltás</th>
 			<th>Aktivált</th>
 			<th>Ajánló</th>
 			<th>Szerep</th>
 			<th></th>
 		{% for user in userList%}
-		<form method="post">
-			<input type="hidden" name="userKey" value="{{user.key()}}"/>
 			<tr>
 			<td>{{ user.registrationDate}}</td>
 			<td><a href="/userOverview?userKey={{user.key()}}">{{ user.familyName }} {{user.givenName}}</a></td>
 			<td>{{ user.email }}</td>
-			<td><input type="checkbox" name="activated" {% if user.activated%} checked="checked" {% endif %}/></td>
-			<td>
-				{% if user.referer and user.referer != None %}
-				{{ user.referer.familyName }} {{ user.referer.givenName }}
-				{% endif %}
-			</td>
-			<td>
-				<select name="role">
-					<option value="" label="Felhasználó"></option>
-					{% for role in roles %}
-						<option value="{{ role.key() }}" label="{{ role.name }}" {% if user.role != None and role.key() == user.role.key()%} selected="selected" {% endif %}></option>
-					{% endfor %}
-				</select>
-			</td>
-			<td><input type="submit" value="Mentés"/></td>
+			<form method="post" action="switchToUser">
+				<input type="hidden" name="userKey" value="{{user.key()}}"/>
+				<td><input type="submit" value="Váltás"/></td>
+			</form>
+			<form method="post">
+				<input type="hidden" name="userKey" value="{{user.key()}}"/>
+					<td><input type="checkbox" name="activated" {% if user.activated%} checked="checked" {% endif %}/></td>
+					<td>
+						{% if user.referer and user.referer != None %}
+						{{ user.referer.familyName }} {{ user.referer.givenName }}
+						{% endif %}
+					</td>
+					<td>
+						<select name="role">
+							<option value="" label="Felhasználó"></option>
+							{% for role in roles %}
+								<option value="{{ role.key() }}" label="{{ role.name }}" {% if user.role != None and role.key() == user.role.key()%} selected="selected" {% endif %}></option>
+							{% endfor %}
+						</select>
+					</td>
+					<td><input type="submit" value="Mentés"/></td>
+				</form>
 			</tr>
-		</form>
 		{% endfor %}
 		</table>
 	</div>
