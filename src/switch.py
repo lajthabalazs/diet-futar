@@ -25,6 +25,7 @@ from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
 from user_admin import UserListPage, UserOverviewPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage
+from setup import SetupPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -36,6 +37,8 @@ config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key',
 
 
 app = webapp2.WSGIApplication([('/', MenuOrderPage),
+										('/setup', SetupPage),
+
 										('/google24f0feb13afae7e0.html', GooglePage),
 										('/login', LoginPage),
 										('/logout', LogoutPage),

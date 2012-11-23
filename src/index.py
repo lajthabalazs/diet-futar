@@ -8,12 +8,12 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 class AboutDeliveryPage(BaseHandler):
 	def get(self):
-		template = jinja_environment.get_template('templates/aboutDelivery.html')
+		template = jinja_environment.get_template('templates/about/aboutDelivery.html')
 		self.printPage("Rendel&eacute;s", template.render(), True, True)
 
 class AboutPage(BaseHandler):
 	def get(self):
-		template = jinja_environment.get_template('templates/about.html')
+		template = jinja_environment.get_template('templates/about/about.html')
 		self.printPage("R&oacute;lunk", template.render(), True, True)
 
 class ContactsPage(BaseHandler):

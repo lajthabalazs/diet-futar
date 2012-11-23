@@ -145,18 +145,6 @@ class RegisterPage(BaseHandler):
 		user["phoneNumber"]=phoneNumber
 		user["sourceOfInfo"]=sourceOfInfo
 		users = User.gql('WHERE email = :1', email)
-		# Check if roles are set up properly
-#		roles=Role.all()
-#		if roles.count() == 0:
-#			role = Role()
-#			role.name=ROLE_ADMIN
-#			role.put()
-#			role = Role()
-#			role.name=ROLE_DELIVERY_GUY
-#			role.put()
-#			role = Role()
-#			role.name=ROLE_COOK
-#			role.put()
 		refererUrlPart = ""
 		if referer != None:
 			refererUrlPart = "?refererKey=" + str(referer.key())
@@ -193,7 +181,7 @@ class RegisterPage(BaseHandler):
 				'activationCode':word,
 				'user':user
 			}
-			messageTemplate = jinja_environment.get_template('templates/activation_code.html')
+			messageTemplate = jinja_environment.get_template('templates/activation/activation_code.html')
 			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
 			message.subject="Diet-futar, sikeres regisztracio"
 			message.to = email
@@ -203,7 +191,7 @@ class RegisterPage(BaseHandler):
 
 class ActivationPendingPage (BaseHandler):
 	def get(self):
-			template = jinja_environment.get_template('templates/activation_pending.html')
+			template = jinja_environment.get_template('templates/activation/activation_pending.html')
 			self.printPage("Aktivacio", template.render(), True)
 	
 class ActivatePage (BaseHandler):
@@ -227,7 +215,7 @@ class ActivatePage (BaseHandler):
 		template_values = {
 			'activationResult' : activationResult
 		}
-		template = jinja_environment.get_template('templates/activation.html')
+		template = jinja_environment.get_template('templates/activation/activation.html')
 		self.printPage("Aktivacio", template.render(template_values), True)
 
 class ChangePasswordPage (BaseHandler):

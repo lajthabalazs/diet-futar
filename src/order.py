@@ -593,8 +593,9 @@ class ConfirmOrder(BaseHandler):
 								hasItem = True
 								break
 						if not hasItem:
-							daysAddress=user.deliveryAddresses.filter("day = ", day)[0]
-							daysAddress.delete()
+							if user.deliveryAddresses.filter("day = ", day).count() > 0:
+								daysAddress=user.deliveryAddresses.filter("day = ", day)[0]
+								daysAddress.delete()
 				except ValueError, ReferencePropertyResolveError:
 					continue
 			userOrder.put()
