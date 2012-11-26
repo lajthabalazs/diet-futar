@@ -23,7 +23,6 @@ LOGIN_NEXT_PAGE_KEY="next_page"
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 def isUserAdmin(handler):
-	return True
 	userKey = handler.session.get(USER_KEY,None)
 	if (userKey != None):
 	#If session has a user key, than return logged in
@@ -72,7 +71,6 @@ def isUserCook(handler):
 		return False
 	
 def isUserLoggedIn(handler):
-	return True
 	userKey = handler.session.get(USER_KEY,None)
 	if (userKey != None):
 	#If session has a user key, than return logged in
