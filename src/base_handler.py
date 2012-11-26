@@ -17,23 +17,61 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 LAST_ORDER_HOUR=12
 timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
-def getDeliveryCost(district, price):
-	costs = {
-		"I":500,
-		"II":500,
-		"III":500,
-		"IV":0,
-		"V":300,
-		"VI":300,
-		"VII":300,
-		"VIII":300,
-		"IX":500,
-		"X":500,
-		"XIII":0,
-		"XIV":0,
-		"XV":0,
-		"XVI":300
+deliveryZones = [
+	{
+		"cost" : 0,
+		"limit" : 0,
+		"districts":["IV","XIII","XIV", "XV"]
+	},
+	{
+		"cost" : 300,
+		"limit" : 3000,
+		"districts":["V","VI","VII", "VIII", "XVI"]
+	},
+	{
+		"cost" : 500,
+		"limit" : 4000,
+		"districts":["I","II","III", "IX", "X"]
+	},
+	{
+		"cost" : 1000,
+		"limit" : 5000,
 	}
+]
+costs = {
+	"I":500,
+	"II":500,
+	"III":500,
+	"IV":0,
+	"V":300,
+	"VI":300,
+	"VII":300,
+	"VIII":300,
+	"IX":500,
+	"X":500,
+	"XIII":0,
+	"XIV":0,
+	"XV":0,
+	"XVI":300
+}
+limits = {
+	"I":4000,
+	"II":4000,
+	"III":4000,
+	"IV":0,
+	"V":3000,
+	"VI":3000,
+	"VII":3000,
+	"VIII":3000,
+	"IX":4000,
+	"X":4000,
+	"XIII":0,
+	"XIV":0,
+	"XV":0,
+	"XVI":3000
+}
+
+def getDeliveryCost(district, price):
 	if costs.has_key(district):
 		if (price < getDeliveryLimit(district)):
 			return costs.get(district)
@@ -46,24 +84,8 @@ def getDeliveryCost(district, price):
 			return 0
 	
 def getDeliveryLimit(district):
-	limit = {
-		"I":4000,
-		"II":4000,
-		"III":4000,
-		"IV":0,
-		"V":3000,
-		"VI":3000,
-		"VII":3000,
-		"VIII":3000,
-		"IX":4000,
-		"X":4000,
-		"XIII":0,
-		"XIV":0,
-		"XV":0,
-		"XVI":3000
-	}
-	if limit.has_key(district):
-		return limit.get(district)
+	if limits.has_key(district):
+		return limits.get(district)
 	else:
 		return 5000
 	
@@ -141,7 +163,7 @@ class BaseHandler(webapp2.RequestHandler):
 		template_params={
 			"pageTitle":title
 		}
-		ret=jinja_environment.get_template('templates/header_part_zero.html').render(template_params)
+		ret=jinja_environment.get_template('templates/headers/header_part_zero.html').render(template_params)
 		topMenu=[]
 		if isUserAdmin(self):
 			dailyMenu={}
@@ -236,7 +258,7 @@ class BaseHandler(webapp2.RequestHandler):
 				"menuItems":topMenu
 			}
 			ret=ret + jinja_environment.get_template('templates/admin_menu.html').render(template_params)
-		ret=ret + jinja_environment.get_template('templates/header_part_one.html').render()
+		ret=ret + jinja_environment.get_template('templates/headers/header_part_one.html').render()
 		#Set menu items
 		menuItems=[]
 		weeklyOrderMenu={}
@@ -257,13 +279,13 @@ class BaseHandler(webapp2.RequestHandler):
 		}
 		ret=ret+jinja_environment.get_template('templates/menu.html').render(template_params)
 		ret=ret+getUserBox(self)
-		ret=ret+jinja_environment.get_template('templates/header_part_two.html').render()
+		ret=ret+jinja_environment.get_template('templates/headers/header_part_two.html').render()
 		if forAnonymus or isUserLoggedIn(self):
 			ret=ret+content
 		else:
 			ret=ret + "A tartalom nem jelenitheto meg"
 		ret=ret+"</div>"
-		ret=ret+jinja_environment.get_template('templates/footer.html').render()
+		ret=ret+jinja_environment.get_template('templates/headers/footer.html').render()
 		self.response.out.write(ret)
 	@webapp2.cached_property
 	def session(self):

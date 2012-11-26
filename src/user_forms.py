@@ -108,7 +108,6 @@ class RegisterPage(BaseHandler):
 		clearRegistrationError(self)
 		template = jinja_environment.get_template('templates/register.html')
 		self.printPage("Regisztracio", template.render(template_params), True, True)
-		#self.response.out.write(jinja_environment.get_template('templates/header.html').render() + template.render())
 	def post(self):
 		referer = None
 		refererKey = self.request.get('refererKey')
