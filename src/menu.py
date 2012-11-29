@@ -59,6 +59,8 @@ def getMenu(day, dayIndex, availableMenuItems):
 	dishCategories=getDishCategories()
 	menu=[]
 	for category in dishCategories:
+		if not category['canBeTopLevel']:
+			continue
 		actualCategoryObject={}
 		actualCategoryObject['category']=category
 		categoryKey=category['key']
@@ -83,12 +85,13 @@ class MenuWeekEditPage(BaseHandler):
 		menu=[]
 		dishCategories=getDishCategories()
 		monday=day+datetime.timedelta(days=-calendar[2]+1)
-		#sunday=day+datetime.timedelta(days=-calendar[2]+7)
 		days=[]
 		for i in range(0,5):
 			actualDay=monday+datetime.timedelta(days=i)
 			days.append(getDay(actualDay, i, getDaysAvailableMenuItems(actualDay)))
 		for category in dishCategories:
+			if not category['canBeTopLevel']:
+				continue
 			actualCategoryObject={}
 			actualCategoryObject['category']=category
 			categoryKey=category['key']

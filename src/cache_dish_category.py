@@ -9,6 +9,21 @@ from cache_dish import getDish
 
 CATEGORIES_KEY="CATS"
 
+def createCategoryObject(categoryDb):
+	categoryObject={
+		'key':str(categoryDb.key()),
+		'name':categoryDb.name,
+		'basePrice':categoryDb.basePrice,
+		'isMenu':categoryDb.isMenu,
+		'canBeTopLevel':categoryDb.canBeTopLevel,
+		'index':categoryDb.index
+	}
+	dishKeys=[]
+	for dish in categoryDb.dishes:
+		dishKeys.append(str(dish.key()))
+	categoryObject['dishKeys'] = dishKeys
+	return categoryObject
+	
 def getDishCategories():
 	client = memcache.Client()
 	categories=client.get(CATEGORIES_KEY)
@@ -16,13 +31,7 @@ def getDishCategories():
 		categories = DishCategory.all().order("index")
 		categoryList=[]
 		for category in categories:
-			categoryObject={
-				'key':str(category.key()),
-				'name':category.name,
-				'basePrice':category.basePrice,
-				'isMenu':category.isMenu,
-				'index':category.index
-			}
+			categoryObject=createCategoryObject(category);
 			categoryList.append(categoryObject)
 		client.set(CATEGORIES_KEY, categoryList)
 		return categoryList
@@ -30,15 +39,10 @@ def getDishCategories():
 
 def addCategory(category):
 	client = memcache.Client()
+	categoryObject=createCategoryObject(category)
 	categories=client.get(CATEGORIES_KEY)
+	client.set(str(category.key()), categoryObject)
 	if categories != None:
-		categoryObject={
-			'key':str(category.key()),
-			'name':category.name,
-			'basePrice':category.basePrice,
-			'isMenu':category.isMenu,
-			'index':category.index
-		}
 		categories.append(categoryObject)
 		client.set(CATEGORIES_KEY, categories)
 
@@ -48,7 +52,7 @@ def deleteCategory(key):
 	if categories != None:
 		categoryList=[]
 		for category in categories:
-			if category.key == key:
+			if category['key'] == key:
 				continue
 			else:
 				categoryList.append(category)
@@ -60,15 +64,8 @@ def modifyCategory(category):
 	if categories != None:
 		categoryList=[]
 		for categoryObject in categories:
-			dishKeys=[]
-			for dish in category.dishes:
-				dishKeys.append(str(dish.key()))
-			if category.key == categoryObject.key:
-				categoryObject['name'] = category.name
-				categoryObject['isMenu'] = category.isMenu
-				categoryObject['index'] = category.index
-				categoryObject['basePrice'] = category.basePrice
-				categoryObject['dishKeys'] = categoryObject.dishKeys
+			if str(category.key()) == categoryObject['key']:
+				categoryObject=createCategoryObject(category);
 			categoryList.append(categoryObject)
 		client.set(CATEGORIES_KEY, categoryList)
 
@@ -78,17 +75,7 @@ def getCategoryWithDishes(key):
 	if category == None:
 		categoryDb = DishCategory.get(key)
 		if categoryDb != None:
-			dishKeys=[]
-			for dish in categoryDb.dishes:
-				dishKeys.append(str(dish.key()))
-			category={
-				'key':key,
-				'name':categoryDb.name,
-				'isMenu':categoryDb.isMenu,
-				'index':categoryDb.index,
-				'basePrice':categoryDb.basePrice,
-				'dishKeys':dishKeys
-			}
+			category = createCategoryObject(categoryDb);
 			client.set(key, category)
 		else:
 			return None

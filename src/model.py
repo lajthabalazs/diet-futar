@@ -37,6 +37,7 @@ class Address (db.Model):
 class DishCategory(db.Model):
 	name = db.StringProperty()
 	isMenu = db.BooleanProperty()
+	canBeTopLevel = db.BooleanProperty()
 	basePrice=db.IntegerProperty()
 	index=db.IntegerProperty()
 

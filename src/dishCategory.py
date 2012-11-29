@@ -6,6 +6,9 @@ from base_handler import BaseHandler
 from keys import DISH_CATEGORY_KEY, DISH_KEY, DISH_CATEGORY_URL, DISH_CATEGORY_NAME,\
 	DISH_CATEGORY_DELETE_URL, DISH_CATEGORY_ADD_URL, DISH_CATEGORY_INDEX
 from user_management import isUserCook
+from cache_dish_category import getDishCategories, getCategoryWithDishes,\
+	modifyCategory, deleteCategory, addCategory
+from cache_dish import modifyDish
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -16,7 +19,8 @@ class CategoryDishDeletePage(BaseHandler):
 			return
 		category = db.get(self.request.get(DISH_CATEGORY_KEY))
 		dish = db.get(self.request.get(DISH_KEY))
-		dish.category=None
+		dish.category = None
+		modifyDish(dish);
 		dish.put()
 		self.redirect(DISH_CATEGORY_URL+'?'+DISH_CATEGORY_KEY+'=%s' % category.key())
 
@@ -25,7 +29,7 @@ class DishCategoryPage(BaseHandler):
 		if not isUserCook(self):
 			self.redirect("/")
 			return
-		dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
+		dishCategoryKey = self.request.get("dishCategoryKey")
 		if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 			dishCategory=db.get(self.request.get(DISH_CATEGORY_KEY))
 		else:
@@ -40,31 +44,36 @@ class DishCategoryPage(BaseHandler):
 		except ValueError:
 			dishCategory.basePrice = 0
 		dishCategory.isMenu = self.request.get('isMenuCategory', default_value="no")=='yes'
+		dishCategory.canBeTopLevel = self.request.get('canBeTopLevel', default_value="no")=='yes'
 		dishCategory.put()
+		if (dishCategoryKey != None and dishCategoryKey != ""):
+			modifyCategory(dishCategory);
+		else:
+			addCategory(dishCategory);
 		self.redirect(DISH_CATEGORY_URL)
 	def get(self):
 		if not isUserCook(self):
 			self.redirect("/")
 			return
-		dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
+		dishCategoryKey=self.request.get("dishCategoryKey")
 		if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 		# List every ingredient in the category
-			dishCategory = db.get(self.request.get(DISH_CATEGORY_KEY))
+			dishCategory = getCategoryWithDishes(dishCategoryKey);
 			template_values = {
 				'dishCategory': dishCategory,
 				'add_url':DISH_CATEGORY_ADD_URL,
 				'delete_url':DISH_CATEGORY_DELETE_URL
 			}
-			template = jinja_environment.get_template('templates/dish_category.html')
-			self.printPage(dishCategory.name, template.render(template_values), False, False)
+			template = jinja_environment.get_template('templates/dishCategory/dish_category.html')
+			self.printPage(dishCategory['name'], template.render(template_values), False, False)
 		else:
 		# All categories
-			ingredientCategories =DishCategory.gql("ORDER BY index")
+			dishCategories=getDishCategories()
 			template_values = {
-				'dishCategories': ingredientCategories,
+				'dishCategories': dishCategories,
 				'delete_url':DISH_CATEGORY_DELETE_URL
 			}
-			template = jinja_environment.get_template('templates/dish_category_list.html')
+			template = jinja_environment.get_template('templates/dishCategory/dish_category_list.html')
 			self.printPage("Etel kategoriak", template.render(template_values), False, False)
 
 class DishCategoryDeletePage(BaseHandler):
@@ -72,7 +81,9 @@ class DishCategoryDeletePage(BaseHandler):
 		if not isUserCook(self):
 			self.redirect("/")
 			return
-		dishCategory = db.get(self.request.get('dishCategoryKey'))	  
+		dishCategoryKey = self.request.get('dishCategoryKey');
+		dishCategory = db.get(dishCategoryKey)
+		deleteCategory(dishCategoryKey);
 		dishCategory.delete()
 		self.redirect(DISH_CATEGORY_URL+'?'+DISH_CATEGORY_KEY+'=%s' % self.request.get('ingredientCategoryKey'))
 

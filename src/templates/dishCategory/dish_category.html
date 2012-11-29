@@ -4,10 +4,10 @@
 		<table>
 		{% for dish in dishCategory.dishes %}
 		<tr>
-			<td><a href="/dish?dishKey={{ dish.key() }}">{{ dish.title }}</a></td>
+			<td><a href="/dish?dishKey={{ dish.key }}">{{ dish.title }}</a></td>
 			<td><form action="{{delete_url}}" method="post">
-				<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key() }}"/>
-				<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
+				<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key }}"/>
+				<input type="hidden" name="dishKey" value="{{ dish.key }}"/>
 				<input type="submit" value="Töröl">
 			</form></td>
 		</tr>

@@ -1,0 +1,43 @@
+﻿<div class="mainBg staticPage">
+	<div class="container">
+		<h3>Fogások</h3>
+		<table>
+		<tr>
+			<th>Név</th>
+			<th>Sorrend</th>
+			<th>Alapár</th>
+			<th>Menü</th>
+			<th>Rendelhető</th>
+			<th></th>
+			<th></th>
+		</tr>
+		{% for dishCategory in dishCategories %}
+		<tr>
+			<td><a href="/dishCategory?dishCategoryKey={{ dishCategory.key }}">{{ dishCategory.name }}</a></td>
+			<form method="post">
+			<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key }}"/>
+			<td><input type="number" name="dishCategoryIndex" cols="60" value="{{ dishCategory.index }}"/></td>
+			<td><input type="number" name="basePrice" cols="60" value="{{ dishCategory.basePrice }}"/></td>
+			<td><input type="checkbox" name="isMenuCategory" cols="60" value="yes" {% if(dishCategory.isMenu) %} checked="true"{% endif %}/></td>
+			<td><input type="checkbox" name="canBeTopLevel" cols="60" value="yes" {% if(dishCategory.canBeTopLevel) %} checked="true"{% endif %}/></td>
+			<td><input type="submit" value="Ment"></td>
+			</form>
+			<form action="{{delete_url}}" method="post">
+				<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key }}"/>
+				<td><input type="submit" value="Töröl"></td>
+			</form>
+		</tr>
+		{% endfor %}
+		<tr>
+			<form method="post">
+				<td><input type="text" name="dishCategoryName" cols="60"/></td>
+				<td><input type="number" name="dishCategoryIndex" cols="60"/></td>
+				<td><input type="number" name="basePrice" cols="60"/></td>
+				<td><input type="checkbox" name="isMenuCategory" cols="60"/></td>
+				<td><input type="checkbox" name="canBeTopLevel" cols="60"/></td>
+				<td colspan="2"><input type="submit" value="Fogás hozzáadása"></td>
+			</form>
+		</tr>
+		</table>
+	</div>
+</div>
