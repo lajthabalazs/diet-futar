@@ -1,4 +1,5 @@
-﻿<div class="mainBg">
+﻿{% from '/templates/macros.html' import menuItemTitleAndContentSmall, compositTitleAndContentSmall %}
+<div class="mainBg">
 	<div class="container">
 
 		{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
@@ -21,10 +22,12 @@
 					<td>
 						{% for item in order.orderedItems %}
 							{{item.itemCount}}
-							{{ item.dish.title }}
-							{% for component in item.components %}
-								{{ component.dish.title }}
-							{% endfor %}<br/>
+							{% if item.isMenuItem %}
+								{{menuItemTitleAndContentSmall (item)}}
+							{% else %}
+								{{compositTitleAndContentSmall (item)}}
+							{% endif %}
+							<br/>
 						{% endfor %}
 					</td>
 					<td><select name="deliverer">

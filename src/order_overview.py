@@ -16,6 +16,48 @@ ACTUAL_ORDER="actualOrder"
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
+# Returns composits and menu items alike
+def getOrderedItems (orderAddress):
+	filteredSet = orderAddress.user.orderedItems.filter("day = ", orderAddress.day)
+	# Aggregate filtered set
+	menuItemIndexes={}
+	menuItemOrders=[]
+	compositIndexes={}
+	compositOrders=[]
+	for orderedItem in filteredSet:
+		if orderedItem.orderedComposit == None:
+			menuItem=orderedItem.orderedItem
+			actualOrder=0
+			if menuItemIndexes.has_key(menuItem.key()):
+				itemIndex=menuItemIndexes.get(menuItem.key())
+				actualOrder=menuItemOrders[itemIndex].itemCount
+				menuItemOrders[itemIndex].itemCount = actualOrder + orderedItem.itemCount
+			else:
+				menuItem.isMenuItem = True
+				menuItem.itemCount=orderedItem.itemCount
+				menuItemIndexes[menuItem.key()] = len(menuItemOrders)
+				menuItemOrders.append(menuItem)
+		else:
+			composit=orderedItem.orderedComposit
+			actualOrder=0
+			if compositIndexes.has_key(composit.key()):
+				itemIndex=compositIndexes.get(composit.key())
+				actualOrder=compositOrders[itemIndex].itemCount
+				compositOrders[itemIndex].itemCount = actualOrder + composit.itemCount
+			else:
+				composit.isMenuItem = False
+				composit.itemCount=orderedItem.itemCount
+				compositIndexes[composit.key()] = len(compositOrders)
+				compositOrders.append(composit)
+	notNulItemOrders = []
+	for itemOrder in compositOrders:
+		if itemOrder.itemCount > 0:
+			notNulItemOrders.append(itemOrder)
+	for itemOrder in menuItemOrders:
+		if itemOrder.itemCount > 0:
+			notNulItemOrders.append(itemOrder)
+	return notNulItemOrders
+
 #An accumulated overview of every ordered item
 class ChefReviewOrdersPage(BaseHandler):
 	def get(self):
@@ -212,44 +254,6 @@ class ChefReviewToMakePage(BaseHandler):
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/chefReviewDishes.html')
 		self.printPage(str(day), template.render(template_values), False, False)
-		
-
-def getOrderedItems (orderAddress):
-	filteredSet = orderAddress.user.orderedItems.filter("day = ", orderAddress.day)
-	# Aggregate filtered set
-	menuItemIndexes={}
-	menuItemOrders=[]
-	for orderedItem in filteredSet:
-		if orderedItem.orderedComposit == None:
-			menuItem=orderedItem.orderedItem
-			actualOrder=0
-			if menuItemIndexes.has_key(menuItem.key()):
-				itemIndex=menuItemIndexes.get(menuItem.key())
-				actualOrder=menuItemOrders[itemIndex].itemCount
-				menuItemOrders[itemIndex].itemCount = actualOrder + orderedItem.itemCount
-			else:
-				menuItem.itemCount=orderedItem.itemCount
-				menuItemIndexes[menuItem.key()] = len(menuItemOrders)
-				menuItemOrders.append(menuItem)
-		else:
-			actualOrder=0
-			for compositItem in orderedItem.orderedComposit.components:
-				menuItem = compositItem.menuItem;
-				actualOrder=0
-				if menuItemIndexes.has_key(menuItem.key()):
-					itemIndex=menuItemIndexes.get(menuItem.key())
-					actualOrder=menuItemOrders[itemIndex].itemCount
-					menuItemOrders[itemIndex].itemCount = actualOrder + orderedItem.itemCount
-				else:
-					menuItem.itemCount=orderedItem.itemCount
-					menuItemIndexes[menuItem.key()] = len(menuItemOrders)
-					menuItemOrders.append(menuItem)
-	notNulItemOrders = []
-	for itemOrder in menuItemOrders:
-		if itemOrder.itemCount > 0:
-			notNulItemOrders.append(itemOrder)
-	return notNulItemOrders
-
 		
 #An accumulated overview of every ordered item
 class DeliveryReviewOrdersPage(BaseHandler):

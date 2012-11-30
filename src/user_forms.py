@@ -67,7 +67,7 @@ class ForgotPassword(BaseHandler):
 		}
 		if (users.count(1) == 1):
 			template_params[EMAIL_KEY] = email
-		template = jinja_environment.get_template('templates/changePass.html')
+		template = jinja_environment.get_template('templates/userForms/changePass.html')
 		self.printPage("Uj jelszo", template.render(template_params), True, True)
 	def post(self):
 		email = self.session.get(EMAIL_KEY)
@@ -85,7 +85,7 @@ class ForgotPassword(BaseHandler):
 			template_values = {
 				"password":word
 			}
-			messageTemplate = jinja_environment.get_template('templates/changePassMail.html')
+			messageTemplate = jinja_environment.get_template('templates/userForms/changePassMail.html')
 			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
 			message.subject="Diet-futar, uj jelszo"
 			message.to = email
@@ -93,7 +93,7 @@ class ForgotPassword(BaseHandler):
 			message.send()
 			user.put()
 			template_params[EMAIL_KEY] = email
-		template = jinja_environment.get_template('templates/changePassSuccess.html')
+		template = jinja_environment.get_template('templates/userForms/changePassSuccess.html')
 		self.printPage("Uj jelszo", template.render(template_params), True, True)
 		
 class RegisterPage(BaseHandler):
@@ -163,7 +163,7 @@ class RegisterPage(BaseHandler):
 				'activationCode':word,
 				'user':user
 			}
-			messageTemplate = jinja_environment.get_template('templates/activation/activation_code.html')
+			messageTemplate = jinja_environment.get_template('templates/userForms/activation/activation_code.html')
 			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
 			message.subject="Diet-futar, sikeres regisztracio"
 			message.to = email
@@ -173,7 +173,7 @@ class RegisterPage(BaseHandler):
 
 class ActivationPendingPage (BaseHandler):
 	def get(self):
-			template = jinja_environment.get_template('templates/activation/activation_pending.html')
+			template = jinja_environment.get_template('templates/userForms/activation/activation_pending.html')
 			self.printPage("Aktivacio", template.render(), True)
 	
 class ActivatePage (BaseHandler):
@@ -197,7 +197,7 @@ class ActivatePage (BaseHandler):
 		template_values = {
 			'activationResult' : activationResult
 		}
-		template = jinja_environment.get_template('templates/activation/activation.html')
+		template = jinja_environment.get_template('templates/userForms/activation/activation.html')
 		self.printPage("Aktivacio", template.render(template_values), True)
 
 class ChangePasswordPage (BaseHandler):

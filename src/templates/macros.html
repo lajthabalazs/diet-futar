@@ -9,6 +9,19 @@
 		{% endfor %}</p>
 {% endmacro %}
 
+{% macro menuItemTitleAndContentSmall(menuItem)%}
+		{{ menuItem.dish.title }}
+		{% for component in menuItem.components %}
+			<i>{{ component.dish.title }}</i> 
+		{% endfor %}
+{% endmacro %}
+
+{% macro compositTitleAndContentSmall(composit)%}
+	{% for component in composit.components%}
+		{{ menuItemTitleAndContentSmall(component.menuItem) }}
+	{% endfor %}
+{% endmacro %}
+
 {% macro tooltipContent(menuItem)%}
 		<h3 class='tooltipMenuItemTitle'>{{ menuItem.dish.title }}</h3>
 		<p class='tooltipMenuItemSubtitle'>{{ menuItem.dish.subtitle }}</p>

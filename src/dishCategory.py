@@ -85,7 +85,7 @@ class DishCategoryDeletePage(BaseHandler):
 		dishCategory = db.get(dishCategoryKey)
 		deleteCategory(dishCategoryKey);
 		dishCategory.delete()
-		self.redirect(DISH_CATEGORY_URL+'?'+DISH_CATEGORY_KEY+'=%s' % self.request.get('ingredientCategoryKey'))
+		self.redirect(DISH_CATEGORY_URL)
 
 
 

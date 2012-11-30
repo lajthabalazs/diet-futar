@@ -87,30 +87,18 @@ class CompositMenuItemListItem(db.Model):
 	menuItem=db.ReferenceProperty(MenuItem, collection_name='composits')
 	composit=db.ReferenceProperty(Composit, collection_name='components')
 
-class UserOrder(db.Model):
-	orderDate=db.DateTimeProperty()
-	price=db.IntegerProperty()
-	user=db.ReferenceProperty(User, collection_name='userOrders')
-	canceled=db.BooleanProperty()
-
-class UserOrderAddress(db.Model):
-	day=db.DateProperty()
-	user=db.ReferenceProperty(User, collection_name='deliveryAddresses')
-	address=db.ReferenceProperty(Address, collection_name='deliveries')
-	delivered=db.BooleanProperty(default=False)
-	deliverer=db.ReferenceProperty(User, collection_name='deliveryJobs')
-
-class UserOrderItem(db.Model):
-	day=db.DateProperty()
-	price=db.IntegerProperty()
-	isComposit=db.BooleanProperty()
-	user=db.ReferenceProperty(User, collection_name='orderedItems')
-	userOrder=db.ReferenceProperty(UserOrder, collection_name='items')
-	itemCount=db.IntegerProperty()
-	orderedItem=db.ReferenceProperty(MenuItem, collection_name='occurrences')
-	orderedComposit=db.ReferenceProperty(Composit, collection_name='occurrences')
-	delivery=db.ReferenceProperty(UserOrderAddress, collection_name='items')
-
+class UserWeekOrder(db.Model):
+	user=db.ReferenceProperty(User, collection_name='weeks')
+	orderedComposits=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
+	orderedMenuItems=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
+	mondayAddress=db.ReferenceProperty(Address, collection_name='mondays')
+	tuesdayAddress=db.ReferenceProperty(Address, collection_name='tuesdays')
+	wednesdayAddress=db.ReferenceProperty(Address, collection_name='wednesdays')
+	thursdayAddress=db.ReferenceProperty(Address, collection_name='thursdays')
+	fridayAddress=db.ReferenceProperty(Address, collection_name='fridays')
+	saturdayAddress=db.ReferenceProperty(Address, collection_name='saturdays')
+	sundayAddress=db.ReferenceProperty(Address, collection_name='sundays')
+	
 class Wish(db.Model):
 	title = db.StringProperty()
 	description=db.StringProperty(multiline=True)
