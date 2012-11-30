@@ -2,7 +2,6 @@
 	{% if user %}
 		<h3>{{ user.email }}</h3>
 		<a class="userMenu" href="/profile">Profil</a><br/>
-		<a class="userMenu" href="/previousOrders">Korábbi rendelések</a><br/>
 		<a class="userMenu" href="/logout">Kilépés</a>
 	{% else %}
 		<form action="/login" method="post">

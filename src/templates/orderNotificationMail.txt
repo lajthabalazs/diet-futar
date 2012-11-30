@@ -1,31 +1,15 @@
 ﻿Kedves {{ user.familyName }} {{ user.givenName }}!
 
-Köszönjük, hogy megtisztelt bizalmával, és {{userOrder.orderDate.strftime('%Y-%m-%d %H:%M')}} -kor a következő rendelést adta föl:
-		{% for orderItem in userOrder.items %}
-				{% if orderItem.orderedItem == None %}
-				{{ orderItem.orderedComposit.day }}
-				{% for component in orderItem.orderedComposit.components%}{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}{% endfor %}
-				{{orderItem.itemCount}} adag
-				{{orderItem.orderedComposit.price}} Ft/adag
-				{{orderItem.price}} Ft
-				{% else %}
-				{{ orderItem.orderedItem.day }}
-				{{orderItem.orderedItem.dish.title}}
-				{{orderItem.itemCount}} adag
-				{{orderItem.orderedItem.price}} Ft/adag
-				{{orderItem.price}} Ft
-				{% endif %}
-		{% endfor %}
-		
-		Összesen{{userOrder.price}} Ft
-		
-	Szállítási feltételek
+	Köszönjük, hogy megtisztelt bizalmával, és tőlünk rendelte meg ebédjét.
+	A megrendelésének részleteiről a http://diet-futar.hu/personalMenu oldalon tájékozódhat.
+
+	Szállítási feltételeink
 	
-	IV., XIII., XIV és XV. kerületben ingyenes.
-	V., VI., VII, VIII., és XVI. kerületekben a házhozszállítás300 Ft, vagy 3000 ft feletti rendelés esetén ingyenes.
-	I., II., III., IX., X. kerületekben 500 Ft, vagy ingyenes 4000 ft feletti rendelés esetén.
-	Budapest többi kerületébe 1000 Ft, vagy ingyenes 5000 ft feletti rendelés esetén.
+	A házhozsszállítás ingyenes a IV., XIII., XIV és XV. kerületben.
+	Az V., VI., VII, VIII., és XVI. kerületekben a házhozszállítás 300 Ft, vagy 3000 ft feletti rendelés esetén ingyenes.
+	Az I., II., III., IX., X. kerületekben 500 Ft, vagy ingyenes 4000 ft feletti rendelés esetén
+	Budapest többi kerületébe 1000 Ft, vagy ingyenes 5000 ft feletti rendelés esetén.	
+	
+	Amennyiben rendelését módosítani szeretné, látogasson el a szállítás napját megelőző nap 12:00 előtt oldalunkra a <a href="http://www.diet-futar.hu">http://www.diet-futar.hu</a> címre. Lemondáshoz rendeljen a korábbi rendeléseinek megfelelő negatív mennyiséget.
 
-Amennyiben rendelését módosítani szeretné, látogasson el a szállítás napját megelőző nap 12:00 előtt oldalunkra a http://www.diet-futar.hu címre. Lemondáshoz rendeljen a korábbi rendeléseinek megfelelő negatív mennyiséget.
-
-Üdvözlettel: Diet-futár
+	Üdvözlettel: Diet-futár

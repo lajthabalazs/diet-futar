@@ -1,6 +1,6 @@
 from base_handler import BaseHandler, jinja_environment
-from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT,\
-	User
+from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, User
+
 class SetupPage(BaseHandler):
 	def get(self):
 		roles=Role.all()

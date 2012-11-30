@@ -5,7 +5,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, getBaseDate, getFormDate
+from base_handler import BaseHandler, getBaseDate, getFormDate, getMonday
 import datetime
 from model import Composit, CompositMenuItemListItem
 from user_management import isUserCook
@@ -84,7 +84,7 @@ class MenuWeekEditPage(BaseHandler):
 		#Organize into days
 		menu=[]
 		dishCategories=getDishCategories()
-		monday=day+datetime.timedelta(days=-calendar[2]+1)
+		monday = getMonday(day)
 		days=[]
 		for i in range(0,5):
 			actualDay=monday+datetime.timedelta(days=i)
@@ -105,11 +105,10 @@ class MenuWeekEditPage(BaseHandler):
 			actualCategoryObject["days"]=items
 			menu.append(actualCategoryObject)
 		# A single dish with editable ingredient list
-		prevMonday=day+datetime.timedelta(days=-calendar[2]+1-7)
-		nextMonday=day+datetime.timedelta(days=-calendar[2]+1+7)
+		prevMonday=monday+datetime.timedelta(days = -7)
+		nextMonday=monday+datetime.timedelta(days = 7)
 		today=datetime.date.today()
-		todayCalendat=today.isocalendar()
-		actualMonday=today+datetime.timedelta(days=-todayCalendat[2]+1)
+		actualMonday = getMonday(today)
 		allDishes=getDishes()
 		template_values = {
 			'days':days,

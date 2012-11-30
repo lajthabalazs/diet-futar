@@ -96,6 +96,10 @@ def getFirstOrderableDate(handler):
 	if now.hour > LAST_ORDER_HOUR:
 		firstOrderableDay=today+datetime.timedelta(days=1)
 	return firstOrderableDay;
+
+def getMonday(day):
+	return day + datetime.timedelta(days = - day.weekday())
+	
 # Returns the first date user can order
 def getOrderBaseDate(handler):
 	day=datetime.date.today()	
@@ -104,15 +108,12 @@ def getOrderBaseDate(handler):
 		parts=requestDay.rsplit("-")
 		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
 	else:
-		calendar=day.isocalendar()
 		#Organize into days
-		if calendar[2]==4 and datetime.datetime.now().hour > 16:
-			day=day+datetime.timedelta(days=4)
-		elif calendar[2]==5:
+		if day.weekday()==4:
 			day=day+datetime.timedelta(days=3)
-		elif calendar[2]==6:
+		elif day.weekday()==5:
 			day=day+datetime.timedelta(days=2)
-		elif calendar[2]==7:
+		elif day.weekday()==6:
 			day=day+datetime.timedelta(days=1)
 	return day
 
@@ -178,10 +179,6 @@ class BaseHandler(webapp2.RequestHandler):
 			payingOrders["label"]="Rendelt"
 			payingOrders["target"]="/chefReviewOrders"
 			topMenu.append(payingOrders)
-			toMake={}
-			toMake["label"]="K&#233;sz&#237;tend&#337;"
-			toMake["target"]="/chefReviewToMake"
-			topMenu.append(toMake)
 			toDeliver={}
 			toDeliver["label"]="Szallitando"
 			toDeliver["target"]="/deliveryReviewOrders"
@@ -224,9 +221,6 @@ class BaseHandler(webapp2.RequestHandler):
 			payingOrders["target"]="/chefReviewOrders"
 			topMenu.append(payingOrders)
 			toMake={}
-			toMake["label"]="K&#233;sz&#237;tend&#337;"
-			toMake["target"]="/chefReviewToMake"
-			topMenu.append(toMake)
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"

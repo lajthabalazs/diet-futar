@@ -8,17 +8,17 @@
 		{{ day.day }}
 		<table border="1">
 			<tr>
-				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th><th>Futár</th><th></th>
+				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th><th></th>
 			</tr>
 			{% for order in orders%}
 			<form method="post">
-				<input type="hidden" name="odrerKey" value="{{order.key()}}"/>
+				<input type="hidden" name="weekKey" value="{{order.week.key()}}"/>
 				<tr>
 					<td><input type="checkbox" name="delivered" {% if order.delivered %} checked="checked" {% endif %}/></td>
-					<td>{{order.address.district}}</td>
-					<td>{{order.address.zipCode}}</td>
-					<td>{{order.address.street}} {{order.address.streetNumber}}</td>
-					<td><a href="/deliverable?orderAddressKey={{order.key()}}">{{order.user.familyName}} {{order.user.givenName}}</a></td>
+					<td>{{order.district}}</td>
+					<td>{{order.zipCode}}</td>
+					<td>{{order.street}} {{order.streetNumber}}</td>
+					<td><a href="/deliverable?weekKey={{order.week.key()}}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a></td>
 					<td>
 						{% for item in order.orderedItems %}
 							{{item.itemCount}}
@@ -30,12 +30,6 @@
 							<br/>
 						{% endfor %}
 					</td>
-					<td><select name="deliverer">
-						<option value="" label="-- Nincs kiválasztva"></option>
-						{% for user in deliverers%}
-							<option value="{{user.key()}}" label="{{user.familyName}} {{user.givenName}}" {% if order.deliverer!=None and user.key() == order.deliverer.key() %} selected="selected" {% endif %}></option>
-						{% endfor %}
-					</select></td>
 					<td><input type="submit" value="Mentés"/></td>
 				</tr>
 			</form>

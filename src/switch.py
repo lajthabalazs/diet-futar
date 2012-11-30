@@ -15,13 +15,12 @@ from menu import MenuEditPage, AddMenuItemComponent,\
 	ModifyMenuItem, CreateComposit, AddItemToComposit, DeleteItemFromComposit,\
 	ModifyComposit, DeleteMenuItem, DeleteComposit, MenuWeekEditPage
 from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage,\
-	ConfirmOrder, PreviousOrders, PreviousOrder, ReviewOrderedMenuPage
+	ConfirmOrder, ReviewOrderedMenuPage
 from ingredientCategory import CategoryIngredientDeletePage,\
 	IngredientCategoryPage, IngredientCategoryDeletePage
 from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
-from order_overview import ChefReviewOrdersPage, ChefReviewToMakePage,\
-	DeliveryReviewOrdersPage, DeliveryPage
+from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage
@@ -52,8 +51,6 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/address', AddressPage),
 
 										('/confirmOrder', ConfirmOrder),
-										('/previousOrders', PreviousOrders),
-										('/previousOrder', PreviousOrder),
 										('/order', MenuOrderPage),
 										('/clearOrder', ClearOrderPage),
 										('/pendingOrder', ReviewPendingOrderPage),
@@ -88,7 +85,6 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/ingredient', IngredientPage),
 										('/deleteIngredientCategory', IngredientCategoryDeletePage),
 										('/ingredientCategory', IngredientCategoryPage),
-										('/chefReviewToMake', ChefReviewToMakePage),
 										('/deliveryReviewOrders', DeliveryReviewOrdersPage),
 										('/deliverable', DeliveryPage),
 										('/chefReviewOrders', ChefReviewOrdersPage),

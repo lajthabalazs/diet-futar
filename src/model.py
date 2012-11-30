@@ -89,6 +89,7 @@ class CompositMenuItemListItem(db.Model):
 
 class UserWeekOrder(db.Model):
 	user=db.ReferenceProperty(User, collection_name='weeks')
+	monday=db.DateProperty() # Monday of the week
 	orderedComposits=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
 	orderedMenuItems=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
 	mondayAddress=db.ReferenceProperty(Address, collection_name='mondays')

@@ -22,24 +22,23 @@
 				{% endfor%}
 				{% if next %}<a href="/personalMenu?day={{ next }}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
 			</div>
-			{% for category in menu%}
-				<div class="span-24 last calendarRow">
-					<h2 class="span-2">{{ category.category.name }}</h2>
-					{% for day in category.days %}
-						<div class="span-4 calendarColumn">
-							{% if day.menuItems|length ==0 %}
-								&nbsp;
+			<div class="span-24 last calendarRow">
+				<p class="span-2">&nbsp;</p>
+				{% for day in days %}
+					<div class="span-4 calendarColumn">
+						{% if day.orderedItems|count == 0 %}
+							&nbsp;
+						{% endif %}
+						{% for item in day.orderedItems %}
+							{% if item.isMenuItem%}
+								{{ menuItemToOrderMacro (item) }}
+							{% else %}
+								{{ compositToOrderMacro(item) }}
 							{% endif %}
-							{% for menuItem in day.menuItems %}
-								{{ menuItemToOrderMacro (menuItem) }}
-							{% endfor %}
-							{% for composit in day.composits %}
-								{{ compositToOrderMacro(composit) }}
-							{% endfor %}
-						</div>
-					{% endfor %}
-				</div>
-			{% endfor %}
+						{% endfor %}
+					</div>
+				{% endfor %}
+			</div>
 			<div class="span-24 last subTotal">
 				<h2 class="span-2">Összesen</h2>
 				{% for day in days %}
@@ -56,7 +55,7 @@
 						{% if day.has_key('address') %}
 							<select onchange="addressChangeListener('{{day.date}}',{{day.orderedPrice}} );" name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%} style="width: 120px">
 								{% for address in addresses %}
-									<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
+									<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and day.address != None and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
 								{% endfor %}
 							</select><br/>
 							<strong>Szállítási költség:</strong> <strong id="deliveryCost{{day.date}}">{{ day.deliveryCost }}</strong> <strong>Ft</strong>
