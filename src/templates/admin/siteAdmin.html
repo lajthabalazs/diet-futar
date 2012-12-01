@@ -1,0 +1,39 @@
+<div class="mainBg staticPage">
+	<div class="container">
+		<h3>Leállás</h3>
+		Korábbi leállások
+		<table>
+			<tr>
+				<th>Karbantartás kezdete</th>
+				<th>Karbantartás vége</th>
+				<th>Karbantartás igért vége</th>
+				<th>Karbantartás oka</th>
+				<th></th>
+			</tr>
+			{% for maintenence in maintenences %}
+				<tr>
+					<td> {{ maintenence.startDate }} </td>
+					<td> {% if maintenence.endDate != None %}{{ maintenence.endDate }} {% endif %}</td>
+					<td> {{ maintenence.displayedDate }} </td>
+					<td> {{ maintenence.features }} </td>
+					<td> {% if maintenence.active %}
+					<form method="post" action="/endMaintenence">
+						<input type="hidden" name="maintenenceKey" value="{{maintenence.key()}}" />
+						<input type="submit" value="Karbantartás befejezése"/>
+					</form>	
+					{% endif %}</td>
+				</tr>
+			{% endfor %}
+		</table>
+		<form method="post" action="/scheduleMainenence">
+			<label>Leállás vége <input type="text" id="displayedDate" name="displayedDate"/></label>
+			<label>Leállás oka <input type="text" id="features" name="features"/></label>
+			<input type="submit" value="Leállás megkezdése"/>
+		</form>
+		<h3 style="margin-top: 20px">Egyéb funkciók</h3>
+		<form method="post">
+			<input type="hidden" name="adminAction" value="migrateUserOrderDataToWeeks"/>
+			<input type="submit" value="Rendelések migrálása" />
+		</form>
+	</div>
+</div>

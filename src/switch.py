@@ -24,21 +24,23 @@ from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, Deliv
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage
-from setup import SetupPage
+from siteAdmin import SetupPage, AdminConsolePage,\
+	ScheduleMainenencePage, EndMainenencePage
 from userWeeks import WeeksListPage
+from maintenence import MaintenencePage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 config = {}
-config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key',
-												}
-#app = webapp2.WSGIApplication([('/', TmpMainPage)],
-#										debug=True, config=config)
-
-
+config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key'}
+# Check if site is under maintenence
 app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/setup', SetupPage),
-
+										('/siteAdmin', AdminConsolePage),
+										('/maintenence', MaintenencePage),
+										('/scheduleMainenence', ScheduleMainenencePage),
+										('/endMaintenence', EndMainenencePage),
+										
 										('/google24f0feb13afae7e0.html', GooglePage),
 										('/login', LoginPage),
 										('/logout', LogoutPage),

@@ -12,6 +12,8 @@ import os
 from keys import DISH_CATEGORY_URL
 import datetime
 from timezone import USTimeZone
+from model import Maintenence
+from string import replace, split
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 LAST_ORDER_HOUR=12
@@ -148,6 +150,20 @@ def getFormDate(handler):
 
 class BaseHandler(webapp2.RequestHandler):
 	def dispatch(self):
+		if Maintenence.all().filter("active = ", True).count() > 0:
+			baseUrl = replace(self.request.url, self.request.query_string, "")
+			baseUrl = replace(baseUrl, "?", "")
+			parts = split(baseUrl,"/")
+			lastPart = parts[len(parts) -1]
+			if (lastPart != "siteAdmin") and \
+					(lastPart != "migrateOrderToWeek") and \
+					(lastPart != "scheduleMainenence") and \
+					(lastPart != "endMaintenence") and \
+					(lastPart != "login") and \
+					(lastPart != "logout") and \
+					(lastPart != "maintenence"):
+				self.redirect("/maintenence")
+				return
 		# Get a session store for this request.
 		self.session_store = sessions.get_store(request=self.request)
 		try:
@@ -207,6 +223,10 @@ class BaseHandler(webapp2.RequestHandler):
 			agent["label"]="Ajanlott"
 			agent["target"]="/referred"
 			topMenu.append(agent)
+			siteAdmin={}
+			siteAdmin["label"]="Karbantartas"
+			siteAdmin["target"]="/siteAdmin"
+			topMenu.append(siteAdmin)
 		elif isUserCook(self):
 			dailyMenu={}
 			dailyMenu["label"]="Menu osszeallitas"
@@ -220,7 +240,6 @@ class BaseHandler(webapp2.RequestHandler):
 			payingOrders["label"]="Rendelt"
 			payingOrders["target"]="/chefReviewOrders"
 			topMenu.append(payingOrders)
-			toMake={}
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"
