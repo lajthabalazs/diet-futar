@@ -251,7 +251,7 @@ class BaseHandler(webapp2.RequestHandler):
 			template_params={
 				"menuItems":topMenu
 			}
-			ret=ret + jinja_environment.get_template('templates/admin_menu.html').render(template_params)
+			ret=ret + jinja_environment.get_template('templates/admin/adminMenu.html').render(template_params)
 		ret=ret + jinja_environment.get_template('templates/headers/header_part_one.html').render()
 		#Set menu items
 		menuItems=[]

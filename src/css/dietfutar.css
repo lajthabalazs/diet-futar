@@ -440,7 +440,7 @@ a.userMenu:hover, input.userMenu:hover {
 }
 
 
-.profileColumn input[type=text], .profileColumn input[type=password], .profileColumn label span {
+.profileColumn input[type=text], .profileColumn select, .profileColumn input[type=password], .profileColumn label span{
 	float: right;
 	width: 210px;
 	height: 30px;
@@ -473,7 +473,7 @@ a.userMenu:hover, input.userMenu:hover {
 	background-color: none;
 }
 
-.profileColumn input[type=submit], .profileColumn input[type=button] {
+.profileColumn input[type=submit], .profileColumn input[type=button], .profileColumn button {
 	font-family: GillSansMT-Condensed;
 	font-size: 28px;
 	text-shadow: #FFFFFF 0px 1px 0px;
@@ -487,7 +487,7 @@ a.userMenu:hover, input.userMenu:hover {
 	line-height: 35px;
 }
 
-.profileColumn input[type=submit]:hover, .profileColumn input[type=button]:hover {
+.profileColumn input[type=submit]:hover, .profileColumn input[type=button]:hover, .profileColumn button:hover {
 	color: #399;
 	text-shadow: #FFFFFF 0px 1px 0px;
 }

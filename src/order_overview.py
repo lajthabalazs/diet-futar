@@ -11,7 +11,6 @@ from user_management import isUserCook, isUserDelivery
 from cache_dish_category import getDishCategories
 from cache_menu_item import getDaysMenuItems
 from cache_composit import getDaysComposits
-from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 
 ACTUAL_ORDER="actualOrder"
 
@@ -163,13 +162,14 @@ class DeliveryPage(BaseHandler):
 		weekKey=self.request.get("weekKey")
 		week=UserWeekOrder.get(weekKey)
 		days = []
+		weekOrderTotal = 0
+		weekDeliveryTotal = 0
 		for i in range(0,5):
 			day = {}
 			actualDay = week.monday + datetime.timedelta(days=i)
 			daysOrderItems = getOrderedItemsFromWeekData(week, actualDay)
 			address=getOrderAddress(week, actualDay)
 			day['orderedItems'] = daysOrderItems
-			day['address'] = address
 			day['day']=dayNames[i]
 			day['date'] = actualDay
 			orderedPrice = 0
@@ -178,13 +178,20 @@ class DeliveryPage(BaseHandler):
 					orderedPrice = orderedPrice + orderedItem['price'] * orderedItem['orderedQuantity']
 				except:
 					pass
+			weekOrderTotal = weekOrderTotal + orderedPrice
 			day["orderedPrice"] = orderedPrice
-			day["deliveryCost"] = getDeliveryCost(address.district, orderedPrice) 
-
+			if len(daysOrderItems) > 0:
+				day['address'] = address
+				deliveryCost = getDeliveryCost(address.district, orderedPrice)
+				day["deliveryCost"] = deliveryCost
+				weekDeliveryTotal = weekDeliveryTotal + deliveryCost
 			days.append(day)
 		template_values = {
 			'days':days,
-			'week':week
+			'week':week,
+			'deliveryTotal':weekDeliveryTotal,
+			'orderTotal':weekOrderTotal,
+			'total':weekOrderTotal + weekDeliveryTotal,
 		}
 		template = jinja_environment.get_template('templates/delivery.html')
 		self.printPage(str(day), template.render(template_values), False, False)

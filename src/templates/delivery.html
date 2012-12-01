@@ -1,8 +1,8 @@
 ﻿{% from '/templates/macros.html' import menuItemToOrderMacro, compositToOrderMacro%}
 <div class="mainBg staticPage">
 	<div class="container">
-		<strong>{{week.user.familyName}} {{week.user.givenName}}</strong><br/>
-		<strong>{{week.user.email}} {{week.user.phoneNumber}}</strong>
+		<strong>{{week.user.familyName}} {{week.user.givenName}}, {{week.user.email}}, {{week.user.phoneNumber}}</strong><br/>
+		Ételek <strong>{{orderTotal}} Ft</strong>, Szállítás: <strong>{{deliveryTotal}} Ft</strong> Összesen: <strong>{{total}} Ft</strong>
 		<div class="span-24 last calendar">
 			<div class="span-24 last calendarHeader">
 				<div class="span-2">&nbsp;</div>

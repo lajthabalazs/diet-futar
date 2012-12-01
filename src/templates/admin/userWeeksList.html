@@ -1,0 +1,10 @@
+﻿<div class="mainBg staticPage">
+	<div class="container">
+		<strong>{{user.familyName}} {{user.givenName}}, {{user.email}}, {{user.phoneNumber}}</strong><br/>
+		<table width="400px">
+		{% for week in weeks %}
+			<tr><td><a href="/deliverable?weekKey={{ week.key() }}">{{ week.monday }}</a></td></tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

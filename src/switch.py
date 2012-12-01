@@ -25,6 +25,7 @@ from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage
 from setup import SetupPage
+from userWeeks import WeeksListPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -91,6 +92,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/wish', WishPage),
 
 										('/userList', UserListPage),
+										('/usersOrders', WeeksListPage),
 										('/userOverview', UserOverviewPage),
 										('/switchToUser', SwitchToUserPage),
 										],

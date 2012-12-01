@@ -242,7 +242,7 @@ class UserProfilePage (BaseHandler):
 				'districts':districts,
 				LOGIN_ERROR_KEY:self.session.get(LOGIN_ERROR_KEY,0)
 			}
-			template = jinja_environment.get_template('templates/profile_new.html')
+			template = jinja_environment.get_template('templates/userForms/profile.html')
 			self.printPage("Profil", template.render(template_values), False, True)
 	def post(self):
 		if(not isUserLoggedIn(self)):
@@ -262,7 +262,7 @@ class UserProfilePage (BaseHandler):
 					'user': user,
 					'districts':districts
 				}
-				template = jinja_environment.get_template('templates/profile_new.html')
+				template = jinja_environment.get_template('templates/userForms/profile.html')
 				self.printPage("Profil", template.render(template_values), False, True)
 			else:
 				self.redirect("/registration")

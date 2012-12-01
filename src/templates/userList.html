@@ -17,11 +17,11 @@
 			<th><a href="?order=registrationDate">Regisztráció</a></th>
 			<th><a href="?order=familyName">Név</a></th>
 			<th><a href="?order=email">E-mail cím</a></th>
+			<th>Rendelése</th>
 			<th>Felhasználó váltás</th>
 			<th>Aktivált</th>
 			<th>Ajánló</th>
 			<th>Szerep</th>
-			<th></th>
 		{% for user in userList%}
 			<tr>
 			<td>{{ user.registrationDate}}</td>
@@ -29,6 +29,7 @@
 			<td>{{ user.email }}</td>
 			<form method="post" action="switchToUser">
 				<input type="hidden" name="userKey" value="{{user.key()}}"/>
+				<td><a href="/usersOrders?userKey={{user.key()}}">Rendelések</a></td>
 				<td><input type="submit" value="Váltás"/></td>
 			</form>
 			<form method="post">

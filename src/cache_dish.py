@@ -90,7 +90,10 @@ def deleteDish(key):
 	if dishObject == None:
 		return
 	else:
-		removeDishFromCategory(dishObject["categoryKey"], key)
+		try:
+			removeDishFromCategory(dishObject["categoryKey"], key)
+		except KeyError:
+			pass
 		client.delete(key)
 	dishKeys = client.get(ALL_DISHES)
 	# If not in memcache, does nothing
