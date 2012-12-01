@@ -7,7 +7,7 @@ from google.appengine.ext import db
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
 	getFirstOrderableDate, getDeliveryCost, getDeliveryLimit, getMonday
 import datetime
-from model import MenuItem, User, UserWeekOrder
+from model import MenuItem, User, UserWeekOrder, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import USER_KEY, getUser, isUserLoggedIn
 from cache_menu_item import getDaysMenuItems, getMenuItem
@@ -49,7 +49,6 @@ def getOrderedItemsFromWeekData (week, day):
 	return orderedItems
 
 def getOrderAddress (week, day):
-	week = UserWeekOrder()
 	if day.weekday() == 0:
 		return week.mondayAddress
 	elif day.weekday() == 1:
@@ -395,12 +394,12 @@ class ReviewOrderedMenuPage(BaseHandler):
 					orderedPrice = orderedPrice + orderedItem['price'] * orderedItem['orderedQuantity']
 				except:
 					pass
-			actualDayObject['address'] = getOrderAddress(week, actualDay)
 			actualDayObject['day']=dayNames[i]
 			actualDayObject['date'] = actualDay
 			actualDayObject["orderedPrice"] = orderedPrice
-			if actualDayObject['address'] != None:
-				actualDayObject["deliveryCost"] = getDeliveryCost(actualDayObject['address'].district, 0) 
+			if daysOrderItems != None and len(daysOrderItems)>0:
+				actualDayObject['address'] = getOrderAddress(week, actualDay)
+				actualDayObject["deliveryCost"] = getDeliveryCost(actualDayObject['address'].district, orderedPrice) 
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=monday + datetime.timedelta(days=-7)
@@ -437,9 +436,26 @@ class ReviewOrderedMenuPage(BaseHandler):
 				user = getUser(self)
 				monday = getMonday(day)
 				firstOrderableDay=getFirstOrderableDate(self);
-				weeks = user.weeks.filter("monday = ", monday)
-				# Check if user has order for the day
-				# TODO save modified address to the day
+				if day >= firstOrderableDay:
+					weeks = user.weeks.filter("monday = ", monday)
+					if weeks.count() == 1:
+						week = weeks.get()
+						address=Address.get(self.request.get(field))
+						if day.weekday() == 0:
+							week.mondayAddress = address
+						elif day.weekday() == 1:
+							week.tuesdayAddress = address
+						elif day.weekday() == 2:
+							week.wednesdayAddress = address
+						elif day.weekday() == 3:
+							week.thursdayAddress = address
+						elif day.weekday() == 4:
+							week.fridayAddress = address
+						elif day.weekday() == 5:
+							week.saturdayAddress = address
+						elif day.weekday() == 6:
+							week.sundayAddress = address
+						week.put()
 		self.redirect("/personalMenu")
 
 class ConfirmOrder(BaseHandler):
@@ -510,6 +526,16 @@ class ConfirmOrder(BaseHandler):
 						week = UserWeekOrder()
 						week.user = user
 						week.monday = monday
+						# Add address for every day
+						defaultAddress = user.addresses.get()
+						print defaultAddress.zipCode
+						week.mondayAddress = defaultAddress
+						week.tuesdayAddress = defaultAddress
+						week.wednesdayAddress = defaultAddress
+						week.thursdayAddress = defaultAddress
+						week.fridayAddress = defaultAddress
+						week.saturdayAddress = defaultAddress
+						week.sundayAddress = defaultAddress
 						if orderItemCount > 0:
 							newItems = []
 							newItem = str(orderItemCount) + " " + orderKey
