@@ -115,7 +115,6 @@ class MenuOrderPage(BaseHandler):
 				actualMenuItems=[]
 				actualComposits=[]
 				for menuItem in menuItems:
-					menuItem = getMenuItem(menuItem['key'])
 					itemKeyStr=menuItem['key']
 					try:
 						if (actualOrder!=None) and (itemKeyStr in actualOrder):
@@ -528,7 +527,6 @@ class ConfirmOrder(BaseHandler):
 						week.monday = monday
 						# Add address for every day
 						defaultAddress = user.addresses.get()
-						print defaultAddress.zipCode
 						week.mondayAddress = defaultAddress
 						week.tuesdayAddress = defaultAddress
 						week.wednesdayAddress = defaultAddress

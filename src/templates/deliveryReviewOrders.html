@@ -1,5 +1,5 @@
 ﻿{% from '/templates/macros.html' import menuItemTitleAndContentSmall, compositTitleAndContentSmall %}
-<div class="mainBg">
+<div class="mainBg staticPage">
 	<div class="container">
 
 		{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
@@ -8,7 +8,7 @@
 		{{ day.day }}
 		<table border="1">
 			<tr>
-				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th><th></th>
+				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th>
 			</tr>
 			{% for order in orders%}
 			<form method="post">
@@ -21,7 +21,7 @@
 					<td><a href="/deliverable?weekKey={{order.week.key()}}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a></td>
 					<td>
 						{% for item in order.orderedItems %}
-							{{item.itemCount}}
+							{{item.orderedQuantity}}
 							{% if item.isMenuItem %}
 								{{menuItemTitleAndContentSmall (item)}}
 							{% else %}
@@ -30,7 +30,6 @@
 							<br/>
 						{% endfor %}
 					</td>
-					<td><input type="submit" value="Mentés"/></td>
 				</tr>
 			</form>
 			{% endfor %}
