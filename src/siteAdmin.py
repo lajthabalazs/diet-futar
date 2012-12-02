@@ -5,29 +5,6 @@ from user_management import isUserAdmin
 
 import datetime
 
-def migrateUserDate(handler):
-	# Iterate through each user
-	users = User.all()
-	for user in users:
-		for orderAddress in user.deliveryAddresses:
-			monday = getMonday(orderAddress.day)
-			print "monday"
-			print monday
-			print user.weeks.count()
-			weeks = user.weeks.filter("monday = ", monday)
-			print weeks.count()
-			if weeks.count() == 1:
-				print "Week found "
-				week =  weeks.get()
-			else:
-				print "New week"
-				week = UserWeekOrder()
-				week.user = user
-				week.monday = monday
-			week.put()
-				
-	pass
-
 class AdminConsolePage(BaseHandler):
 	def get(self):
 		if not isUserAdmin(self):
@@ -39,11 +16,6 @@ class AdminConsolePage(BaseHandler):
 		}
 		template = jinja_environment.get_template('templates/admin/siteAdmin.html')
 		self.printPage("dashboard", template.render(template_values), True, True)
-	def post(self):
-		adminAction = self.request.get('adminAction')
-		if (adminAction == "migrateUserOrderDataToWeeks"):
-			migrateUserDate(self)
-		self.redirect("/siteAdmin")
 
 class ScheduleMainenencePage(BaseHandler):
 	def post(self):
