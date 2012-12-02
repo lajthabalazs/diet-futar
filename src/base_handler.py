@@ -150,6 +150,7 @@ def getFormDate(handler):
 
 class BaseHandler(webapp2.RequestHandler):
 	def dispatch(self):
+		self.session_store = sessions.get_store(request=self.request)
 		if Maintenence.all().filter("active = ", True).count() > 0:
 			if not isUserAdmin(self):
 				baseUrl = replace(self.request.url, self.request.query_string, "")
@@ -163,7 +164,6 @@ class BaseHandler(webapp2.RequestHandler):
 					self.redirect("/maintenence")
 					return
 		# Get a session store for this request.
-		self.session_store = sessions.get_store(request=self.request)
 		try:
 			# Dispatch the request.
 			webapp2.RequestHandler.dispatch(self)
