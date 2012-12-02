@@ -127,16 +127,14 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		weeks = UserWeekOrder.gql("WHERE monday=DATE(:1,:2,:3)", monday.year, monday.month, monday.day)
 		deliveries = []
 		for week in weeks:
-			orderAddress = getOrderAddress(week, day)
-			if orderAddress == None:
-				orderAddress = Address()
-				orderAddress.zipCode = "0000"
-				orderAddress.street = "Ismeretlen"
-				orderAddress.streetNumber = "x."
 			items = getOrderedItemsFromWeekData(week, day)
-			orderAddress.orderedItems = items
-			orderAddress.week = week
-			deliveries.append(orderAddress)
+			if len(items) > 0:
+				orderAddress = getOrderAddress(week, day)
+				if orderAddress == None:
+					orderAddress = week.user.addresses.get()
+				orderAddress.orderedItems = items
+				orderAddress.week = week
+				deliveries.append(orderAddress)
 		sortedDeliveries = sorted(deliveries, key=lambda item:item.zipCode)
 		admins=Role.all().filter("name = ", ROLE_ADMIN)[0].users
 		delivereryGuys=Role.all().filter("name = ", ROLE_DELIVERY_GUY)[0].users
@@ -182,8 +180,12 @@ class DeliveryPage(BaseHandler):
 			day["orderedPrice"] = orderedPrice
 			if len(daysOrderItems) > 0:
 				day['address'] = address
-				deliveryCost = getDeliveryCost(address.district, orderedPrice)
-				day["deliveryCost"] = deliveryCost
+				deliveryCost = 0
+				if address != None:
+					deliveryCost = getDeliveryCost(address.district, orderedPrice)
+					day["deliveryCost"] = deliveryCost
+				else:
+					day["deliveryCost"] = 0
 				weekDeliveryTotal = weekDeliveryTotal + deliveryCost
 			days.append(day)
 		template_values = {

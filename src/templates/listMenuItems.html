@@ -1,0 +1,11 @@
+﻿<div class="mainBg staticPage">
+	<div class="container">
+		<table width="400px">
+		{% for item in items %}
+			<tr><td><a href="?itemKey={{ item.key }}">{{ item.title }}</a></td>
+			<td>{{ item.day }}</td>
+			<td>{{ item.categoryName }}</td></tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

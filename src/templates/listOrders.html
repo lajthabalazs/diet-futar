@@ -1,0 +1,27 @@
+﻿<div class="mainBg staticPage">
+	<div class="container">
+		<form method="post">
+			<input type="submit" value="Generáld a heteket!"/>
+		</form>
+
+		<table width="400px">
+		{% for item in items %}
+			<tr><td>{{ item.day }}</td>
+			<td>{{ item.userKey }}</td>
+			<td>{{ item.userFamily }}</td>
+			<td>{{ item.userGiven }}</td>
+			<td>{{ item.itemCount }}</td>
+			<td>{{ item.isComposit }}</td>
+			<td>{{ item.orderedComposit }}</td>
+			<td>{{ item.orderedMenuItem }}</td>
+			<td>{% if item.hasWeek %}
+					Hozzárendelve
+				{% else %}
+					Nincs hozzá hét
+				{% endif%}
+			</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

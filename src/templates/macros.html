@@ -18,7 +18,7 @@
 
 {% macro compositTitleAndContentSmall(composit)%}
 	{% for component in composit.components%}
-		{{ menuItemTitleAndContentSmall(component.menuItem) }}
+		{{ menuItemTitleAndContentSmall(component) }}
 	{% endfor %}
 {% endmacro %}
 

@@ -28,6 +28,7 @@ from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
+from datastoreViewer import ListMenuItems, ListOrders, ListOrderAddresses
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -40,6 +41,9 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/maintenence', MaintenencePage),
 										('/scheduleMainenence', ScheduleMainenencePage),
 										('/endMaintenence', EndMainenencePage),
+										('/listMenuItems', ListMenuItems),
+										('/listOrders', ListOrders),
+										('/listAddresses', ListOrderAddresses),
 										
 										('/google24f0feb13afae7e0.html', GooglePage),
 										('/login', LoginPage),

@@ -151,19 +151,17 @@ def getFormDate(handler):
 class BaseHandler(webapp2.RequestHandler):
 	def dispatch(self):
 		if Maintenence.all().filter("active = ", True).count() > 0:
-			baseUrl = replace(self.request.url, self.request.query_string, "")
-			baseUrl = replace(baseUrl, "?", "")
-			parts = split(baseUrl,"/")
-			lastPart = parts[len(parts) -1]
-			if (lastPart != "siteAdmin") and \
-					(lastPart != "migrateOrderToWeek") and \
-					(lastPart != "scheduleMainenence") and \
-					(lastPart != "endMaintenence") and \
-					(lastPart != "login") and \
-					(lastPart != "logout") and \
-					(lastPart != "maintenence"):
-				self.redirect("/maintenence")
-				return
+			if not isUserAdmin(self):
+				baseUrl = replace(self.request.url, self.request.query_string, "")
+				baseUrl = replace(baseUrl, "?", "")
+				parts = split(baseUrl,"/")
+				lastPart = parts[len(parts) -1]
+				if (lastPart != "siteAdmin") and \
+						(lastPart != "login") and \
+						(lastPart != "logout") and \
+						(lastPart != "maintenence"):
+					self.redirect("/maintenence")
+					return
 		# Get a session store for this request.
 		self.session_store = sessions.get_store(request=self.request)
 		try:

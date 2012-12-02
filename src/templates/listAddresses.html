@@ -1,0 +1,25 @@
+﻿<div class="mainBg staticPage">
+	<div class="container">
+			<form method="post">
+				<input type="submit" value="Generálás"/>
+			</form>
+		<table width="400px">
+		{% for item in items %}
+			<tr><td>{{ item.day }}</td>
+			<td>{{ item.addressZip }}</td>
+			<td>{{ item.addressStreet }}</td>
+			<td>{{ item.addressStreetNumber }}</td>
+			<td>{{ item.userFamily }}</td>
+			<td>{{ item.userGiven }}</td>
+			<td>{{item.orderedItems}}</td>
+			<td>{% if item.hasWeek %}
+					Hozzárendelve
+				{% else %}
+					Nincs hozzárendelve
+				{% endif%}
+			</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

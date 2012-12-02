@@ -1,5 +1,5 @@
-application: diet-futar-test
-version: 45-weekly-sheet
+application: diet-futar
+version: 50-weekly-sheet
 runtime: python27
 api_version: 1
 threadsafe: no

@@ -24,7 +24,7 @@
 					{% for composit in day.composits %}
 						{{ composit.orderedQuantity }} adag 
 						{% for component in composit.components%}
-							{{component.menuItem.dish.title}}{% for subItem in component.menuItem.components%}, {{subItem.dish.title}}{% endfor %}
+							{{component.dish.title}}{% for subItem in component.components%}, {{subItem.dish.title}}{% endfor %}
 						{% endfor %}
 						<br/>
 					{% endfor %}

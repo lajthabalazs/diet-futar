@@ -39,9 +39,9 @@ def getOrderedItemsFromWeekData (week, day):
 		orderedQuantity = int(parts[0])
 		compositKey = parts[1]
 		composit = getComposit(compositKey)
-		if composit != None and composit.day == day:
-			composit.orderedQuantity = orderedQuantity
-			composit.isMenuItem = False
+		if composit != None and composit['day'] == day:
+			composit['orderedQuantity'] = orderedQuantity
+			composit['isMenuItem'] = False
 			orderedComposits.append(composit)
 	orderedItems = []
 	orderedItems.extend(orderedComposits)
@@ -397,8 +397,11 @@ class ReviewOrderedMenuPage(BaseHandler):
 			actualDayObject['date'] = actualDay
 			actualDayObject["orderedPrice"] = orderedPrice
 			if daysOrderItems != None and len(daysOrderItems)>0:
-				actualDayObject['address'] = getOrderAddress(week, actualDay)
-				actualDayObject["deliveryCost"] = getDeliveryCost(actualDayObject['address'].district, orderedPrice) 
+				address = getOrderAddress(week, actualDay)
+				if address == None:
+					address = user.addresses.get()
+				actualDayObject['address'] = address
+				actualDayObject["deliveryCost"] = getDeliveryCost(address.district, orderedPrice) 
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=monday + datetime.timedelta(days=-7)
@@ -509,17 +512,22 @@ class ConfirmOrder(BaseHandler):
 							week.orderedMenuItems = newItems
 						else:
 							newItems = []
+							itemExists = False
 							for item in week.orderedComposits:
 								parts = item.split(" ")
 								weekItemQuantity = parts[0]
 								weekItemKey = parts[1]
 								if weekItemKey == orderKey:
-									alreadyOrdered = int(weekItemQuantity)
+									itemExists = True
+									alreadyOrdered = int(weekItemQuantity) + orderItemCount
 									if (alreadyOrdered > 0):
 										newItem = str(alreadyOrdered) + " " + orderKey
 										newItems.append(newItem)
 								else:
 									newItems.append(item)
+							if ((not itemExists) and orderItemCount > 0):
+								newItem = str(orderItemCount) + " " + orderKey
+								newItems.append(newItem)
 							week.orderedComposits = newItems
 					else:
 						week = UserWeekOrder()
