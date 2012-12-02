@@ -28,7 +28,6 @@ from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
-from datastoreViewer import ListMenuItems, ListOrders, ListOrderAddresses
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
