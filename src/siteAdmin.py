@@ -95,17 +95,19 @@ class EveryUsersOrderPage(BaseHandler):
 				weeks = user.weeks.filter("monday = ", actualMonday)
 				if (weeks.count() == 1):
 					week = weeks.get()
+					weekTotal = getOrderTotal(week)
 					computedWeek = {
-						'itemPrice': getOrderTotal(week),
+						'itemPrice': weekTotal,
 						'key': week.key(),
 					}
+					orderTotal = orderTotal + weekTotal
 				else:
 					computedWeek = {'itemPrice': 0}
 				computedWeeks.append(computedWeek)
 			user.computedWeeks = computedWeeks
 			user.orderTotal = orderTotal
 			allUsers.append(user)
-		orderedUsers = sorted(allUsers, key=lambda item:item.orderTotal)
+		orderedUsers = sorted(allUsers, key=lambda item:item.orderTotal, reverse=True)
 		template_values = {
 			'users':orderedUsers
 		}
