@@ -18,7 +18,7 @@
 						{{ menuItem.dish.title }}
 						{% for component in menuItem.components %}
 							,{{ component.dish.title }}
-						{% endfor %}				
+						{% endfor %}
 						<br/>
 					{% endfor %}
 					{% for composit in day.composits %}
@@ -32,7 +32,12 @@
 				</td>
 				{% endfor %}
 			</tr>
+			<tr>
 			{% endfor %}
+				{% for day in days %}
+					<td><strong>{{day.orderedPrice}} Ft</strong></td>
+				{% endfor%}
+			</tr>
 		</table>
 	</div>
 </div>

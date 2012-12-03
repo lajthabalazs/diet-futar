@@ -1,6 +1,6 @@
-from base_handler import BaseHandler, jinja_environment, getMonday
+from base_handler import BaseHandler, jinja_environment
 from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, User,\
-	Maintenence, UserWeekOrder
+	Maintenence
 from user_management import isUserAdmin
 
 import datetime
