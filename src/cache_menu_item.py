@@ -38,9 +38,9 @@ def getMenuItem(key):
 		menuItem = createMenuItemData(menuItemDb)
 		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems
-	menuItem['dish']=getDish(menuItem['dishKey'])
 	try:
 		dish = getDish(menuItem['dishKey'])
+		menuItem['dish'] = dish
 		sumprice = 0
 		try:
 			sumprice = dish['price']
