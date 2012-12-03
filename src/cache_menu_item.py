@@ -17,7 +17,6 @@ def createMenuItemData(menuItem):
 	menuItemObject={
 		'key':str(menuItem.key()),
 		'categoryKey':menuItem.categoryKey,
-		'dishKey':str(menuItem.dish.key()),
 		'price':menuItem.price,
 		'day':menuItem.day,
 		'containingMenuItem':None,
@@ -25,6 +24,10 @@ def createMenuItemData(menuItem):
 		'componentKeys':subItemKeys,
 		'alterable':True
 	}
+	try:
+		menuItemObject['dishKey'] = str(menuItem.dish.key()),
+	except:
+		pass
 	return menuItemObject
 
 def getMenuItem(key):
@@ -36,79 +39,89 @@ def getMenuItem(key):
 		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems
 	menuItem['dish']=getDish(menuItem['dishKey'])
-	dish = getDish(menuItem['dishKey'])
-	sumprice = 0
 	try:
-		sumprice = dish['price']
-	except KeyError:
-		pass
-	if sumprice == None:
+		dish = getDish(menuItem['dishKey'])
 		sumprice = 0
-	energy = 0
-	try:
-		energy = dish['energy']
-	except KeyError:
+		try:
+			sumprice = dish['price']
+		except KeyError:
+			pass
+		if sumprice == None:
+			sumprice = 0
+		energy = 0
+		try:
+			energy = dish['energy']
+		except KeyError:
+			pass
+		if energy == None:
+			energy=0
+		fat = 0
+		try:
+			fat = dish['fat']
+		except KeyError:
+			pass
+		if fat == None:
+			fat=0
+		carbs = 0
+		try:
+			carbs = dish['carbs']
+		except KeyError:
+			pass
+		if carbs == None:
+			carbs=0
+		fiber = 0
+		try:
+			fiber = dish['fiber']
+		except KeyError:
+			pass
+		if fiber == None:
+			fiber=0
+		protein = 0
+		try:
+			protein = dish['protein']
+		except KeyError:
+			pass
+		if protein == None:
+			protein=0
+		# Calculate sum price
+		components = []
+		for subItemKey in menuItem['componentKeys']:
+			component = getMenuItem(subItemKey)
+			components.append(component)
+			componentPrice = component['dish']['price']
+			componentEnergy = component['dish']['energy']
+			componentFat = component['dish']['fat']
+			componentCarbs = component['dish']['carbs']
+			componentFiber = component['dish']['fiber']
+			componentProtein = component['dish']['protein']
+			if componentPrice != None:
+				sumprice = sumprice + componentPrice
+			if componentEnergy != None:
+				energy = energy + componentEnergy
+			if componentFat != None:
+				fat = fat + componentFat
+			if componentCarbs != None:
+				carbs = carbs + componentCarbs
+			if componentFiber != None:
+				fiber = fiber + componentFiber
+			if componentProtein != None:
+				protein = protein + componentProtein
+		menuItem['sumprice'] = sumprice
+		menuItem['energy'] = energy
+		menuItem['fat'] = fat
+		menuItem['carbs'] = carbs
+		menuItem['fiber'] = fiber
+		menuItem['protein'] = protein
+		menuItem['components'] = components
+	except:
+		menuItem['sumprice'] = -1
+		menuItem['energy'] = -1
+		menuItem['fat'] = -1
+		menuItem['carbs'] = -1
+		menuItem['fiber'] = -1 
+		menuItem['protein'] = -1
+		menuItem['components'] = []
 		pass
-	if energy == None:
-		energy=0
-	fat = 0
-	try:
-		fat = dish['fat']
-	except KeyError:
-		pass
-	if fat == None:
-		fat=0
-	carbs = 0
-	try:
-		carbs = dish['carbs']
-	except KeyError:
-		pass
-	if carbs == None:
-		carbs=0
-	fiber = 0
-	try:
-		fiber = dish['fiber']
-	except KeyError:
-		pass
-	if fiber == None:
-		fiber=0
-	protein = 0
-	try:
-		protein = dish['protein']
-	except KeyError:
-		pass
-	if protein == None:
-		protein=0
-	# Calculate sum price
-	components = []
-	for subItemKey in menuItem['componentKeys']:
-		component = getMenuItem(subItemKey)
-		components.append(component)
-		componentPrice = component['dish']['price']
-		componentEnergy = component['dish']['energy']
-		componentFat = component['dish']['fat']
-		componentCarbs = component['dish']['carbs']
-		componentFiber = component['dish']['fiber']
-		componentProtein = component['dish']['protein']
-		if componentPrice != None:
-			sumprice = sumprice + componentPrice
-		if componentEnergy != None:
-			energy = energy + componentEnergy
-		if componentFat != None:
-			fat = fat + componentFat
-		if componentCarbs != None:
-			carbs = carbs + componentCarbs
-		if componentFiber != None:
-			fiber = fiber + componentFiber
-		if componentProtein != None:
-			protein = protein + componentProtein
-	menuItem['sumprice'] = sumprice
-	menuItem['energy'] = energy
-	menuItem['fat'] = fat
-	menuItem['carbs'] = carbs
-	menuItem['fiber'] = fiber
-	menuItem['protein'] = protein
-	menuItem['components'] = components
 	return menuItem
 	
 def getDaysMenuItems(day, categoryKey):
