@@ -25,7 +25,7 @@ from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage
 from siteAdmin import SetupPage, AdminConsolePage,\
-	ScheduleMainenencePage, EndMainenencePage
+	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
 
@@ -40,6 +40,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/maintenence', MaintenencePage),
 										('/scheduleMainenence', ScheduleMainenencePage),
 										('/endMaintenence', EndMainenencePage),
+										('/everyUsersOrder', EveryUsersOrderPage),
 										
 										('/google24f0feb13afae7e0.html', GooglePage),
 										('/login', LoginPage),

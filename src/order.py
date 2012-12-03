@@ -81,6 +81,24 @@ def getUserOrdersForWeek(user, monday):
 			userOrders[orderedItemKey] = orderedQuantity
 	return userOrders
 
+def getOrderTotal(week):
+	orderTotal = 0
+	for orderedComposit in week.orderedComposits:
+		parts = orderedComposit.split(" ")
+		orderedQuantity = int(parts[0])
+		orderedItemKey = parts[1]
+		composit = getComposit(orderedItemKey)
+		if composit['price'] != 0:
+			orderTotal = orderTotal + composit['price'] * orderedQuantity
+	for orderedMenuItem in week.orderedMenuItems:
+		parts = orderedMenuItem.split(" ")
+		orderedQuantity = int(parts[0])
+		orderedItemKey = parts[1]
+		menuItem = getMenuItem(orderedItemKey)
+		if menuItem['price'] != 0:
+			orderTotal = orderTotal + menuItem['price'] * orderedQuantity
+	return orderTotal
+
 class MenuOrderPage(BaseHandler):
 	def get(self):
 		firstOrderableDay=getFirstOrderableDate(self)

@@ -3,6 +3,7 @@
 		<div class="span-24 last profile">
 			<div class="span-24 last profileRow">
 				<h2 style="text-align: left;">{{user.familyName}} {{user.givenName}}</h2>
+				<a href="/usersOrders?userKey={{user.key()}}">Rendelések</a>
 				<p>
 					<label>E-mail <strong>{{ user.email }}</strong></label><br/>
 					<label>Telefonszám <strong>{{user.phoneNumber}}</strong></label>

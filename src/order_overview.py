@@ -195,5 +195,13 @@ class DeliveryPage(BaseHandler):
 			'orderTotal':weekOrderTotal,
 			'total':weekOrderTotal + weekDeliveryTotal,
 		}
+		prevMonday = week.monday + datetime.timedelta(days= -7)
+		prevWeeks = week.user.weeks.filter("monday = ", prevMonday)
+		if prevWeeks.count() > 0:
+			template_values['prev'] = prevWeeks.get().key()
+		nextMonday = week.monday + datetime.timedelta(days= 7)
+		nextWeeks = week.user.weeks.filter("monday = ", nextMonday)
+		if nextWeeks.count() > 0:
+			template_values['next'] = nextWeeks.get().key()
 		template = jinja_environment.get_template('templates/delivery.html')
 		self.printPage(str(day), template.render(template_values), False, False)

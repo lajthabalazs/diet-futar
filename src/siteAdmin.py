@@ -1,9 +1,10 @@
-from base_handler import BaseHandler, jinja_environment
+from base_handler import BaseHandler, jinja_environment, getMonday
 from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, User,\
-	Maintenence
+	Maintenence, UserWeekOrder
 from user_management import isUserAdmin
 
 import datetime
+from order import getOrderTotal
 
 class AdminConsolePage(BaseHandler):
 	def get(self):
@@ -74,3 +75,40 @@ class SetupPage(BaseHandler):
 		else:
 			template = jinja_environment.get_template('templates/setup/alreadySetUp.html')
 			self.printPage("Kor&aacute;bban inicializ&aacute;lva", template.render(), True, True)
+
+class EveryUsersOrderPage(BaseHandler):
+	def get(self):
+		if not isUserAdmin(self):
+			self.printPage("Dashboard", "", True, True)
+			return
+		user = User()
+		users = User.all()
+		allUsers = []
+		today=datetime.date.today()
+		monday = getMonday(today)
+		maxWeeks = 20
+		for user in users:
+			orderTotal = 0
+			computedWeeks = []
+			for i in range(0, maxWeeks):
+				actualMonday = monday + datetime.timedelta(days = (i - maxWeeks + 1) * 7)
+				weeks = user.weeks.filter("monday = ", actualMonday)
+				if (weeks.count() == 1):
+					week = weeks.get()
+					computedWeek = {
+						'itemPrice': getOrderTotal(week),
+						'key': week.key(),
+					}
+				else:
+					computedWeek = {'itemPrice': 0}
+				computedWeeks.append(computedWeek)
+			user.computedWeeks = computedWeeks
+			user.orderTotal = orderTotal
+			allUsers.append(user)
+		orderedUsers = sorted(allUsers, key=lambda item:item.orderTotal)
+		template_values = {
+			'users':orderedUsers
+		}
+		template = jinja_environment.get_template('templates/admin/everyUsersOrder.html')
+		self.printPage("Rendel&eacute;sek", template.render(template_values), True, True)
+		

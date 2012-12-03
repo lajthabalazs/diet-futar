@@ -1,16 +1,17 @@
 ﻿{% from '/templates/macros.html' import menuItemToOrderMacro, compositToOrderMacro%}
 <div class="mainBg staticPage">
 	<div class="container">
-		<strong>{{week.user.familyName}} {{week.user.givenName}}, {{week.user.email}}, {{week.user.phoneNumber}}</strong><br/>
+		<strong><a href="/userOverview?userKey={{week.user.key()}}">{{week.user.familyName}} {{week.user.givenName}} </a>, {{week.user.email}}, {{week.user.phoneNumber}}</strong><br/>
 		Ételek <strong>{{orderTotal}} Ft</strong>, Szállítás: <strong>{{deliveryTotal}} Ft</strong> Összesen: <strong>{{total}} Ft</strong>
 		<div class="span-24 last calendar">
 			<div class="span-24 last calendarHeader">
-				<div class="span-2">&nbsp;</div>
+				{% if prev %}<a href="/deliverable?weekKey={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
 				{% for day in days %}
 					<div class="span-4"><h3>{{ day.day }}</h3>{{ day.date }}</div>
 				{% endfor%}
+				{% if next %}<a href="/deliverable?weekKey={{ next }}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
 			</div>
-			
+
 			<div class="span-24 last calendarRow">
 				<p class="span-2">&nbsp;</p>
 				{% for day in days %}

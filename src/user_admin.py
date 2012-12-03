@@ -107,7 +107,16 @@ class UserOverviewPage(BaseHandler):
 					"user":user,
 				}
 				template = jinja_environment.get_template('templates/userOverview.html')
-				self.printPage(user.familyName + " " + user.givenName, template.render(template_values), False, False)
+				userName = ""
+				if (user.familyName != None):
+					userName = userName + user.familyName
+				if (user.familyName != None) and (user.givenName != None):
+					userName = userName + " "
+				if (user.givenName != None):
+					userName = userName + user.givenName
+				if userName == "":
+					userName = "UNKNOWN"
+				self.printPage(userName, template.render(template_values), False, False)
 			else:
 				template_values = {
 					"title":"Nincs ilyen felhasznalo",
