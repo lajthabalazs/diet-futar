@@ -82,7 +82,7 @@ class ChefReviewOrdersPage(BaseHandler):
 					if not orders.has_key(itemKeyStr):
 						continue
 					composit['orderedQuantity'] = orders[itemKeyStr]
-					orderedPrice[i] = orderedPrice[i] +  composit['price'] * int(orders[itemKeyStr])
+					orderedPrice[i] = orderedPrice[i] + composit['price'] * int(orders[itemKeyStr])
 					actualComposits.append(composit)
 				actualDayObject["menuItems"]=actualMenuItems
 				actualDayObject["composits"]=actualComposits
