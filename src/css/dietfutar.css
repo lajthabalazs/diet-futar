@@ -280,14 +280,16 @@ filter:alpha(opacity=30); /* For IE8 and earlier */
 }
 
 a.adminMenu {
-	margin-right: 20px;
+	margin-bottom: 0px;
+	margin-left:0px;
+	margin-top: 0px;
+	margin-right: 10px;
 	font-family: GillSansMT-Condensed;
 	font-size: 18px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	text-transform: uppercase;
 	background: none;
 	border: none;
-	margin: 0;
 	padding: 0;
 	color: #000;
 }

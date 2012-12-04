@@ -182,11 +182,11 @@ class BaseHandler(webapp2.RequestHandler):
 		topMenu=[]
 		if isUserAdmin(self):
 			dailyMenu={}
-			dailyMenu["label"]="Menu osszeallitas"
+			dailyMenu["label"]="Napi menu"
 			dailyMenu["target"]="/menuEdit"
 			topMenu.append(dailyMenu)
 			weeklyMenu={}
-			weeklyMenu["label"]="Menu attekintes"
+			weeklyMenu["label"]="Heti menu"
 			weeklyMenu["target"]="/menuWeekEdit"
 			topMenu.append(weeklyMenu)
 			payingOrders={}			
@@ -194,7 +194,7 @@ class BaseHandler(webapp2.RequestHandler):
 			payingOrders["target"]="/chefReviewOrders"
 			topMenu.append(payingOrders)
 			toDeliver={}
-			toDeliver["label"]="Szallitando"
+			toDeliver["label"]="Sz&aacute;llitand&oacute;"
 			toDeliver["target"]="/deliveryReviewOrders"
 			topMenu.append(toDeliver)			
 			ingredients={}
@@ -202,7 +202,7 @@ class BaseHandler(webapp2.RequestHandler):
 			ingredients["target"]="/ingredient"
 			topMenu.append(ingredients)
 			categories={}
-			categories["label"]="Ketegoriak"
+			categories["label"]="Ketegori&aacute;k"
 			categories["target"]="/ingredientCategory"
 			topMenu.append(categories)
 			recepies={}
@@ -210,19 +210,19 @@ class BaseHandler(webapp2.RequestHandler):
 			recepies["target"]="/dish"
 			topMenu.append(recepies)
 			dishCategories={}
-			dishCategories["label"]="Fogasok"
+			dishCategories["label"]="Fog&aacute;sok"
 			dishCategories["target"]=DISH_CATEGORY_URL
 			topMenu.append(dishCategories)
 			userList={}
-			userList["label"]="Felhasznalok"
+			userList["label"]="Felhaszn&aacute;l&oacute;k"
 			userList["target"]="/userList"
 			topMenu.append(userList)
 			agent={}
-			agent["label"]="Ajanlott"
+			agent["label"]="Aj&aacute;nlott"
 			agent["target"]="/referred"
 			topMenu.append(agent)
 			siteAdmin={}
-			siteAdmin["label"]="Karbantartas"
+			siteAdmin["label"]="Adminisztraci&oacute;"
 			siteAdmin["target"]="/siteAdmin"
 			topMenu.append(siteAdmin)
 		elif isUserCook(self):
