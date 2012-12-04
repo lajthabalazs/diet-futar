@@ -87,6 +87,13 @@ class EveryUsersOrderPage(BaseHandler):
 		today=datetime.date.today()
 		monday = getMonday(today)
 		maxWeeks = 20
+		weekTotals = []
+		for i in range(0, maxWeeks):
+			weekTotalITem = {
+					'total' : 0,
+					'monday' : monday + datetime.timedelta(days = (i - maxWeeks + 1) * 7)
+				}
+			weekTotals.append(weekTotalITem)
 		for user in users:
 			orderTotal = 0
 			computedWeeks = []
@@ -96,6 +103,7 @@ class EveryUsersOrderPage(BaseHandler):
 				if (weeks.count() == 1):
 					week = weeks.get()
 					weekTotal = getOrderTotal(week)
+					weekTotals[i]['total'] = weekTotals[i]['total'] + weekTotal
 					computedWeek = {
 						'itemPrice': weekTotal,
 						'key': week.key(),
@@ -109,7 +117,8 @@ class EveryUsersOrderPage(BaseHandler):
 			allUsers.append(user)
 		orderedUsers = sorted(allUsers, key=lambda item:item.orderTotal, reverse=True)
 		template_values = {
-			'users':orderedUsers
+			'users':orderedUsers,
+			'weekTotals':weekTotals
 		}
 		template = jinja_environment.get_template('templates/admin/everyUsersOrder.html')
 		self.printPage("Rendel&eacute;sek", template.render(template_values), True, True)

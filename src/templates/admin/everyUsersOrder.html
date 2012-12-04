@@ -1,20 +1,34 @@
 ﻿<div class="mainBg staticPage">
 	<div class="container">
 		<table width="400px">
-		{% for user in users %}
 			<tr>
-				<td><a href="/userOverview?userKey={{ user.key() }}">{{ user.familyName }} {{ user.givenName }}</a></td>
-				{% for week in user.computedWeeks %}
-					<td>
-						{% if week.itemPrice == 0 %}
+				<th>Heti összesítés</th>
+				<th>&nbsp;</th>
+				{% for weekTotal in weekTotals %}
+					<th>
+						{% if weekTotal.total == 0 %}
 							-
 						{% else %}
-							<a href="/deliverable?weekKey={{ week.key }}">{{week.itemPrice}} Ft</a>
+							<a href="/chefReviewOrders?day={{ weekTotal.monday }}">{{weekTotal.total}} Ft</a>
 						{% endif %}
-					</td>
+					</th>
 				{% endfor %}
 			</tr>
-		{% endfor %}
+			{% for user in users %}
+				<tr>
+					<td><a href="/userOverview?userKey={{ user.key() }}">{{ user.familyName }} {{ user.givenName }}</a></td>
+					<td> <strong>{{user.orderTotal}} Ft</strong></td>
+					{% for week in user.computedWeeks %}
+						<td>
+							{% if week.itemPrice == 0 %}
+								-
+							{% else %}
+								<a href="/deliverable?weekKey={{ week.key }}">{{week.itemPrice}} Ft</a>
+							{% endif %}
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
 		</table>
 	</div>
 </div>
