@@ -36,6 +36,8 @@ def addDishToCategory(categoryKey, dishKey):
 		client.set(categoryKey, category)
 
 def getDish(key):
+	if key == None:
+		return None
 	client = memcache.Client()
 	dish = client.get(key)
 	if dish == None:

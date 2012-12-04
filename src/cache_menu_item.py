@@ -10,6 +10,14 @@ from cache_dish import getDish
 
 MENU_ITEMS_FOR_DAY="MI_DAY"
 
+def getDishKeyString(menuItem):
+	ret = None
+	try:
+		ret = str(menuItem.dish.key())
+	except:
+		pass
+	return ret
+
 def createMenuItemData(menuItem):
 	subItemKeys=[]
 	for subItem in menuItem.components:
@@ -17,7 +25,7 @@ def createMenuItemData(menuItem):
 	menuItemObject={
 		'key':str(menuItem.key()),
 		'categoryKey':menuItem.categoryKey,
-		'dishKey':str(menuItem.dish.key()),
+		'dishKey':getDishKeyString(menuItem),
 		'price':menuItem.price,
 		'day':menuItem.day,
 		'containingMenuItem':None,
@@ -27,6 +35,19 @@ def createMenuItemData(menuItem):
 	}
 	return menuItemObject
 
+def dummyDish():
+	dish = {
+		'title' : 'UNKNOWN',
+		'price' : 0,
+		'energy' : 0,
+		'fat' : 0,
+		'carbs' : 0,
+		'fiber' : 0,
+		'protein' : 0, 
+	}
+	return dish
+
+
 def getMenuItem(key):
 	client = memcache.Client()
 	menuItem = client.get(key)
@@ -35,50 +56,23 @@ def getMenuItem(key):
 		menuItem = createMenuItemData(menuItemDb)
 		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems
-	menuItem['dish']=getDish(menuItem['dishKey'])
 	dish = getDish(menuItem['dishKey'])
-	sumprice = 0
-	try:
-		sumprice = dish['price']
-	except KeyError:
-		pass
-	if sumprice == None:
+	if dish == None:
+		menuItem['dish'] = dummyDish()
 		sumprice = 0
-	energy = 0
-	try:
+		energy = 0
+		fat = 0
+		carbs = 0
+		fiber = 0
+		protein = 0
+	else:
+		menuItem['dish'] = dish
+		sumprice = dish['price']
 		energy = dish['energy']
-	except KeyError:
-		pass
-	if energy == None:
-		energy=0
-	fat = 0
-	try:
 		fat = dish['fat']
-	except KeyError:
-		pass
-	if fat == None:
-		fat=0
-	carbs = 0
-	try:
 		carbs = dish['carbs']
-	except KeyError:
-		pass
-	if carbs == None:
-		carbs=0
-	fiber = 0
-	try:
 		fiber = dish['fiber']
-	except KeyError:
-		pass
-	if fiber == None:
-		fiber=0
-	protein = 0
-	try:
 		protein = dish['protein']
-	except KeyError:
-		pass
-	if protein == None:
-		protein=0
 	# Calculate sum price
 	components = []
 	for subItemKey in menuItem['componentKeys']:
@@ -144,24 +138,17 @@ def getDaysAvailableMenuItems(day):
 	ret = []
 	for menuItem in daysItems:
 		sumprice = 0
-		try:
-			sumprice = getDish(menuItem['dishKey'])['price']
-		except KeyError:
-			pass
-		if sumprice == None:
-			sumprice = 0
-		menuItem['dish']=getDish(menuItem['dishKey'])
+		dish = getDish(menuItem['dishKey'])
+		menuItem['dish'] = dish
+		if dish != None:
+			sumprice = dish['price']
 		components = []
 		for subItemKey in menuItem['componentKeys']:
 			component = getMenuItem(subItemKey)
 			components.append(component)
-			componentPrice = 0
-			try:
-				componentPrice = getDish(component['dishKey'])['price']
-			except KeyError:
-				pass
-			if componentPrice != None:
-				sumprice = sumprice + componentPrice
+			componentDish = getDish(component['dishKey'])
+			if componentDish != None:
+				sumprice = sumprice + componentDish['price']
 		menuItem['sumprice'] = sumprice
 		menuItem['components'] = components
 		ret.append(menuItem)
