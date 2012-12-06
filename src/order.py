@@ -427,7 +427,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		today=datetime.date.today()
 		actualMonday = getMonday(today)
 		availableAddresses = []
-		for address in user.addresses:
+		for address in user.addresses.filter('active = ', True):
 			address.deliveryCost = getDeliveryCost(address.district,0)
 			address.deliveryLimit = getDeliveryLimit(address.district)
 			availableAddresses.append(address)
@@ -488,7 +488,7 @@ class ConfirmOrder(BaseHandler):
 		user=None
 		if (userKey != None):
 			user = User.get(userKey)
-		addresses = user.addresses
+		addresses = user.addresses.filter("active = ", True)
 		if addresses.count()==0:
 			template = jinja_environment.get_template('templates/no_address.html')
 			self.printPage('Rendelesek', template.render(), True)
@@ -552,7 +552,7 @@ class ConfirmOrder(BaseHandler):
 						week.user = user
 						week.monday = monday
 						# Add address for every day
-						defaultAddress = user.addresses.get()
+						defaultAddress = user.addresses.filter("active = ", True).get()
 						week.mondayAddress = defaultAddress
 						week.tuesdayAddress = defaultAddress
 						week.wednesdayAddress = defaultAddress

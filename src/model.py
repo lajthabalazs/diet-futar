@@ -35,11 +35,12 @@ class User(db.Model):
 	role=db.ReferenceProperty(Role, collection_name='users')
 
 class Address (db.Model):
+	user = db.ReferenceProperty(User, collection_name='addresses')
 	district = db.StringProperty()
 	zipCode = db.StringProperty()
 	street = db.StringProperty()
 	streetNumber = db.StringProperty()
-	user = db.ReferenceProperty(User, collection_name='addresses')
+	active = db.BooleanProperty(default=True)
 
 class DishCategory(db.Model):
 	name = db.StringProperty()
@@ -99,6 +100,7 @@ class UserWeekOrder(db.Model):
 	monday=db.DateProperty() # Monday of the week
 	orderedComposits=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
 	orderedMenuItems=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
+	orderHistory=db.StringListProperty() # The list of ordered items keys of form: date_time SPACE quantity SPACE key
 	mondayAddress=db.ReferenceProperty(Address, collection_name='mondays')
 	tuesdayAddress=db.ReferenceProperty(Address, collection_name='tuesdays')
 	wednesdayAddress=db.ReferenceProperty(Address, collection_name='wednesdays')
@@ -106,6 +108,20 @@ class UserWeekOrder(db.Model):
 	fridayAddress=db.ReferenceProperty(Address, collection_name='fridays')
 	saturdayAddress=db.ReferenceProperty(Address, collection_name='saturdays')
 	sundayAddress=db.ReferenceProperty(Address, collection_name='sundays')
+
+class WebshopItem(db.Model):
+	price=db.IntegerProperty(default=0)
+	availableQuantity=db.IntegerProperty(default=0)
+	shortDescription=db.StringProperty()
+	description=db.StringProperty()
+
+class WebshopOrderItem(db.Model):
+	user=db.ReferenceProperty(User, collection_name='christmasLunch')
+	item=db.ReferenceProperty(WebshopItem, collection_name='orders')
+	orderQuantity=db.IntegerProperty(default=0)
+	orderDate=db.DateProperty()
+	orderState=db.IntegerProperty(default=0)
+	address=db.ReferenceProperty(Address, collection_name='christmasLunches')
 	
 class Wish(db.Model):
 	title = db.StringProperty()

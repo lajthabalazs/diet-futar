@@ -154,20 +154,18 @@ body {
 	color: #333;
 }
 
-.calendarElement small {
+small.orderQuantity {
 	font-size: 16px;
 	margin-right: 3px;
-	float: right;
 }
 
 
-.calendarElement input[type=text] {
+input.orderQuantity {
 	height: 22px;
 	width: 25px;
 	box-shadow:inset 0px 2px 3px #DDDDDD;
 	border: solid 1px #BBBBBB;
 	margin-top: -3px;
-	float: right;
 	margin-right: 0;
 	margin-bottom: 0;
 	margin-left: 0;
@@ -178,11 +176,11 @@ body {
 	color: #F60;
 }
 
-.calendarElement input[type=text]:focus {
+input[type=text].orderQuantity:focus {
 	border: solid 1px #F60;
 }
 	
-.calendarElement input[type=button] {
+input[type=button].orderQuantity {
 	text-decoration: none;
 	background: none;
 	border: none;
@@ -196,7 +194,7 @@ body {
 	margin-left: 106px;
 }
 	
-.calendarElement input[type=button]:hover {
+input[type=button].orderQuantity:hover {
 	background-image: url(../img/deleteHover.png);
 }
 
@@ -304,12 +302,12 @@ a.adminMenu {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	margin-bottom: 9px;
+	margin-bottom: 0px;
 }
 
 .menu li a {
 	font-family: GillSansMT-Condensed;
-	font-size: 28px;
+	font-size: 20px;
 	text-shadow: #FFFFFF 0px 1px 0px;
 	text-transform: uppercase;
 	background: none;

@@ -1,0 +1,56 @@
+﻿{% from '/templates/macros.html' import menuItemToOrderMacro, compositToOrderMacro%}
+<div class="review-ordered {% if user %}{% else %}staticPage{% endif %}">
+	<div class="container">
+		<script  type="text/javascript">
+			function addressChangeListener(orderedPrice) {
+				var addressCosts = [{% for address in addresses %}{{ address.deliveryCost }},{% endfor %}];
+				var addressLimits = [{% for address in addresses %}{{ address.deliveryLimit }},{% endfor %}];
+				var selectedIndex = document.getElementById('address').selectedIndex;
+				var deliveryCost = addressCosts[selectedIndex];
+				if (orderedPrice > addressLimits[selectedIndex]){
+					deliveryCost = 0;
+				}
+				document.getElementById('deliveryCost').innerHTML = deliveryCost;
+			}
+		
+		</script>
+		<div class="span-24">
+			<div class="span-24">
+				<h2 style="text-align: left;">Karácsonyi menü</h2>
+				<p>Hamarosan...</p>
+				<!--
+				{% if user %}
+				<div>
+					<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantity('christmasLunch')"/>
+					<input class="orderQuantity" onkeyup="validateQuantity('christmasLunch')" type="text" id="christmasLunch" name="christmasLunch" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
+					<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('christmasLunch')"/>
+					{% if orderedQuantity and orderedQuantity > 0 %}
+						<small>{{ orderedQuantity}} {% if orderable %}+{% else %}adag{% endif %} </small>
+					{% endif %}
+					<br/>
+					<strong>Összesen:</strong><strong id="totalPrice">{{ orderedPrice }} Ft</strong>
+				</div>
+
+				<form method="post">
+					<div class="span-24 last subTotal">
+						<h2 class="span-2">Szállítási cím</h2>
+						<div class="span-4">
+						<select onchange="addressChangeListener({{orderedPrice}} );" name="address" id="address" {% if changable == False %}disabled="disabled" {% endif%} style="width: 120px">
+							{% for itemAddress in user.addresses %}
+								<option value="{{itemAddress.key()}}" label="{{itemAddress.street}} {{itemAddress.streetNumber}}" {% if address and address != None and address.key() == itemAddress.key() %}selected="selected"{% endif %}></option>
+							{% endfor %}
+						</select><br/>
+						<strong>Szállítási költség:</strong> <strong id="deliveryCost">{{ deliveryCost }}</strong> <strong>Ft</strong>
+						</div>
+					</div>
+					<div class="span-24 total last">
+						<input id="toCartButton" type="submit" name="" value="Megrendelés" id=""/>
+					</div>
+				</form>
+				{% else %}
+				<strong>Rendeléshez jelentkezzen be!</strong>
+				{% endif %}
+				-->
+		</div>
+	</div>
+</div>

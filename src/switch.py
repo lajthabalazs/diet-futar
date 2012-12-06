@@ -10,7 +10,7 @@ from dish import DishPage, DeleteDishPage, DishIngredientAddPage, DishIngredient
 from wish import WishPage, DeleteWishPage
 from user_forms import LoginPage, RegisterPage, LogoutPage, UserProfilePage,\
 	ActivatePage, AddressPage, ChangePasswordPage, ActivationPendingPage, Referals,\
-	ForgotPassword
+	ForgotPassword, DeleteAddressPage
 from menu import MenuEditPage, AddMenuItemComponent,\
 	ModifyMenuItem, CreateComposit, AddItemToComposit, DeleteItemFromComposit,\
 	ModifyComposit, DeleteMenuItem, DeleteComposit, MenuWeekEditPage
@@ -28,6 +28,7 @@ from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
+from christmasLunch import ChristmasLunchPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -53,12 +54,14 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/forgotPassword', ForgotPassword),
 										('/profile', UserProfilePage),
 										('/address', AddressPage),
+										('/deleteAddress', DeleteAddressPage),
 
 										('/confirmOrder', ConfirmOrder),
 										('/order', MenuOrderPage),
 										('/clearOrder', ClearOrderPage),
 										('/pendingOrder', ReviewPendingOrderPage),
 										('/personalMenu', ReviewOrderedMenuPage),
+										('/christmasLunch', ChristmasLunchPage),
 
 										('/about', AboutPage),
 										('/contacts', ContactsPage),

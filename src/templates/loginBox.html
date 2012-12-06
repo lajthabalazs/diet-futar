@@ -1,6 +1,6 @@
 ﻿<div class="span-6 login">
 	{% if user %}
-		<h3>{{ user.email }}</h3>
+		<span style="font-size: 17px;">{{ user.email }}</span><br/>
 		<a class="userMenu" href="/profile">Profil</a><br/>
 		<a class="userMenu" href="/logout">Kilépés</a>
 	{% else %}

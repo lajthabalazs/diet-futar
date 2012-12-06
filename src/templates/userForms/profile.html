@@ -1,4 +1,11 @@
-<div class="mainBg">
+<script language="JavaScript">
+	function modifyAddress(formId) {
+		var form = document.forms[formId];
+		form.submit();
+	}
+</script>
+
+<div class="mainBg staticPage">
 	<div class="container">
 		<div class="span-24 last profile">
 			<div class="span-24 last profileRow">
@@ -50,20 +57,26 @@
 						</form>
 					</div>
 					{% for address in user.addresses%}
-						<div class="span-9 prepend-1 profileColumn profileElement">
-							<form action="/address" method="post">
-								<input type="hidden" name="addressKey" value="{{address.key()}}"/>
-								<label>Kerület <select name="district">
-									{% for district in districts %}
-										<option value="{{district}}" label="{{district}}. kerület" {% if district==address.district%}selected{% endif %}></option>
-									{% endfor %}
-								</select></label>
-								<label>Irányítószám<input type="text" name="zipCode" value="{{address.zipCode}}"/></label>
-								<label>Utca név<input type="text" name="street" value="{{address.street}}"/></label>
-								<label>Házszám, emelet<input type="text" name="streetNumber" value="{{address.streetNumber}}"/></label>
-							</form>
-							<label><button onclick="">Cím módosítása</button></label>
-						</div>
+						{% if address.active %}
+							<div class="span-9 prepend-1 profileColumn profileElement">
+								<form name="address_{{address.key()}}" id="address_{{address.key()}}" action="/address" method="post">
+									<input type="hidden" name="addressKey" value="{{address.key()}}"/>
+									<label>Kerület <select name="district">
+										{% for district in districts %}
+											<option value="{{district}}" label="{{district}}. kerület" {% if district==address.district%}selected{% endif %}></option>
+										{% endfor %}
+									</select></label>
+									<label>Irányítószám<input type="text" name="zipCode" value="{{address.zipCode}}"/></label>
+									<label>Utca név<input type="text" name="street" value="{{address.street}}"/></label>
+									<label>Házszám, emelet<input type="text" name="streetNumber" value="{{address.streetNumber}}"/></label>
+								</form>
+								<button onclick="modifyAddress('address_{{ address.key() }}');">Cím módosítása</button><br/><br/>
+								<form id="address_{{address.key()}}_delete" action="/deleteAddress" method="post">
+									<input type="hidden" name="addressKey" value="{{address.key()}}"/>
+								</form>
+								<button onclick="modifyAddress('address_{{ address.key() }}_delete');" style="color: RED; float: right; margin-top: -10px;">Cím törlése</button>
+							</div>
+						{% endif %}
 					{% endfor %}
 				</div>
 			</div>

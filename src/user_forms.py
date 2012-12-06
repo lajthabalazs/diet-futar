@@ -285,6 +285,10 @@ class AddressPage (BaseHandler):
 		address = None
 		if addressKey != None and addressKey != "":
 			address = Address.get(addressKey)
+			if address != None:
+				if (address.user.email != user.email):
+					self.redirect("/profile")
+					return
 		if address == None:
 			address = Address()
 		address.user = user
@@ -294,6 +298,30 @@ class AddressPage (BaseHandler):
 		address.street = self.request.get("street")
 		address.streetNumber = self.request.get("streetNumber")
 		address.put()
+		self.redirect("/profile")
+
+class DeleteAddressPage (BaseHandler):
+	def post(self):
+		if(not isUserLoggedIn(self)):
+			self.redirect("/registration")
+			return
+		user = None
+		userKey=self.session.get(USER_KEY,None)
+		if (userKey != None):
+			user = db.get(userKey)
+		else:
+			self.redirect("/profile")
+			return
+		addressKey = self.request.get("addressKey")
+		address = None
+		if addressKey != None and addressKey != "":
+			address = Address.get(addressKey)
+			if address != None:
+				if (address.user.email != user.email):
+					self.redirect("/profile")
+					return
+				address.active = False
+				address.put()
 		self.redirect("/profile")
 
 class Referals (BaseHandler):

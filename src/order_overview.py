@@ -131,7 +131,7 @@ class DeliveryReviewOrdersPage(BaseHandler):
 			if len(items) > 0:
 				orderAddress = getOrderAddress(week, day)
 				if orderAddress == None:
-					orderAddress = week.user.addresses.get()
+					orderAddress = week.user.addresses.filter('active = ', True).get()
 				orderAddress.orderedItems = items
 				orderAddress.week = week
 				deliveries.append(orderAddress)
