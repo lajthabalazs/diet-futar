@@ -1,0 +1,24 @@
+﻿<div class="mainBg staticPage">
+	<div class="container">
+		<form method="post">
+			<label>Termék neve <input type="text" name="title" cols="100" style="width: 400px;"/></label><br/>
+			<label>Termék kódja <input type="text" name="code" cols="100" style="width: 400px;"/></label><br/>
+			<label>Termék ára <input type="number" name="price" cols="100" style="width: 70px;"/></label><br/>
+			Rövid leírás<br/>
+			<textarea name="shortDescription" cols="40" rows="4" style="height: 40px"></textarea><br/>
+			Hosszú leírás<br/>
+			<textarea name="description" cols="40" rows="4" style="height: 40px"></textarea><br/>
+			<input type="submit" value="Termék hozzáadása"/><br/>
+		</form>
+		<table width="400px">
+		{% for item in items %}
+			<tr><td><a href="/webshopItem?itemKey={{ item.key() }}">{{ item.title }}</a></td>
+			<td>{{ item.price }}</td>
+			<td align="right"><form action="{% if item.active %}deactivateWebshopItem{% else %}activateWebshopItem{% endif %}" method="post">
+				<input type="hidden" name="itemKey" value="{{ item.key() }}"/>
+				<input type="submit" value="{% if item.active %}Szüneteltetés{% else %}Aktiválás{% endif %}">
+			</form></td></tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

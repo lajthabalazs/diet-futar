@@ -4,6 +4,8 @@ Created on Aug 11, 2012
 @author: lajthabalazs
 '''
 from google.appengine.ext import db
+from google.appengine._internal.django.template.defaultfilters import date
+import datetime
 
 ROLE_ADMIN="admin"
 ROLE_DELIVERY_GUY="fut&#225;r"
@@ -110,18 +112,27 @@ class UserWeekOrder(db.Model):
 	sundayAddress=db.ReferenceProperty(Address, collection_name='sundays')
 
 class WebshopItem(db.Model):
+	title=db.StringProperty()
+	code=db.StringProperty(default=None)
+	active = db.BooleanProperty(default=True)
+	nextAvailable = db.DateProperty(default=datetime.datetime.strptime('2012-10-01','%Y-%m-%d').date())
+	availableUntil = db.DateProperty(default=datetime.datetime.strptime('9999-12-30','%Y-%m-%d').date())
 	price=db.IntegerProperty(default=0)
-	availableQuantity=db.IntegerProperty(default=0)
+	availableQuantity=db.IntegerProperty(default=10000)
+	tags=db.StringListProperty()
 	shortDescription=db.StringProperty()
 	description=db.StringProperty()
 
 class WebshopOrderItem(db.Model):
-	user=db.ReferenceProperty(User, collection_name='christmasLunch')
+	user=db.ReferenceProperty(User, collection_name='webshopOrders')
 	item=db.ReferenceProperty(WebshopItem, collection_name='orders')
 	orderQuantity=db.IntegerProperty(default=0)
-	orderDate=db.DateProperty()
-	orderState=db.IntegerProperty(default=0)
-	address=db.ReferenceProperty(Address, collection_name='christmasLunches')
+	orderDate=db.DateTimeProperty()
+	orderState=db.IntegerProperty(default=0) # States are the following: 0 ordered 1 accepted 2 rejected 3 prepared 4 delivered 5 failed 6 deleted_by_user
+	address=db.ReferenceProperty(Address, collection_name='webshopOrders')
+	comments=db.StringListProperty()
+	commentDates=db.StringListProperty()
+	commentAuthors=db.StringListProperty()
 	
 class Wish(db.Model):
 	title = db.StringProperty()

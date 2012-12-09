@@ -28,7 +28,10 @@ from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
-from christmasLunch import ChristmasLunchPage
+from christmasLunch import ChristmasLunchPage, InitChristmasLunchPage
+from webshopAdmin import ItemListPage
+from webshopUser import UserWebshopOrderListPage, UserWebshopOrderDetailsPage, UserWebshopPostMessagePage,\
+	WebshopItemDetailsPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -42,6 +45,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/scheduleMainenence', ScheduleMainenencePage),
 										('/endMaintenence', EndMainenencePage),
 										('/everyUsersOrder', EveryUsersOrderPage),
+										('/initChristmasLunch', InitChristmasLunchPage),
 										
 										('/google24f0feb13afae7e0.html', GooglePage),
 										('/login', LoginPage),
@@ -62,6 +66,11 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/pendingOrder', ReviewPendingOrderPage),
 										('/personalMenu', ReviewOrderedMenuPage),
 										('/christmasLunch', ChristmasLunchPage),
+										('/userOrderList', UserWebshopOrderListPage),
+										
+										('/webshopItem', WebshopItemDetailsPage),
+										('/webshopUserOrder', UserWebshopOrderDetailsPage),
+										('/postOrderComment', UserWebshopPostMessagePage),
 
 										('/about', AboutPage),
 										('/contacts', ContactsPage),
@@ -96,6 +105,8 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/deliverable', DeliveryPage),
 										('/chefReviewOrders', ChefReviewOrdersPage),
 										('/wish', WishPage),
+										
+										('/itemList', ItemListPage),
 
 										('/userList', UserListPage),
 										('/usersOrders', WeeksListPage),

@@ -102,3 +102,13 @@
 		{{ orderQuantityBox(composit) }}
 	</div>
 {% endmacro %}
+
+{% macro humanReadableOrderState(order)%}
+	{% if order.orderState == 0%}Megrendelve{% endif%}
+	{% if order.orderState == 1%}Befogadva{% endif%}
+	{% if order.orderState == 2%}Elutasítva{% endif%}
+	{% if order.orderState == 3%}Szállításra kész{% endif%}
+	{% if order.orderState == 4%}Kiszállítva{% endif%}
+	{% if order.orderState == 5%}Sikertelen{% endif%}
+	{% if order.orderState == 6%}Visszavonva{% endif%}
+{% endmacro %}

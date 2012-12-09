@@ -1,0 +1,20 @@
+﻿{% from '/templates/macros.html' import humanReadableOrderState %}
+<div class="mainBg staticPage">
+	<div class="container">
+		<h3>{{ order.item.title }}</h3>
+		Rendelés időpontja: <strong>{{ order.orderDate.strftime('%Y-%m-%d %H:%M:%S') }}</strong><br/>
+		Rendelt mennyiség: <strong>{{ order.orderQuantity }}</strong><br/>
+		Rendelés állapota: <strong>{{ humanReadableOrderState(order) }}</strong><br/>
+		Teljes ár: <strong>{{ order.price }} Ft</strong><br/>
+		Szállítási cím: <strong>{{ order.addressString }}</strong><br/><br/>
+		<h4>Megjegyzések</h4>
+		<form method="post" action="/postOrderComment">
+			<input type="hidden" id="orderKey" name="orderKey" value="{{order.key()}}"/>
+			<input style="width: 300px;" type="text" name="message" id="message"/>
+			<input type="submit" value="Küldés"/>
+		</form>
+		{% for comment in order.formattedComments%}
+			<strong>{{comment.author}} ({{ comment.date }}): </strong>{{comment.comment}}<br/>
+		{% endfor %}
+	</div>
+</div>

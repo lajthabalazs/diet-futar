@@ -8,7 +8,7 @@
 					<th><a href="/deliveryReviewOrders?day={{ day.date }}">{{ day.day }}<br/>{{ day.date }}</a></th>
 				{% endfor%}
 			</tr>
-			{% for category in menu%}
+			{% for category in menu %}
 				<tr><td> {{ category.category.name }} </td>
 				{% for day in category.days %}
 					<td valign="bottom">

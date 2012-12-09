@@ -189,14 +189,18 @@ class BaseHandler(webapp2.RequestHandler):
 			weeklyMenu["label"]="Heti menu"
 			weeklyMenu["target"]="/menuWeekEdit"
 			topMenu.append(weeklyMenu)
-			payingOrders={}			
+			payingOrders={}
 			payingOrders["label"]="Rendelt"
 			payingOrders["target"]="/chefReviewOrders"
 			topMenu.append(payingOrders)
 			toDeliver={}
 			toDeliver["label"]="Sz&aacute;llitand&oacute;"
 			toDeliver["target"]="/deliveryReviewOrders"
-			topMenu.append(toDeliver)			
+			topMenu.append(toDeliver)
+			webShop={}
+			webShop["label"]="WebShop"
+			webShop["target"]="/itemList"
+			topMenu.append(webShop)
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"

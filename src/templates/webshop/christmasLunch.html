@@ -16,41 +16,59 @@
 		</script>
 		<div class="span-24">
 			<div class="span-24">
-				<h2 style="text-align: left;">Karácsonyi menü</h2>
-				<p>Hamarosan...</p>
-				<!--
+				<h2 style="text-align: left;">Karácsonyi ebéd</h2>
+				<p>Karácsonykor sem feledkezünk meg lisztérzékeny vendégeinkről. 2012. December 24.-én délben ünnepi menüt szállítunk azoknak, akik a megelőző péntekig feladták megrendelésüket. A különleges alkalomból szállítás Budapest területén ingyenes. Két menüből választhattok:
+					mindkettő nagy adag halászlével indul, amit mi készítünk, hagyományos recept alapján, harcsafilével a szálkára érzékenyebbek kedvéért. A leves után választhattok a töltött káposzta és a túróscsuszán tálalt harcsapaprikás közt. Folytásként mindkét menü bejglivel zárul, mákos, diós egyéni izlés szerint (kommentben írjátok meg, hogy melyik szimpatikusabb).</p>
+				<div class="span-11">
+				<strong>A menü</strong><br/>
+				Halászlé harcsafilével<br/>
+				Töltöttkáposzta<br/>
+				Bejgli<br/>
+				<strong>2300 Ft</strong><br/>
 				{% if user %}
-				<div>
-					<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantity('christmasLunch')"/>
-					<input class="orderQuantity" onkeyup="validateQuantity('christmasLunch')" type="text" id="christmasLunch" name="christmasLunch" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
-					<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('christmasLunch')"/>
-					{% if orderedQuantity and orderedQuantity > 0 %}
-						<small>{{ orderedQuantity}} {% if orderable %}+{% else %}adag{% endif %} </small>
-					{% endif %}
-					<br/>
-					<strong>Összesen:</strong><strong id="totalPrice">{{ orderedPrice }} Ft</strong>
+					<form method="post">
+						<div>
+							<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('aMenu')"/>
+							<input class="orderQuantity" onkeyup="validateQuantityNotNegative('aMenu')" type="text" id="aMenu" name="aMenu" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
+							<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('aMenu')"/>
+							<br/>
+						</div>
+					</div>
+				{% endif %}
+				<div class="span-11">
+				<strong>B menü</strong><br/>
+				Halászlé harcsafilével<br/>
+				Harcsapaprikás túróscsuszával<br/>
+				Bejgli<br/>
+				<strong>2600 Ft</strong><br/>
+				{% if user %}
+					<div>
+						<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('bMenu')"/>
+						<input class="orderQuantity" onkeyup="validateQuantityNotNegative('bMenu')" type="text" id="bMenu" name="bMenu" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
+						<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('bMenu')"/>
+						<br/>
+					</div>
 				</div>
 
-				<form method="post">
 					<div class="span-24 last subTotal">
 						<h2 class="span-2">Szállítási cím</h2>
 						<div class="span-4">
-						<select onchange="addressChangeListener({{orderedPrice}} );" name="address" id="address" {% if changable == False %}disabled="disabled" {% endif%} style="width: 120px">
-							{% for itemAddress in user.addresses %}
-								<option value="{{itemAddress.key()}}" label="{{itemAddress.street}} {{itemAddress.streetNumber}}" {% if address and address != None and address.key() == itemAddress.key() %}selected="selected"{% endif %}></option>
-							{% endfor %}
-						</select><br/>
-						<strong>Szállítási költség:</strong> <strong id="deliveryCost">{{ deliveryCost }}</strong> <strong>Ft</strong>
+							<select name="address" id="address" {% if changable == False %}disabled="disabled" {% endif%} style="width: 120px">
+								{% for itemAddress in user.addresses %}
+									<option value="{{itemAddress.key()}}" label="{{itemAddress.street}} {{itemAddress.streetNumber}}" {% if address and address != None and address.key() == itemAddress.key() %}selected="selected"{% endif %}></option>
+								{% endfor %}
+							</select><br/>
 						</div>
+						<strong>Megjegyzés: </strong><input style="width: 300px;" type="text" name="message" id="message"/>
 					</div>
 					<div class="span-24 total last">
 						<input id="toCartButton" type="submit" name="" value="Megrendelés" id=""/>
 					</div>
 				</form>
 				{% else %}
+				</div>
 				<strong>Rendeléshez jelentkezzen be!</strong>
 				{% endif %}
-				-->
 		</div>
 	</div>
 </div>
