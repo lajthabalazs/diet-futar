@@ -1,6 +1,7 @@
 ﻿<div class="span-6 login">
 	{% if user %}
 		<span style="font-size: 17px;">{{ user.email }}</span><br/>
+		<a class="userMenu" href="/userOrderList">Rendelések</a><br/>
 		<a class="userMenu" href="/profile">Profil</a><br/>
 		<a class="userMenu" href="/logout">Kilépés</a>
 	{% else %}
