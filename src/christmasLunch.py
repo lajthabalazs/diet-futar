@@ -30,7 +30,7 @@ class ChristmasLunchPage(BaseHandler):
 			return
 		user = getUser(self)
 		aMenuQuantity = int(self.request.get('aMenu'))
-		bMenuQuantity = int(self.request.get('aMenu'))
+		bMenuQuantity = int(self.request.get('bMenu'))
 		addressKey = self.request.get('address')
 		address = Address.get(addressKey)
 		message = self.request.get('message') 
