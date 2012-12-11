@@ -427,7 +427,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		today=datetime.date.today()
 		actualMonday = getMonday(today)
 		availableAddresses = []
-		for address in user.addresses.filter('active = ', True):
+		for address in user.addresses:
 			address.deliveryCost = getDeliveryCost(address.district,0)
 			address.deliveryLimit = getDeliveryLimit(address.district)
 			availableAddresses.append(address)
