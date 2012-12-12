@@ -391,7 +391,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		firstOrderableDay=getFirstOrderableDate(self);
 		user = getUser(self)
 		weeks = user.weeks.filter("monday = ", monday)
-		if (weeks.count() == 1):
+		if (weeks.count() > 0):
 			week = weeks.get()
 		else:
 			week = UserWeekOrder()
@@ -507,8 +507,8 @@ class ConfirmOrder(BaseHandler):
 					weeks = user.weeks.filter("monday = ", monday)
 					week = None
 					alreadyOrdered = 0
-					if (weeks.count() == 1):
-						week = weeks[0]
+					if (weeks.count() > 0):
+						week = weeks.get()
 						if type(item) == MenuItem:
 							newItems = []
 							itemExists = False

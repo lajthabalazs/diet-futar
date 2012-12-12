@@ -124,7 +124,7 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		nextDay=day+datetime.timedelta(days=1)
 		today=datetime.date.today()
 		monday = getMonday(day)
-		weeks = UserWeekOrder.gql("WHERE monday=DATE(:1,:2,:3)", monday.year, monday.month, monday.day)
+		weeks = UserWeekOrder.all().filter('monday = ', monday)
 		deliveries = []
 		for week in weeks:
 			items = getOrderedItemsFromWeekData(week, day)
