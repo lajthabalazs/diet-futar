@@ -9,6 +9,12 @@
 					<label>E-mail <strong>{{ user.email }}</strong></label><br/>
 					<label>Telefonszám <strong>{{user.phoneNumber}}</strong></label>
 				</p>
+
+				<form method="post" action="switchToUser">
+					<input type="hidden" name="userKey" value="{{user.key()}}"/>
+					<td><input type="submit" value="Váltás"/></td>
+				</form>
+				
 				<h2 style="text-align: left;">Ajánló link</h2>
 				<p><a href="http://diet-futar.hu/registration?refererKey={{ user.key() }}">http://diet-futar.hu/registration?refererKey={{ user.key() }}</a></p>
 			</div>
