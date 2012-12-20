@@ -17,7 +17,8 @@
 			<th><a href="?order=registrationDate">Regisztráció</a></th>
 			<th><a href="?order=familyName">Név</a></th>
 			<th><a href="?order=email">E-mail cím</a></th>
-			<th>Rendelése</th>
+			<th>Heti rendelések</th>
+			<th>Webshop rendelések</th>
 			<th>Felhasználó váltás</th>
 			<th>Aktivált</th>
 			<th>Ajánló</th>
@@ -27,9 +28,10 @@
 			<td>{{ user.registrationDate}}</td>
 			<td><a href="/userOverview?userKey={{user.key()}}">{{ user.familyName }} {{user.givenName}}</a></td>
 			<td>{{ user.email }}</td>
+			<td><a href="/weeksList?userKey={{user.key()}}">Heti rendelések</a></td>
+			<td><a href="/usersOrders?userKey={{user.key()}}">Webshop rendelések</a></td>
 			<form method="post" action="switchToUser">
 				<input type="hidden" name="userKey" value="{{user.key()}}"/>
-				<td><a href="/usersOrders?userKey={{user.key()}}">Rendelések</a></td>
 				<td><input type="submit" value="Váltás"/></td>
 			</form>
 			<form method="post">

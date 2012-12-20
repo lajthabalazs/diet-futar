@@ -31,7 +31,15 @@ class UsersOrdersPage(BaseHandler):
 		if not isUserAdmin(self):
 			self.redirect("/")
 			return
-		orders = WebshopOrderItem.all().order("-orderDate")
+		userKey = self.request.get('userKey')
+		orders = None
+		user = None
+		if userKey != None and userKey != '':
+			user = User.get(userKey)
+			if user != None:
+				orders = user.webshopOrders
+		if orders == None:
+			orders = WebshopOrderItem.all().order("-orderDate")
 		orderedOrders = sorted(orders, key=lambda order: order.orderDate, reverse=True)
 		orders = []
 		for order in orderedOrders:
@@ -41,10 +49,8 @@ class UsersOrdersPage(BaseHandler):
 		template_values = {
 			'orders':orders
 		}
-		template_values = {
-			'orders':orders
-		}
-
+		if user != None:
+			template_values['user'] = user
 		template = jinja_environment.get_template('templates/webshop/usersOrders.html')
 		self.printPage("Rendel&eacute;sek", template.render(template_values), True, True)
 

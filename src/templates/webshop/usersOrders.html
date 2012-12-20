@@ -1,6 +1,9 @@
 ﻿{% from '/templates/macros.html' import humanReadableOrderState %}
 <div class="mainBg staticPage">
 	<div class="container">
+		{% if user %}
+			<a href="/userOverview?userKey={{user.key()}}">{{ user.familyName }} {{user.givenName}}</a>
+		{% endif %}
 		<h2>Rendelések</h2>
 		<table width="400px">
 		<tr><th>Rendelés időpontja</th><th>Szállítási cím</th><th>Felhasználó</th><th>Termék</th><th>Mennyiség</th><th>Státusz</th><th>Teljes ár</th></tr>
