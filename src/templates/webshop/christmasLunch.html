@@ -15,60 +15,92 @@
 		
 		</script>
 		<div class="span-24">
-			<div class="span-24">
-				<h2 style="text-align: left;">Karácsonyi ebéd</h2>
-				<p>Karácsonykor sem feledkezünk meg lisztérzékeny vendégeinkről. 2012. December 24.-én délben ünnepi menüt szállítunk azoknak, akik a megelőző péntekig feladták megrendelésüket. A különleges alkalomból a szállítás Budapest területén ingyenes. Két menüből választhattok:
-					mindkettő nagy adag halászlével indul, amit hagyományos recept alapján készítünk, harcsafilével a szálkára érzékenyebbek kedvéért. A leves után választhattok a töltött káposzta és a túróscsuszán tálalt harcsapaprikás közt. Végül mindkét menü bejglivel zárul, szigorúan glutén nélkül és sok mákkal és dióval. Ha bármilyen speciális kérésetek van, írjatok egy megjegyzést, és kitalálunk valamit.</p>
-				<div class="span-11">
-				<strong>A menü</strong><br/>
-				Halászlé harcsafilével<br/>
-				Töltöttkáposzta<br/>
-				Bejgli<br/>
-				<strong>2300 Ft</strong><br/>
-				{% if user %}
-					<form method="post">
-						<div>
-							<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('aMenu')"/>
-							<input class="orderQuantity" onkeyup="validateQuantityNotNegative('aMenu')" type="text" id="aMenu" name="aMenu" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
-							<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('aMenu')"/>
-							<br/>
-						</div>
-					</div>
-				{% endif %}
-				<div class="span-11">
-				<strong>B menü</strong><br/>
-				Halászlé harcsafilével<br/>
-				Harcsapaprikás túróscsuszával<br/>
-				Bejgli<br/>
-				<strong>2600 Ft</strong><br/>
-				{% if user %}
+			<h2 style="text-align: left;">Karácsonyi ebéd</h2>
+			<p>Karácsonykor sem feledkezünk meg lisztérzékeny vendégeinkről. 2012. December 24.-én délben ünnepi menüt szállítunk azoknak, akik a megelőző péntekig feladták megrendelésüket. A különleges alkalomból a szállítás Budapest területén ingyenes. Két menüből választhattok:
+				mindkettő nagy adag halászlével indul, amit hagyományos recept alapján készítünk, harcsafilével a szálkára érzékenyebbek kedvéért. A leves után választhattok a töltött káposzta és a túróscsuszán tálalt harcsapaprikás közt. Végül mindkét menü bejglivel zárul, szigorúan glutén nélkül és sok mákkal és dióval. Ha bármilyen speciális kérésetek van, írjatok egy megjegyzést, és kitalálunk valamit.</p>
+			{% if user %}
+				<form method="post">
+			{% endif %}
+			<div class="span-11">
+			<strong>A menü</strong><br/>
+			Halászlé harcsafilével<br/>
+			Töltöttkáposzta<br/>
+			Bejgli<br/>
+			<strong>2300 Ft</strong><br/>
+			{% if user %}
 					<div>
-						<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('bMenu')"/>
-						<input class="orderQuantity" onkeyup="validateQuantityNotNegative('bMenu')" type="text" id="bMenu" name="bMenu" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
-						<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('bMenu')"/>
+						<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('aMenu')"/>
+						<input class="orderQuantity" onkeyup="validateQuantityNotNegative('aMenu')" type="text" id="aMenu" name="aMenu" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
+						<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('aMenu')"/>
 						<br/>
 					</div>
+			{% endif %}
+			</div>
+			<div class="span-11">
+			<strong>B menü</strong><br/>
+			Halászlé harcsafilével<br/>
+			Harcsapaprikás túróscsuszával<br/>
+			Bejgli<br/>
+			<strong>2600 Ft</strong><br/>
+			{% if user %}
+				<div>
+					<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('bMenu')"/>
+					<input class="orderQuantity" onkeyup="validateQuantityNotNegative('bMenu')" type="text" id="bMenu" name="bMenu" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
+					<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('bMenu')"/>
+					<br/>
 				</div>
-
-					<div class="span-24 last subTotal">
-						<h2 class="span-2">Szállítási cím</h2>
-						<div class="span-4">
-							<select name="address" id="address" {% if changable == False %}disabled="disabled" {% endif%} style="width: 120px">
-								{% for itemAddress in user.addresses %}
-									<option value="{{itemAddress.key()}}" label="{{itemAddress.street}} {{itemAddress.streetNumber}}" {% if address and address != None and address.key() == itemAddress.key() %}selected="selected"{% endif %}></option>
-								{% endfor %}
-							</select><br/>
-						</div>
-						<strong>Megjegyzés: </strong><input style="width: 300px;" type="text" name="message" id="message"/>
-					</div>
-					<div class="span-24 total last">
-						<input id="toCartButton" type="submit" name="" value="Megrendelés" id=""/>
-					</div>
-				</form>
-				{% else %}
+			{% endif %}
+			</div>
+			<div class="span-22">
+				&nbsp;<br/>
+				&nbsp;
+			</div>
+			
+			<div class="span-11">
+			<strong>Mákos beigli - 300g</strong><br/>
+			Saját készítésű gluténmentes beigli. Főzött mák-töltelékkel.<br/>
+			<strong>1200 Ft</strong><br/>
+			{% if user %}
+				<div>
+					<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('makos')"/>
+					<input class="orderQuantity" onkeyup="validateQuantityNotNegative('makos')" type="text" id="makos" name="makos" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
+					<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('makos')"/>
+					<br/>
 				</div>
-				<strong>Rendeléshez jelentkezzen be!</strong>
-				{% endif %}
-		</div>
+			{% endif %}
+			</div>
+			<div class="span-11">
+			<strong>Diós beigli - 300g</strong><br/>
+			Saját készítésű gluténmentes beigli, igazi dióból.<br/>
+			<strong>1500 Ft</strong><br/>
+			{% if user %}
+				<div>
+					<img style="height: 19px; width:14px; vertical-align: middle;" src="img/minus.png" onclick="decrementQuantityNotNegative('dios')"/>
+					<input class="orderQuantity" onkeyup="validateQuantityNotNegative('dios')" type="text" id="dios" name="dios" value={% if inCurrentOrder %}"{{ inCurrentOrder}}"{% else %}"0"{% endif %}/>
+					<img style="height: 17px; width:17px; vertical-align: middle;" src="img/plus.png" onclick="incrementQuantity('dios')"/>
+					<br/>
+				</div>
+			{% endif %}
+			</div>
+			{% if user %}
+				<div class="span-24 last subTotal">
+					<h2 class="span-2">Szállítási cím</h2>
+					<div class="span-4">
+						<select name="address" id="address" {% if changable == False %}disabled="disabled" {% endif%} style="width: 120px">
+							{% for itemAddress in user.addresses %}
+								<option value="{{itemAddress.key()}}" label="{{itemAddress.street}} {{itemAddress.streetNumber}}" {% if address and address != None and address.key() == itemAddress.key() %}selected="selected"{% endif %}></option>
+							{% endfor %}
+						</select><br/>
+					</div>
+					<strong>Megjegyzés: </strong><input style="width: 300px;" type="text" name="message" id="message"/>
+				</div>
+				<div class="span-24 total last">
+					<input id="toCartButton" type="submit" name="" value="Megrendelés" id=""/>
+				</div>
+			</form>
+			{% else %}
+			</div>
+			<strong>Rendeléshez jelentkezzen be!</strong>
+			{% endif %}
 	</div>
 </div>
