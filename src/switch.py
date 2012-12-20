@@ -29,7 +29,7 @@ from siteAdmin import SetupPage, AdminConsolePage,\
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
 from christmasLunch import ChristmasLunchPage, InitChristmasLunchPage
-from webshopAdmin import ItemListPage
+from webshopAdmin import ItemListPage, UsersOrdersPage
 from webshopUser import UserWebshopOrderListPage, UserWebshopOrderDetailsPage, UserWebshopPostMessagePage,\
 	WebshopItemDetailsPage
 
@@ -70,6 +70,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										
 										('/webshopItem', WebshopItemDetailsPage),
 										('/webshopUserOrder', UserWebshopOrderDetailsPage),
+										('/usersOrders', UsersOrdersPage),
 										('/postOrderComment', UserWebshopPostMessagePage),
 
 										('/about', AboutPage),

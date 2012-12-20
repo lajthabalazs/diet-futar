@@ -4,7 +4,7 @@ import jinja2
 import os
 
 from base_handler import BaseHandler
-from model import User, Role, ROLE_ADMIN
+from model import User, Role
 from user_management import isUserAdmin, getUser, USER_KEY
 from google.appengine.api.datastore_errors import BadKeyError
 #from user_management import getUserBox
@@ -20,13 +20,13 @@ class UserListPage(BaseHandler):
 			self.redirect("/")
 			return
 		pageText=self.request.get("page")
-		pageSize=10
+		pageSize=20
 		actualPage=0
 		if (pageText!=None and pageText!=""):
 			actualPage=int(pageText)-1
 		orderByText=self.request.get("order")
 		if (orderByText==None or orderByText==""):
-			orderByText='registrationDate'
+			orderByText='name'
 		userCount=User.all().count()
 		roles=Role.all().order("name")
 		usersToDisplay=User.all().order(orderByText).run(offset=actualPage*pageSize, limit=pageSize)

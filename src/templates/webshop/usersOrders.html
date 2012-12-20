@@ -1,0 +1,22 @@
+﻿{% from '/templates/macros.html' import humanReadableOrderState %}
+<div class="mainBg staticPage">
+	<div class="container">
+		<h2>Rendelések</h2>
+		<table width="400px">
+		<tr><th>Rendelés időpontja</th><th>Szállítási cím</th><th>Felhasználó</th><th>Termék</th><th>Mennyiség</th><th>Státusz</th><th>Teljes ár</th></tr>
+		{% for order in orders %}
+			<tr>
+				<td><a href="/webshopUserOrder?orderKey={{ order.key() }}">{{ order.orderDate.strftime('%Y-%m-%d %H:%M:%S') }}</a></td>
+				<td>{{ order.addressString }}</td>
+				<td><a href="/userOverview?userKey={{ order.user.key() }}">{{ order.user.familyName }} {{ order.user.givenName }}</a></td>
+				<td><a href="/webshopItem?itemKey={{ order.item.key() }}">{{ order.item.title }}</a></td>
+				<td>{{ order.orderQuantity }}</td>
+				<td>
+					{{ humanReadableOrderState(order) }}
+				</td>
+				<td>{{ order.price }} Ft</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

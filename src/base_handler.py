@@ -198,9 +198,13 @@ class BaseHandler(webapp2.RequestHandler):
 			toDeliver["target"]="/deliveryReviewOrders"
 			topMenu.append(toDeliver)
 			webShop={}
-			webShop["label"]="WebShop"
+			webShop["label"]="Term&eacute;kek"
 			webShop["target"]="/itemList"
 			topMenu.append(webShop)
+			webShopOrder={}
+			webShopOrder["label"]="WebShop"
+			webShopOrder["target"]="/usersOrders"
+			topMenu.append(webShopOrder)
 			ingredients={}
 			ingredients["label"]="Alapanyagok"
 			ingredients["target"]="/ingredient"
