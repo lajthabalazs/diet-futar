@@ -26,7 +26,7 @@ class UserListPage(BaseHandler):
 			actualPage=int(pageText)-1
 		orderByText=self.request.get("order")
 		if (orderByText==None or orderByText==""):
-			orderByText='name'
+			orderByText='familyName'
 		userCount=User.all().count()
 		roles=Role.all().order("name")
 		usersToDisplay=User.all().order(orderByText).run(offset=actualPage*pageSize, limit=pageSize)
