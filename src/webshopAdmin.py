@@ -31,7 +31,16 @@ class UsersOrdersPage(BaseHandler):
 		if not isUserAdmin(self):
 			self.redirect("/")
 			return
-		orders = WebshopOrderItem.all().order('orderDate')
+		orders = WebshopOrderItem.all().order("-orderDate")
+		orderedOrders = sorted(orders, key=lambda order: order.orderDate, reverse=True)
+		orders = []
+		for order in orderedOrders:
+			order.addressString = order.address.zipCode + " " + order.address.street + " " + order.address.streetNumber
+			order.price = order.item.price * order.orderQuantity
+			orders.append(order)
+		template_values = {
+			'orders':orders
+		}
 		template_values = {
 			'orders':orders
 		}

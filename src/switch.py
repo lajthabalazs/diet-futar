@@ -110,7 +110,7 @@ app = webapp2.WSGIApplication([('/', MenuOrderPage),
 										('/itemList', ItemListPage),
 
 										('/userList', UserListPage),
-										('/usersOrders', WeeksListPage),
+										('/weeksList', WeeksListPage),
 										('/userOverview', UserOverviewPage),
 										('/switchToUser', SwitchToUserPage),
 										],
