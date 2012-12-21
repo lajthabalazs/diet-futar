@@ -135,7 +135,7 @@ class DeliveryReviewOrdersPage(BaseHandler):
 				for item in items:
 					dayCount = dayCount + 1
 					dayQuantity = dayQuantity + item['orderedQuantity']
-					dayTotal = dayTotal + dayQuantity * item['price']
+					dayTotal = dayTotal + item['orderedQuantity'] * item['price']
 				orderAddress = getOrderAddress(week, day)
 				if orderAddress == None:
 					orderAddress = week.user.addresses
