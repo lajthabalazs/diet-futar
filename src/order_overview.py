@@ -131,16 +131,19 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		deliveries = []
 		for week in weeks:
 			items = getOrderedItemsFromWeekData(week, day)
+			dailyUserTotal = 0
 			if len(items) > 0:
 				for item in items:
 					dayCount = dayCount + 1
 					dayQuantity = dayQuantity + item['orderedQuantity']
 					dayTotal = dayTotal + item['orderedQuantity'] * item['price']
+					dailyUserTotal = dailyUserTotal + item['orderedQuantity'] * item['price']
 				orderAddress = getOrderAddress(week, day)
 				if orderAddress == None:
-					orderAddress = week.user.addresses
+					orderAddress = week.user.addresses.get(0)
 				orderAddress.orderedItems = items
 				orderAddress.week = week
+				orderAddress.dailyUserTotal = dailyUserTotal
 				deliveries.append(orderAddress)
 		sortedDeliveries = sorted(deliveries, key=lambda item:item.zipCode)
 		admins=Role.all().filter("name = ", ROLE_ADMIN)[0].users
