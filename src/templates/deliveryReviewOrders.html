@@ -5,7 +5,10 @@
 		{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
 		<br/>
 		{{ day.date }} <br/>
-		{{ day.day }}
+		{{ day.day }} <br/>
+		Elemek: {{ dayCount}}<br/>
+		Mennyiség: {{ dayQuantity}}<br/>
+		Összesen: {{ dayTotal}} Ft
 		<table border="1">
 			<tr>
 				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th>

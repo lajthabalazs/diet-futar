@@ -117,6 +117,9 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		day=getBaseDate(self)
 		calendar=day.isocalendar()
 		#Organize into days
+		dayTotal = 0
+		dayCount = 0
+		dayQuantity = 0
 		dayObject={}
 		dayObject["day"]=dayNames[calendar[2]-1]
 		dayObject["date"]=day
@@ -129,6 +132,10 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		for week in weeks:
 			items = getOrderedItemsFromWeekData(week, day)
 			if len(items) > 0:
+				for item in items:
+					dayCount = dayCount + 1
+					dayQuantity = dayQuantity + item['orderedQuantity']
+					dayTotal = dayTotal + dayQuantity * item['price']
 				orderAddress = getOrderAddress(week, day)
 				if orderAddress == None:
 					orderAddress = week.user.addresses
@@ -146,7 +153,10 @@ class DeliveryReviewOrdersPage(BaseHandler):
 			'actual':today,
 			'orders':sortedDeliveries,
 			'day':dayObject,
-			'deliverers':deliverers
+			'deliverers':deliverers,
+			'dayTotal': dayTotal,
+			'dayCount' : dayCount,
+			'dayQuantity' : dayQuantity
 		}
 		template_values['prev'] = prevDay
 		template = jinja_environment.get_template('templates/deliveryReviewOrders.html')
