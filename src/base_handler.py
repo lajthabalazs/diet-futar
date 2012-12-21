@@ -112,7 +112,8 @@ def getOrderBaseDate(handler):
 	else:
 		#Organize into days
 		if day.weekday()==4:
-			day=day+datetime.timedelta(days=3)
+			pass
+		#	day=day+datetime.timedelta(days=3)
 		elif day.weekday()==5:
 			day=day+datetime.timedelta(days=2)
 		elif day.weekday()==6:
@@ -130,12 +131,11 @@ def getBaseDate(handler):
 		calendar=day.isocalendar()
 		#Organize into days
 		if calendar[2]==4 and datetime.datetime.now().hour > 16:
-			day=day+datetime.timedelta(days=4)
+			pass
+			#day=day+datetime.timedelta(days=3)
 		elif calendar[2]==5:
-			day=day+datetime.timedelta(days=3)
-		elif calendar[2]==6:
 			day=day+datetime.timedelta(days=2)
-		elif calendar[2]==7:
+		elif calendar[2]==6:
 			day=day+datetime.timedelta(days=1)
 	return day
 
