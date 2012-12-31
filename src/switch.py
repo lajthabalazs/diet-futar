@@ -23,7 +23,7 @@ from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
-	ContactsPage
+	ContactsPage, NewYearPage
 from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage
 from userWeeks import WeeksListPage
@@ -38,7 +38,9 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 config = {}
 config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key'}
 # Check if site is under maintenence
-app = webapp2.WSGIApplication([('/', MenuOrderPage),
+app = webapp2.WSGIApplication([
+										('/', NewYearPage),
+										#('/', MenuOrderPage),
 										('/setup', SetupPage),
 										('/siteAdmin', AdminConsolePage),
 										('/maintenence', MaintenencePage),

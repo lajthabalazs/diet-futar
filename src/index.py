@@ -30,3 +30,8 @@ class GooglePage(webapp2.RequestHandler):
 	def get(self):
 		template = jinja_environment.get_template('templates/google24f0feb13afae7e0.html')
 		self.response.out.write(template.render())
+
+class NewYearPage(BaseHandler):
+	def get(self):
+		template = jinja_environment.get_template('templates/newYear.html')
+		self.printPage("Boldog &Uacute; &Eacute;vet!", template.render(), True, True)
