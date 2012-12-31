@@ -100,13 +100,13 @@ class EveryUsersOrderPage(BaseHandler):
 			for i in range(0, maxWeeks):
 				actualMonday = monday + datetime.timedelta(days = (i - maxWeeks + 1) * 7)
 				weeks = user.weeks.filter("monday = ", actualMonday)
-				if (weeks.count() == 1):
-					week = weeks.get()
-					weekTotal = getOrderTotal(week)
+				if (weeks.count() > 0):
+					weekTotal = getOrderTotal(weeks)
 					weekTotals[i]['total'] = weekTotals[i]['total'] + weekTotal
 					computedWeek = {
 						'itemPrice': weekTotal,
-						'key': week.key(),
+						'userKey':user.key(),
+						'day': actualMonday,
 					}
 					orderTotal = orderTotal + weekTotal
 				else:

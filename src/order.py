@@ -22,27 +22,40 @@ ACTUAL_ORDER="actualOrder"
 FURTHEST_DAY_DISPLAYED=14
 dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
 
-def getOrderedItemsFromWeekData (week, day):
+def getOrderedItemsFromWeekData (weeks, day):
+	orderedMenuItemIndexes={}
+	orderedCompositIndexes={}
 	orderedMenuItems=[]
 	orderedComposits=[]
-	for menuItemString in week.orderedMenuItems:
-		parts = menuItemString.split(" ")
-		orderedQuantity = int(parts[0])
-		menuItemKey = parts[1]
-		menuItem = getMenuItem(menuItemKey)
-		if menuItem != None and menuItem['day'] == day:
-			menuItem['orderedQuantity'] = orderedQuantity
-			menuItem['isMenuItem'] = True
-			orderedMenuItems.append(menuItem)
-	for compositString in week.orderedComposits:
-		parts = compositString.split(" ")
-		orderedQuantity = int(parts[0])
-		compositKey = parts[1]
-		composit = getComposit(compositKey)
-		if composit != None and composit['day'] == day:
-			composit['orderedQuantity'] = orderedQuantity
-			composit['isMenuItem'] = False
-			orderedComposits.append(composit)
+	for week in weeks:
+		for menuItemString in week.orderedMenuItems:
+			parts = menuItemString.split(" ")
+			orderedQuantity = int(parts[0])
+			menuItemKey = parts[1]
+			menuItem = getMenuItem(menuItemKey)
+			if menuItem != None and menuItem['day'] == day:
+				if orderedMenuItemIndexes.has_key(menuItemKey):
+					index = orderedMenuItemIndexes.get(menuItemKey)
+					orderedMenuItems[index]['orderedQuantity'] = orderedQuantity + orderedMenuItems[index]['orderedQuantity']
+				else:
+					menuItem['orderedQuantity'] = orderedQuantity
+					menuItem['isMenuItem'] = True
+					orderedMenuItemIndexes[menuItemKey] = len(orderedMenuItems)
+					orderedMenuItems.append(menuItem)
+		for compositString in week.orderedComposits:
+			parts = compositString.split(" ")
+			orderedQuantity = int(parts[0])
+			compositKey = parts[1]
+			composit = getComposit(compositKey)
+			if composit != None and composit['day'] == day:
+				if orderedCompositIndexes.has_key(compositKey):
+					index = orderedCompositIndexes.get(compositKey)
+					orderedComposits[index]['orderedQuantity'] = orderedQuantity + orderedComposits[index]['orderedQuantity']
+				else:
+					composit['orderedQuantity'] = orderedQuantity
+					composit['isMenuItem'] = False
+					orderedCompositIndexes[compositKey] = len(orderedComposits)
+					orderedComposits.append(composit)
 	orderedItems = []
 	orderedItems.extend(orderedComposits)
 	orderedItems.extend(orderedMenuItems)
@@ -67,36 +80,39 @@ def getOrderAddress (week, day):
 def getUserOrdersForWeek(user, monday):
 	userOrders={}
 	weeks = user.weeks.filter("monday = ", monday)
-	if (weeks.count() == 1):
-		week = weeks.get()
+	if (weeks.count() > 0):
+		for week in weeks:
+			for orderedComposit in week.orderedComposits:
+				parts = orderedComposit.split(" ")
+				orderedQuantity = int(parts[0])
+				orderedItemKey = parts[1]
+				if (userOrders.has_key(orderedItemKey)):
+					orderedQuantity = orderedQuantity + userOrders[orderedItemKey]
+				userOrders[orderedItemKey] = orderedQuantity
+			for orderedMenuItem in week.orderedMenuItems:
+				parts = orderedMenuItem.split(" ")
+				orderedQuantity = int(parts[0])
+				orderedItemKey = parts[1]
+				userOrders[orderedItemKey] = orderedQuantity
+	return userOrders
+
+def getOrderTotal(weeks):
+	orderTotal = 0
+	for week in weeks:
 		for orderedComposit in week.orderedComposits:
 			parts = orderedComposit.split(" ")
 			orderedQuantity = int(parts[0])
 			orderedItemKey = parts[1]
-			userOrders[orderedItemKey] = orderedQuantity
+			composit = getComposit(orderedItemKey)
+			if composit['price'] != 0:
+				orderTotal = orderTotal + composit['price'] * orderedQuantity
 		for orderedMenuItem in week.orderedMenuItems:
 			parts = orderedMenuItem.split(" ")
 			orderedQuantity = int(parts[0])
 			orderedItemKey = parts[1]
-			userOrders[orderedItemKey] = orderedQuantity
-	return userOrders
-
-def getOrderTotal(week):
-	orderTotal = 0
-	for orderedComposit in week.orderedComposits:
-		parts = orderedComposit.split(" ")
-		orderedQuantity = int(parts[0])
-		orderedItemKey = parts[1]
-		composit = getComposit(orderedItemKey)
-		if composit['price'] != 0:
-			orderTotal = orderTotal + composit['price'] * orderedQuantity
-	for orderedMenuItem in week.orderedMenuItems:
-		parts = orderedMenuItem.split(" ")
-		orderedQuantity = int(parts[0])
-		orderedItemKey = parts[1]
-		menuItem = getMenuItem(orderedItemKey)
-		if menuItem['price'] != 0:
-			orderTotal = orderTotal + menuItem['price'] * orderedQuantity
+			menuItem = getMenuItem(orderedItemKey)
+			if menuItem['price'] != 0:
+				orderTotal = orderTotal + menuItem['price'] * orderedQuantity
 	return orderTotal
 
 class MenuOrderPage(BaseHandler):
@@ -256,7 +272,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			userKey = self.session.get(USER_KEY,None)
 			if (userKey != None):
 				user = User.get(userKey)
-				getUserOrdersForWeek(user, monday)
+				#userOrders = getUserOrdersForWeek(user, monday)
 			#Organize into days
 			menu=[] #Contains menu items
 			actualOrder=self.session.get(ACTUAL_ORDER,[])
@@ -391,10 +407,6 @@ class ReviewOrderedMenuPage(BaseHandler):
 		firstOrderableDay=getFirstOrderableDate(self);
 		user = getUser(self)
 		weeks = user.weeks.filter("monday = ", monday)
-		if (weeks.count() > 0):
-			week = weeks.get()
-		else:
-			week = UserWeekOrder()
 		days=[]
 		for i in range(0,5):
 			actualDayObject={}
@@ -404,7 +416,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 				actualDayObject["changable"] = False
 			else:
 				actualDayObject["changable"] = True
-			daysOrderItems=getOrderedItemsFromWeekData(week, actualDay)
+			daysOrderItems = getOrderedItemsFromWeekData(weeks, actualDay)
 			actualDayObject['orderedItems'] = daysOrderItems
 			for orderedItem in daysOrderItems:
 				try:
@@ -415,6 +427,10 @@ class ReviewOrderedMenuPage(BaseHandler):
 			actualDayObject['date'] = actualDay
 			actualDayObject["orderedPrice"] = orderedPrice
 			if daysOrderItems != None and len(daysOrderItems)>0:
+				if (weeks.count() > 0):
+					week = weeks.get()
+				else:
+					week = UserWeekOrder()
 				address = getOrderAddress(week, actualDay)
 				if address == None:
 					address = user.addresses.get()

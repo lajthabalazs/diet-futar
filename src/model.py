@@ -4,7 +4,6 @@ Created on Aug 11, 2012
 @author: lajthabalazs
 '''
 from google.appengine.ext import db
-from google.appengine._internal.django.template.defaultfilters import date
 import datetime
 
 ROLE_ADMIN="admin"

@@ -130,7 +130,7 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		weeks = UserWeekOrder.all().filter('monday = ', monday)
 		deliveries = []
 		for week in weeks:
-			items = getOrderedItemsFromWeekData(week, day)
+			items = getOrderedItemsFromWeekData([week], day)
 			dailyUserTotal = 0
 			if len(items) > 0:
 				for item in items:
@@ -178,7 +178,7 @@ class DeliveryPage(BaseHandler):
 		for i in range(0,5):
 			day = {}
 			actualDay = week.monday + datetime.timedelta(days=i)
-			daysOrderItems = getOrderedItemsFromWeekData(week, actualDay)
+			daysOrderItems = getOrderedItemsFromWeekData([week], actualDay)
 			address=getOrderAddress(week, actualDay)
 			day['orderedItems'] = daysOrderItems
 			day['day']=dayNames[i]
