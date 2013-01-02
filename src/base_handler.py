@@ -284,15 +284,6 @@ class BaseHandler(webapp2.RequestHandler):
 		weeklyOrderMenu["label"]="Heti aj&#225;nlat"
 		weeklyOrderMenu["target"]="/order"
 		menuItems.append(weeklyOrderMenu)
-		if (isUserLoggedIn(self)):
-			ownMenu={}
-			ownMenu["label"]="Men&#252;m"
-			ownMenu["target"]="/personalMenu"
-			menuItems.append(ownMenu)
-		christmasMenu={}
-		christmasMenu["label"]="Kar&aacute;csonyi eb&eacute;d"
-		christmasMenu["target"]="/christmasLunch"
-		menuItems.append(christmasMenu)
 		aboutDelivery={}
 		aboutDelivery["label"]="Rendel&eacute;si felt&eacute;telek"
 		aboutDelivery["target"]="/aboutDelivery"
