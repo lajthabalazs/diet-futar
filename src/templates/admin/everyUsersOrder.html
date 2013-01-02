@@ -23,7 +23,7 @@
 							{% if week.itemPrice == 0 %}
 								-
 							{% else %}
-								<a href="/deliverable?weekKey={{ week.key }}">{{week.itemPrice}} Ft</a>
+								<a href="/deliverable?monday={{ week.monday }}&userKey={{user.key()}}">{{week.itemPrice}} Ft</a>
 							{% endif %}
 						</td>
 					{% endfor %}

@@ -22,6 +22,10 @@ ACTUAL_ORDER="actualOrder"
 FURTHEST_DAY_DISPLAYED=14
 dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
 
+def isMenuItem(key):
+	# What better way than to get it from cache
+	return (getMenuItem(key) != None)
+
 def getOrderedItemsFromWeekData (weeks, day):
 	orderedMenuItemIndexes={}
 	orderedCompositIndexes={}
@@ -77,24 +81,38 @@ def getOrderAddress (week, day):
 	elif day.weekday() == 6:
 		return week.sundayAddress
 
+def getOrdersFromWeeks(weeks):
+	orders={}
+	for week in weeks:
+		for orderedComposit in week.orderedComposits:
+			parts = orderedComposit.split(" ")
+			orderedQuantity = int(parts[0])
+			orderedItemKey = parts[1]
+			oldValue = 0
+			try:
+				oldValue = int(orders[orderedItemKey])
+			except:
+				pass
+			orders[orderedItemKey] = orderedQuantity + oldValue
+		for orderedMenuItem in week.orderedMenuItems:
+			parts = orderedMenuItem.split(" ")
+			orderedQuantity = int(parts[0])
+			orderedItemKey = parts[1]
+			oldValue = 0
+			try:
+				oldValue = int(orders[orderedItemKey])
+			except:
+				pass
+			orders[orderedItemKey] = orderedQuantity + oldValue
+	return orders
+
+def getOrdersForWeek(monday):
+	weeks = UserWeekOrder.all().filter("monday = ", monday)
+	return getOrdersFromWeeks(weeks)
+
 def getUserOrdersForWeek(user, monday):
-	userOrders={}
 	weeks = user.weeks.filter("monday = ", monday)
-	if (weeks.count() > 0):
-		for week in weeks:
-			for orderedComposit in week.orderedComposits:
-				parts = orderedComposit.split(" ")
-				orderedQuantity = int(parts[0])
-				orderedItemKey = parts[1]
-				if (userOrders.has_key(orderedItemKey)):
-					orderedQuantity = orderedQuantity + userOrders[orderedItemKey]
-				userOrders[orderedItemKey] = orderedQuantity
-			for orderedMenuItem in week.orderedMenuItems:
-				parts = orderedMenuItem.split(" ")
-				orderedQuantity = int(parts[0])
-				orderedItemKey = parts[1]
-				userOrders[orderedItemKey] = orderedQuantity
-	return userOrders
+	return getOrdersFromWeeks(weeks)
 
 def getOrderTotal(weeks):
 	orderTotal = 0
@@ -511,7 +529,10 @@ class ConfirmOrder(BaseHandler):
 			return
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
 		firstOrderableDay = getFirstOrderableDate(self)
+
 		if (len(actualOrder) > 0):
+			# Organize actual order into weeks
+			ordersInWeeks = {} # A map holding ordered items with ordered quantiy
 			for orderKey in actualOrder.keys():
 				orderItemCount = int(actualOrder[orderKey])
 				if (orderItemCount != 0):
@@ -520,50 +541,37 @@ class ConfirmOrder(BaseHandler):
 					if day < firstOrderableDay:
 						continue
 					monday = getMonday(day)
+					if ordersInWeeks.has_key(monday):
+						weekHolder = ordersInWeeks.get(monday)
+					else:
+						weekHolder = []
+					orderItem = {
+						'key' : orderKey,
+						'quantity' : orderItemCount
+					}
+					weekHolder.append(orderItem)
+					ordersInWeeks[monday] = weekHolder
+			# Go through order week by week
+			if len(ordersInWeeks) > 0:
+				for monday in ordersInWeeks.keys():
+					weekHolder = ordersInWeeks.get(monday)
+					alreadyOrdered = getUserOrdersForWeek(user, monday)
+					# Merge orders for the week
+					for item in weekHolder:
+						orderedQuantity = item['quantity']
+						orderItemKey = item['key']
+						if alreadyOrdered.has_key(orderItemKey):
+							orderedQuantity = orderedQuantity + alreadyOrdered.get(orderItemKey)
+						if (orderedQuantity > 0):
+							alreadyOrdered[orderItemKey] = orderedQuantity
+						else:
+							alreadyOrdered.pop(orderItemKey, 0)
+					# Add stuff to the first week the user created
 					weeks = user.weeks.filter("monday = ", monday)
-					week = None
-					alreadyOrdered = 0
 					if (weeks.count() > 0):
 						week = weeks.get()
-						if type(item) == MenuItem:
-							newItems = []
-							itemExists = False
-							for item in week.orderedMenuItems:
-								parts = item.split(" ")
-								weekItemQuantity = parts[0]
-								weekItemKey = parts[1]
-								if weekItemKey == orderKey:
-									itemExists = True
-									alreadyOrdered = int(weekItemQuantity) + orderItemCount
-									if (alreadyOrdered > 0):
-										newItem = str(alreadyOrdered) + " " + orderKey
-										newItems.append(newItem)
-								else:
-									newItems.append(item)
-							if ((not itemExists) and orderItemCount > 0):
-								newItem = str(orderItemCount) + " " + orderKey
-								newItems.append(newItem)
-							week.orderedMenuItems = newItems
-						else:
-							newItems = []
-							itemExists = False
-							for item in week.orderedComposits:
-								parts = item.split(" ")
-								weekItemQuantity = parts[0]
-								weekItemKey = parts[1]
-								if weekItemKey == orderKey:
-									itemExists = True
-									alreadyOrdered = int(weekItemQuantity) + orderItemCount
-									if (alreadyOrdered > 0):
-										newItem = str(alreadyOrdered) + " " + orderKey
-										newItems.append(newItem)
-								else:
-									newItems.append(item)
-							if ((not itemExists) and orderItemCount > 0):
-								newItem = str(orderItemCount) + " " + orderKey
-								newItems.append(newItem)
-							week.orderedComposits = newItems
 					else:
+						week = UserWeekOrder()
 						week = UserWeekOrder()
 						week.user = user
 						week.monday = monday
@@ -576,29 +584,34 @@ class ConfirmOrder(BaseHandler):
 						week.fridayAddress = defaultAddress
 						week.saturdayAddress = defaultAddress
 						week.sundayAddress = defaultAddress
-						if orderItemCount > 0:
-							newItems = []
-							newItem = str(orderItemCount) + " " + orderKey
-							newItems.append(newItem)
-							if type(item) == MenuItem:
-								week.orderedMenuItems = newItems
+					
+					orderedMenuItems = []
+					orderedComposits = []
+					for itemKey in alreadyOrdered.keys():
+							newItem = str(alreadyOrdered.get(itemKey)) + " " + itemKey
+							if isMenuItem(itemKey):
+								orderedMenuItems.append(newItem)
 							else:
-								week.orderedComposits = newItems
+								orderedComposits.append(newItem)
+					week.orderedMenuItems = orderedMenuItems
+					week.orderedComposits = orderedComposits
 					week.put()
-			template_values = {
-				"user":user
-			}
-			# Send email notification to the user
-			messageTxtTemplate = jinja_environment.get_template('templates/orderNotificationMail.txt')
-			messageHtmlTemplate = jinja_environment.get_template('templates/orderNotificationMail.html')
-			message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
-			message.subject="Diet-futar, rendeles visszaigazolasa"
-			message.to = user.email
-			message.body = messageTxtTemplate.render(template_values)
-			message.html = messageHtmlTemplate.render(template_values)
-			message.send()
-			self.session[ACTUAL_ORDER]={}
-			#self.response.out.write(messageTemplate.render(template_values));
-			self.redirect("/personalMenu")
+				template_values = {
+					"user":user
+				}
+				# Send email notification to the user
+				messageTxtTemplate = jinja_environment.get_template('templates/orderNotificationMail.txt')
+				messageHtmlTemplate = jinja_environment.get_template('templates/orderNotificationMail.html')
+				message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
+				message.subject="Diet-futar, rendeles visszaigazolasa"
+				message.to = user.email
+				message.body = messageTxtTemplate.render(template_values)
+				message.html = messageHtmlTemplate.render(template_values)
+				message.send()
+				self.session[ACTUAL_ORDER]={}
+				#self.response.out.write(messageTemplate.render(template_values));
+				self.redirect("/personalMenu")
+			else:
+				print "Error #100: Can't process orders."
 		else:
-			print "Nothing to confirm"
+				print "Error #100: Can't process orders."

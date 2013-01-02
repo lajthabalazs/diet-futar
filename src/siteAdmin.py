@@ -106,7 +106,7 @@ class EveryUsersOrderPage(BaseHandler):
 					computedWeek = {
 						'itemPrice': weekTotal,
 						'userKey':user.key(),
-						'day': actualMonday,
+						'monday': actualMonday,
 					}
 					orderTotal = orderTotal + weekTotal
 				else:

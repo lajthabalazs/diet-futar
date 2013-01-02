@@ -48,6 +48,8 @@ def getComposit(key):
 	composit = client.get(key)
 	if composit == None:
 		compositDb = Composit.get(key)
+		if compositDb == None:
+			return None
 		composit = createCompositData(compositDb)
 		client.set(key,composit)
 	# Fetch menu item data for keys

@@ -53,6 +53,8 @@ def getMenuItem(key):
 	menuItem = client.get(key)
 	if menuItem == None:
 		menuItemDb = MenuItem.get(key)
+		if menuItemDb == None:
+			return None
 		menuItem = createMenuItemData(menuItemDb)
 		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitems

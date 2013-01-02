@@ -5,11 +5,11 @@
 		Ételek <strong>{{orderTotal}} Ft</strong>, Szállítás: <strong>{{deliveryTotal}} Ft</strong> Összesen: <strong>{{total}} Ft</strong>
 		<div class="span-24 last calendar">
 			<div class="span-24 last calendarHeader">
-				{% if prev %}<a href="/deliverable?weekKey={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
+				{% if prev %}<a href="/deliverable?monday={{ prev }}&userKey={{ user.key() }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
 				{% for day in days %}
 					<div class="span-4"><h3>{{ day.day }}</h3>{{ day.date }}</div>
 				{% endfor%}
-				{% if next %}<a href="/deliverable?weekKey={{ next }}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
+				{% if next %}<a href="/deliverable?monday={{ next }}&userKey={{user.key()}}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
 			</div>
 
 			<div class="span-24 last calendarRow">

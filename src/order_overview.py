@@ -5,8 +5,10 @@ import os
 
 from base_handler import BaseHandler, getBaseDate, getMonday, getDeliveryCost
 import datetime
-from model import ROLE_ADMIN, Role, ROLE_DELIVERY_GUY, UserWeekOrder, Address
-from order import dayNames, getOrderAddress, getOrderedItemsFromWeekData
+from model import ROLE_ADMIN, Role, ROLE_DELIVERY_GUY, UserWeekOrder, Address,\
+	User
+from order import dayNames, getOrderAddress, getOrderedItemsFromWeekData,\
+	getOrdersForWeek
 from user_management import isUserCook, isUserDelivery
 from cache_dish_category import getDishCategories
 from cache_menu_item import getDaysMenuItems
@@ -15,32 +17,6 @@ from cache_composit import getDaysComposits
 ACTUAL_ORDER="actualOrder"
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-
-def getOrdersForWeek(monday):
-	orders={}
-	weeks = UserWeekOrder.all().filter("monday = ", monday)
-	for week in weeks:
-		for orderedComposit in week.orderedComposits:
-			parts = orderedComposit.split(" ")
-			orderedQuantity = int(parts[0])
-			orderedItemKey = parts[1]
-			oldValue = 0
-			try:
-				oldValue = int(orders[orderedItemKey])
-			except:
-				pass
-			orders[orderedItemKey] = orderedQuantity + oldValue
-		for orderedMenuItem in week.orderedMenuItems:
-			parts = orderedMenuItem.split(" ")
-			orderedQuantity = int(parts[0])
-			orderedItemKey = parts[1]
-			oldValue = 0
-			try:
-				oldValue = int(orders[orderedItemKey])
-			except:
-				pass
-			orders[orderedItemKey] = orderedQuantity + oldValue
-	return orders
 
 #An accumulated overview of every ordered item
 class ChefReviewOrdersPage(BaseHandler):
@@ -170,16 +146,23 @@ class DeliveryPage(BaseHandler):
 		if not isUserDelivery(self):
 			self.redirect("/")
 			return	
-		weekKey=self.request.get("weekKey")
-		week=UserWeekOrder.get(weekKey)
+		userKey = self.request.get("userKey")
+		mondayString = self.request.get("monday")
+		monday = datetime.datetime.strptime(mondayString, "%Y-%m-%d").date()
+		user = User.get(userKey)
+		if user == None:
+			print "No user!"
+			return
+		weeks = user.weeks.filter("monday = ", monday)
+		referenceWeek = weeks.get()
 		days = []
 		weekOrderTotal = 0
 		weekDeliveryTotal = 0
 		for i in range(0,5):
 			day = {}
-			actualDay = week.monday + datetime.timedelta(days=i)
-			daysOrderItems = getOrderedItemsFromWeekData([week], actualDay)
-			address=getOrderAddress(week, actualDay)
+			actualDay = monday + datetime.timedelta(days=i)
+			daysOrderItems = getOrderedItemsFromWeekData(weeks, actualDay)
+			address=getOrderAddress(referenceWeek, actualDay)
 			day['orderedItems'] = daysOrderItems
 			day['day']=dayNames[i]
 			day['date'] = actualDay
@@ -202,19 +185,16 @@ class DeliveryPage(BaseHandler):
 				weekDeliveryTotal = weekDeliveryTotal + deliveryCost
 			days.append(day)
 		template_values = {
+			'user':user,
 			'days':days,
-			'week':week,
+			'week':referenceWeek,
 			'deliveryTotal':weekDeliveryTotal,
 			'orderTotal':weekOrderTotal,
 			'total':weekOrderTotal + weekDeliveryTotal,
 		}
-		prevMonday = week.monday + datetime.timedelta(days= -7)
-		prevWeeks = week.user.weeks.filter("monday = ", prevMonday)
-		if prevWeeks.count() > 0:
-			template_values['prev'] = prevWeeks.get().key()
-		nextMonday = week.monday + datetime.timedelta(days= 7)
-		nextWeeks = week.user.weeks.filter("monday = ", nextMonday)
-		if nextWeeks.count() > 0:
-			template_values['next'] = nextWeeks.get().key()
+		prevMonday = monday + datetime.timedelta(days= -7)
+		template_values['prev'] = prevMonday
+		nextMonday = monday + datetime.timedelta(days= 7)
+		template_values['next'] = nextMonday
 		template = jinja_environment.get_template('templates/delivery.html')
 		self.printPage(str(day), template.render(template_values), False, False)
