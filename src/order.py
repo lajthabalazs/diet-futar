@@ -553,6 +553,7 @@ class ConfirmOrder(BaseHandler):
 					ordersInWeeks[monday] = weekHolder
 			# Go through order week by week
 			if len(ordersInWeeks) > 0:
+				orderedItemsForMail = []
 				for monday in ordersInWeeks.keys():
 					weekHolder = ordersInWeeks.get(monday)
 					alreadyOrdered = getUserOrdersForWeek(user, monday)
@@ -560,6 +561,12 @@ class ConfirmOrder(BaseHandler):
 					for item in weekHolder:
 						orderedQuantity = item['quantity']
 						orderItemKey = item['key']
+						if isMenuItem(orderItemKey):
+							menuItem = getMenuItem(orderItemKey)
+							orderedItemsForMail.append(menuItem)
+						else:
+							composit = getComposit(orderItemKey)
+							orderedItemsForMail.append(composit)
 						if alreadyOrdered.has_key(orderItemKey):
 							orderedQuantity = orderedQuantity + alreadyOrdered.get(orderItemKey)
 						if (orderedQuantity > 0):
@@ -596,6 +603,7 @@ class ConfirmOrder(BaseHandler):
 					week.orderedMenuItems = orderedMenuItems
 					week.orderedComposits = orderedComposits
 					week.put()
+					
 				template_values = {
 					"user":user
 				}

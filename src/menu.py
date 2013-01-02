@@ -79,8 +79,6 @@ class MenuWeekEditPage(BaseHandler):
 			self.redirect("/")
 			return
 		day = getBaseDate(self)
-		#Determine the week
-		calendar=day.isocalendar()
 		#Organize into days
 		menu=[]
 		dishCategories=getDishCategories()

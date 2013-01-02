@@ -57,8 +57,11 @@ def getMenuItem(key):
 			return None
 		menuItem = createMenuItemData(menuItemDb)
 		client.set(key,menuItem)
-	# Fetch dish for menu item and fetch subitems
-	dish = getDish(menuItem['dishKey'])
+	# Fetch dish for menu item and fetch subitem
+	try:
+		dish = getDish(menuItem['dishKey'])
+	except KeyError:
+		return None
 	if dish == None:
 		menuItem['dish'] = dummyDish()
 		sumprice = 0
