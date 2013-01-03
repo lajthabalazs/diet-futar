@@ -2,8 +2,9 @@
 	<div class="container">
 		<h3>Statisztikák</h3>
 		<a href="/everyUsersOrder">Elmúlt 20 hét áttekintése</a>
-		<h3>Karácsonyi ebéd</h3>
-		<a href="/initChristmasLunch">Inicializálás</a>
+		<h3>Irányítószámok</h3>
+		<a href="/initializeZipCodes">Inicializálás</a><br/>
+		<a href="/editZipCodes">Szerkesztés</a>
 		<h3>Leállás</h3>
 		Korábbi leállások
 		<table>
@@ -12,7 +13,7 @@
 				<th>Karbantartás vége</th>
 				<th>Karbantartás igért vége</th>
 				<th>Karbantartás oka</th>
-				<th></th>
+				<th>Műveletek</th>
 			</tr>
 			{% for maintenence in maintenences %}
 				<tr>

@@ -25,7 +25,8 @@ from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage, NewYearPage
 from siteAdmin import SetupPage, AdminConsolePage,\
-	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage
+	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage,\
+	ZipCodeEditorPage
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
 from christmasLunch import ChristmasLunchPage, InitChristmasLunchPage
@@ -48,6 +49,8 @@ app = webapp2.WSGIApplication([
 										('/endMaintenence', EndMainenencePage),
 										('/everyUsersOrder', EveryUsersOrderPage),
 										('/initChristmasLunch', InitChristmasLunchPage),
+										('/editZipCodes', ZipCodeEditorPage),
+										
 										
 										('/google24f0feb13afae7e0.html', GooglePage),
 										('/login', LoginPage),

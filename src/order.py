@@ -290,9 +290,8 @@ class ReviewPendingOrderPage(BaseHandler):
 			userKey = self.session.get(USER_KEY,None)
 			if (userKey != None):
 				user = User.get(userKey)
-				#userOrders = getUserOrdersForWeek(user, monday)
 			#Organize into days
-			menu=[] #Contains menu items
+			menu=[]
 			actualOrder=self.session.get(ACTUAL_ORDER,[])
 			dishCategories=getDishCategories()
 			dayTotal = [0,0,0,0,0]

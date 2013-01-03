@@ -21,6 +21,9 @@ class Maintenence(db.Model):
 	features = db.StringProperty()
 	active = db.BooleanProperty()
 
+class ZipCodes(db.Model):
+	deliveryCosts = db.StringListProperty()
+
 class User(db.Model):
 	referNumber = db.IntegerProperty()
 	email = db.StringProperty()

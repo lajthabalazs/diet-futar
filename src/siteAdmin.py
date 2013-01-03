@@ -1,10 +1,11 @@
 from base_handler import BaseHandler, jinja_environment, getMonday
 from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, User,\
-	Maintenence, UserWeekOrder
+	Maintenence, UserWeekOrder, ZipCodes
 from user_management import isUserAdmin
 
 import datetime
 from order import getOrderTotal
+from zipCodeInit import createZipCodeList
 
 class AdminConsolePage(BaseHandler):
 	def get(self):
@@ -16,10 +17,13 @@ class AdminConsolePage(BaseHandler):
 			'maintenences':orderedMaintenences
 		}
 		template = jinja_environment.get_template('templates/admin/siteAdmin.html')
-		self.printPage("dashboard", template.render(template_values), True, True)
+		self.printPage("dashboard", template.render(template_values), False, False)
 
 class ScheduleMainenencePage(BaseHandler):
 	def post(self):
+		if not isUserAdmin(self):
+			self.printPage("Dashboard", "", True, True)
+			return
 		displayedDate = self.request.get('displayedDate')
 		features = self.request.get('features')
 		maintenence = Maintenence()
@@ -30,8 +34,61 @@ class ScheduleMainenencePage(BaseHandler):
 		maintenence.put()
 		self.redirect("/siteAdmin")
 
+class ZipCodeEditorPage(BaseHandler):
+	def get(self):
+		if not isUserAdmin(self):
+			self.printPage("Dashboard", "", True, True)
+			return
+		rawCodes = ZipCodes.all().get()
+		if (rawCodes == None):
+			rawCodes = ZipCodes()
+			zipCodeList = createZipCodeList()
+			rawCodes.deliveryCosts = zipCodeList
+			rawCodes.put()
+		codes = []
+		for code in rawCodes.deliveryCosts:
+			parts=code.rsplit(" ")
+			codes.append(
+				{
+					'code':parts[0],
+					'cost':parts[1],
+					'limit':parts[2]
+				})
+		template_values = {
+			'codes':codes
+		}
+		template = jinja_environment.get_template('templates/admin/zipCodeEditor.html')
+		self.printPage("dashboard", template.render(template_values), False, False)
+	def post(self):
+		codes = {}
+		for field in self.request.arguments():
+			code = field[:4]
+			if not codes.has_key(code):
+				codeObj = {}
+			else:
+				codeObj = codes[code]
+			if (field[4:8]=="_cst"):
+				codeObj['cost'] = int(self.request.get(field))
+			else:
+				codeObj['limit'] = int(self.request.get(field))
+			codes[code] = codeObj
+		sortedCodes =  sorted(codes.keys())
+		deliveryCosts = []
+		for code in sortedCodes:
+			deliveryCosts.append(code + " " + str(codes.get(code)['cost']) + " " + str(codes.get(code)['limit']))
+		rawCodes = ZipCodes.all().get()
+		if (rawCodes == None):
+			rawCodes = ZipCodes()
+		rawCodes.deliveryCosts = deliveryCosts
+		rawCodes.put()
+		self.redirect("/editZipCodes")
+
+
 class EndMainenencePage(BaseHandler):
 	def post(self):
+		if not isUserAdmin(self):
+			self.printPage("Dashboard", "", True, True)
+			return
 		maintenenceKey = self.request.get('maintenenceKey')
 		maintenence = Maintenence.get(maintenenceKey)
 		maintenence.active = False
@@ -121,5 +178,5 @@ class EveryUsersOrderPage(BaseHandler):
 			'weekTotals':weekTotals
 		}
 		template = jinja_environment.get_template('templates/admin/everyUsersOrder.html')
-		self.printPage("Rendel&eacute;sek", template.render(template_values), True, True)
+		self.printPage("Rendel&eacute;sek", template.render(template_values), False, False)
 		

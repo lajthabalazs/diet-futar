@@ -1,0 +1,19 @@
+<div class="mainBg staticPage">
+	<div class="container">
+		<h3>Szállítási költségek</h3>
+		<form method="post" action="/editZipCodes">
+			<table>
+				<tr><th>Irányítószám</th><th>Szállítási költség</th><th>Ingyenes határ</th></tr>
+				{% for code in codes %}
+					<tr>
+						<td>{{code.code}}</td>
+						<td><input id="{{code.code}}_cst" name="{{code.code}}_cst" type="text" value="{{code.cost}}"/></td>
+						<td><input id="{{code.code}}_lmt" name="{{code.code}}_lmt" type="text" value="{{code.limit}}"/></td>
+					</tr>
+				{% endfor %}
+				
+			</table>
+			<input type="submit" value="Mentés"/>
+		</form>
+	</div>
+</div>
