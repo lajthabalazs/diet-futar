@@ -90,6 +90,24 @@ def getDeliveryLimit(district):
 		return limits.get(district)
 	else:
 		return 5000
+
+def getZipBasedDeliveryCost(district, price):
+	if costs.has_key(district):
+		if (price < getDeliveryLimit(district)):
+			return costs.get(district)
+		else:
+			return 0
+	else:
+		if (price < getDeliveryLimit(district)):
+			return 1000
+		else:
+			return 0
+	
+def getZipBasedDeliveryLimit(district):
+	if limits.has_key(district):
+		return limits.get(district)
+	else:
+		return 5000
 	
 def getFirstOrderableDate(handler):
 	today=datetime.date.today()
