@@ -1,10 +1,18 @@
-﻿Kedves {{ user.familyName }} {{ user.givenName }}!
+﻿{% from '/templates/macros.txt' import menuItemTitleAndContentSmall, compositTitleAndContentSmall %}
+Kedves {{ user.familyName }} {{ user.givenName }}!
 
 	Köszönjük, hogy megtisztelt bizalmával, és tőlünk rendelte meg ebédjét.
+	
 	A megrendelésének részleteiről a http://diet-futar.hu/personalMenu oldalon tájékozódhat.
 
+	Rendelt ételek
+	{% for day in userOrder%}{% for order in day.orders%}
+			{{ day.day }} {% if order.isMenuItem %}{{menuItemTitleAndContentSmall (order)}}{% else %}{{compositTitleAndContentSmall (order)}}{% endif %}{{ order.price}} Ft x {{ order.quantity }} > {{ order.totalPrice }} Ft
+		{% endfor %}{% endfor %}
+
 	Szállítási feltételeink
-	
+
+	Az alábbiak - díjak és határok - naponta értendők.
 	A házhozsszállítás ingyenes a IV., XIII., XIV és XV. kerületben.
 	Az V., VI., VII, VIII., és XVI. kerületekben a házhozszállítás 300 Ft, vagy 3000 ft feletti rendelés esetén ingyenes.
 	Az I., II., III., IX., X. kerületekben 500 Ft, vagy ingyenes 4000 ft feletti rendelés esetén

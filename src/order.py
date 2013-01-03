@@ -553,7 +553,7 @@ class ConfirmOrder(BaseHandler):
 					ordersInWeeks[monday] = weekHolder
 			# Go through order week by week
 			if len(ordersInWeeks) > 0:
-				orderedItemsForMail = []
+				orderedItemsForMail = {}
 				for monday in ordersInWeeks.keys():
 					weekHolder = ordersInWeeks.get(monday)
 					alreadyOrdered = getUserOrdersForWeek(user, monday)
@@ -563,10 +563,30 @@ class ConfirmOrder(BaseHandler):
 						orderItemKey = item['key']
 						if isMenuItem(orderItemKey):
 							menuItem = getMenuItem(orderItemKey)
-							orderedItemsForMail.append(menuItem)
+							menuItem['quantity'] = orderedQuantity
+							menuItem['totalPrice'] = orderedQuantity * menuItem['price']
+							menuItem['isMenuItem'] = True
+							day = menuItem['day']
+							if orderedItemsForMail.has_key(day):
+								daysItems = orderedItemsForMail.get(day)
+								daysItems.append(menuItem)
+							else:
+								daysItems = []
+								daysItems.append(menuItem)
+							orderedItemsForMail[day] = daysItems
 						else:
 							composit = getComposit(orderItemKey)
-							orderedItemsForMail.append(composit)
+							day = composit['day']
+							composit['quantity'] = orderedQuantity
+							composit['totalPrice'] = orderedQuantity * composit['price']
+							composit['isMenuItem'] = False
+							if orderedItemsForMail.has_key(day):
+								daysItems = orderedItemsForMail.get(day)
+								daysItems.append(composit)
+							else:
+								daysItems = []
+								daysItems.append(composit)
+							orderedItemsForMail[day] = daysItems
 						if alreadyOrdered.has_key(orderItemKey):
 							orderedQuantity = orderedQuantity + alreadyOrdered.get(orderItemKey)
 						if (orderedQuantity > 0):
@@ -574,6 +594,14 @@ class ConfirmOrder(BaseHandler):
 						else:
 							alreadyOrdered.pop(orderItemKey, 0)
 					# Add stuff to the first week the user created
+					daysForMail = orderedItemsForMail.keys()
+					sortedDays = sorted(daysForMail)
+					sortedItemsForMail = []
+					for day in sortedDays:
+						sortedItemsForMail.append(
+							{'day':day,
+							'orders':orderedItemsForMail.get(day)}
+						)
 					weeks = user.weeks.filter("monday = ", monday)
 					if (weeks.count() > 0):
 						week = weeks.get()
@@ -605,7 +633,8 @@ class ConfirmOrder(BaseHandler):
 					week.put()
 					
 				template_values = {
-					"user":user
+					"user":user,
+					'userOrder':sortedItemsForMail
 				}
 				# Send email notification to the user
 				messageTxtTemplate = jinja_environment.get_template('templates/orderNotificationMail.txt')

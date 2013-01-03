@@ -1,15 +1,49 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿{% from '/templates/macros.html' import menuItemTitleAndContentSmall, compositTitleAndContentSmall %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
-<body>
+<body style="padding: 40px">
 	<span>Kedves {{ user.familyName }} {{ user.givenName }}!</span><br/>
 	<p>Köszönjük, hogy megtisztelt bizalmával, és tőlünk rendelte meg ebédjét.<br/>
 	A megrendelésének részleteiről a <a href = "http://diet-futar.hu/personalMenu">személyes menü</a> oldalon tájékozódhat.</p>
+	Rendelt ételek
+	<table style="border: solid; border-width: 2px;">
+		<tr>
+			<th style="border: solid; border-width: 1px;">Nap</th>
+			<th style="border: solid; border-width: 1px;">Étel</th>
+			<th style="border: solid; border-width: 1px;">Egységár</th>
+			<th style="border: solid; border-width: 1px;">Adag</th>
+			<th style="border: solid; border-width: 1px;">Összesen</th>
+		</tr>
+		{% for day in userOrder%}
+		{% for order in day.orders%}
+			<tr>
+				<td style="border: solid; border-width: 1px;">{{ day.day }}</td>
+				<td style="border: solid; border-width: 1px;">
+					{% if order.isMenuItem %}
+						{{menuItemTitleAndContentSmall (order)}}
+					{% else %}
+						{{compositTitleAndContentSmall (order)}}
+					{% endif %}
+				</td>
+				<td style="border: solid; border-width: 1px;">
+					{{ order.price}} Ft
+				</td>
+				<td style="border: solid; border-width: 1px;">
+					{{ order.quantity }} adag
+				</td>
+				<td style="border: solid; border-width: 1px;">
+					{{ order.totalPrice }} Ft
+				</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+	</table>
 	<h2>Szállítási feltételeink</h2>
-	
-	<p>A házhozsszállítás <strong style="color: #DD0000">ingyenes</strong> a <strong>IV., XIII., XIV és XV.</strong> kerületben.<br/>
+	<p> Az alábbiak - díjak és határok - naponta értendők.<br/>
+	A házhozsszállítás <strong style="color: #DD0000">ingyenes</strong> a <strong>IV., XIII., XIV és XV.</strong> kerületben.<br/>
 		Az <strong>V., VI., VII, VIII., és XVI.</strong> kerületekben a házhozszállítás <strong style="color: #DD0000">300 Ft</strong>, vagy 3000 ft feletti rendelés esetén ingyenes.<br/>
 		Az <strong>I., II., III., IX., X.</strong> kerületekben <strong style="color: #DD0000">500 Ft</strong>, vagy ingyenes 4000 ft feletti rendelés esetén<br/>
 		Budapest többi kerületébe <strong style="color: #DD0000">1000 Ft</strong>, vagy ingyenes 5000 ft feletti rendelés esetén.</p>	

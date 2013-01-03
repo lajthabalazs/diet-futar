@@ -1,0 +1,15 @@
+{% macro itemPrice(item)%}{% if item.price == None%}0{% else %}{{ item.price }}{% endif %} Ft{% endmacro %}
+
+{% macro menuItemTitleAndContentSmall(menuItem)%}{{ menuItem.dish.title }}, {% for component in menuItem.components %} {{ component.dish.title }} {% endfor %}{% endmacro %}
+
+{% macro compositTitleAndContentSmall(composit)%}{% for component in composit.components%}{{ menuItemTitleAndContentSmall(component) }}{% endfor %}{% endmacro %}
+
+{% macro humanReadableOrderState(order)%}
+	{% if order.orderState == 0%}Megrendelve{% endif%}
+	{% if order.orderState == 1%}Befogadva{% endif%}
+	{% if order.orderState == 2%}Elutasítva{% endif%}
+	{% if order.orderState == 3%}Szállításra kész{% endif%}
+	{% if order.orderState == 4%}Kiszállítva{% endif%}
+	{% if order.orderState == 5%}Sikertelen{% endif%}
+	{% if order.orderState == 6%}Visszavonva{% endif%}
+{% endmacro %}

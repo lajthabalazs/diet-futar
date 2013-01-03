@@ -15,13 +15,12 @@
 			</tr>
 			{% for order in orders%}
 			<form method="post">
-				<input type="hidden" name="weekKey" value="{{order.week.key()}}"/>
 				<tr>
 					<td><input type="checkbox" name="delivered" {% if order.delivered %} checked="checked" {% endif %}/></td>
 					<td>{{order.district}}</td>
 					<td>{{order.zipCode}}</td>
 					<td>{{order.street}} {{order.streetNumber}}</td>
-					<td><a href="/deliverable?weekKey={{order.week.key()}}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a></td>
+					<td><a href="/deliverable?monday={{ order.week.monday }}&userKey={{ order.week.user.key() }}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a></td>
 					<td>
 						{% for item in order.orderedItems %}
 							{{item.orderedQuantity}}
