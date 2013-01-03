@@ -59,6 +59,8 @@ class Dish(db.Model):
 	subtitle=db.StringProperty()
 	description = db.StringProperty(multiline=True)
 	category=db.ReferenceProperty(DishCategory, collection_name='dishes')
+	eggFree = db.BooleanProperty(default=False)
+	milkFree = db.BooleanProperty(default=False)
 
 class IngredientCategory(db.Model):
 	name = db.StringProperty()

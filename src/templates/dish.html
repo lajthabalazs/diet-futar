@@ -19,6 +19,8 @@
 			<strong>Bekerülési költség: {% if dish.price == None%}0{% else %}{{ dish.price }}{% endif %} Ft</strong><br/>
 			<textarea name="subtitle" cols="40" rows="4" style="height: 40px">{{ dish.subtitle }}</textarea><br/>
 			<textarea name="description" cols="40" rows="4" style="height: 40px">{{ dish.description }}</textarea><br/>
+			<label>Tojás mentes <input type="checkbox"  name="eggFree" cols="60" value="yes" {% if(dish.eggFree) %} checked="true"{% endif %}/></label><br/>
+			<label>Tej mentes <input type="checkbox"  name="milkFree" cols="60" value="yes" {% if(dish.milkFree) %} checked="true"{% endif %}/></label><br/>
 			<input type="submit" value ="Mentés"/>
 		</form>
 			<!-- Add a new ingredient -->

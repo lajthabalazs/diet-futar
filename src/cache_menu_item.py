@@ -62,6 +62,8 @@ def getMenuItem(key):
 		dish = getDish(menuItem['dishKey'])
 	except KeyError:
 		return None
+	eggFree = False
+	milkFree = False
 	if dish == None:
 		menuItem['dish'] = dummyDish()
 		sumprice = 0
@@ -72,6 +74,14 @@ def getMenuItem(key):
 		protein = 0
 	else:
 		menuItem['dish'] = dish
+		try:
+			eggFree = dish['eggFree']
+		except:
+			pass
+		try:
+			milkFree = dish['milkFree']
+		except:
+			pass
 		sumprice = dish['price']
 		energy = dish['energy']
 		fat = dish['fat']
@@ -101,6 +111,8 @@ def getMenuItem(key):
 			fiber = fiber + componentFiber
 		if componentProtein != None:
 			protein = protein + componentProtein
+		eggFree = eggFree and component['eggFree']
+		milkFree = milkFree and component['milkFree']
 	menuItem['sumprice'] = sumprice
 	menuItem['energy'] = energy
 	menuItem['fat'] = fat
@@ -108,6 +120,8 @@ def getMenuItem(key):
 	menuItem['fiber'] = fiber
 	menuItem['protein'] = protein
 	menuItem['components'] = components
+	menuItem['eggFree']=eggFree
+	menuItem['milkFree']=milkFree
 	return menuItem
 	
 def getDaysMenuItems(day, categoryKey):

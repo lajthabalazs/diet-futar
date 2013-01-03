@@ -34,29 +34,32 @@ class DishPage(BaseHandler):
 		if not isUserCook(self):
 			self.redirect("/")
 			return
+		dishKey=self.request.get('dishKey')
+		if ((dishKey != None) and (dishKey != "")):
+		#Modification of basic data
+			title = self.request.get('title')
+			subtitle = self.request.get('subtitle')
+			description = self.request.get('description')
+			eggFree = (self.request.get('eggFree') == "yes")
+			milkFree = (self.request.get('milkFree') == "yes")
+			dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
+			dishCategory=None
+			if ((dishCategoryKey != None) and (dishCategoryKey != "")):
+				dishCategory = db.get(dishCategoryKey)
+			modifyDish(dishKey, title, subtitle, description, dishCategory, eggFree, milkFree)
+			self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
+			return
 		else:
-			dishKey=self.request.get('dishKey')
-			if ((dishKey != None) and (dishKey != "")):
-			#Modification of basic data
-				title = self.request.get('title')
-				subtitle = self.request.get('subtitle')
-				description = self.request.get('description')
-				dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
-				dishCategory=None
-				if ((dishCategoryKey != None) and (dishCategoryKey != "")):
-					dishCategory = db.get(dishCategoryKey)
-				modifyDish(dishKey, title, subtitle, description, dishCategory)
-				self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
-				return
-			else:
-				dish = Dish()
-				dish.title = self.request.get('title')
-				dish.subtitle = self.request.get('subtitle')
-				dish.description = self.request.get('description')
-				dish.category = DishCategory.get(self.request.get('dishCategoryKey'))
-				dish.put()
-				addDish(dish)
-				self.redirect('/dish?dishKey=%s' % str(dish.key()))
+			dish = Dish()
+			dish.title = self.request.get('title')
+			dish.subtitle = self.request.get('subtitle')
+			dish.description = self.request.get('description')
+			dish.category = DishCategory.get(self.request.get('dishCategoryKey'))
+			dish.milkFree = milkFree
+			dish.eggFree = eggFree
+			dish.put()
+			addDish(dish)
+			self.redirect('/dish?dishKey=%s' % str(dish.key()))
 	def get(self):
 		if not isUserCook(self):
 			self.redirect("/")

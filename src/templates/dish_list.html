@@ -15,12 +15,16 @@
 			<textarea name="subtitle" cols="40" rows="4" style="height: 40px"></textarea><br/>
 			Hosszú leírás<br/>
 			<textarea name="description" cols="40" rows="4" style="height: 40px"></textarea><br/>
+			<label>Tojás mentes <input type="checkbox"  name="eggFree" cols="60" value="yes"/></label><br/>
+			<label>Tej mentes <input type="checkbox"  name="milkFree" cols="60" value="yes"/></label><br/>
 			<input type="submit" value="Recept hozzáadása"/><br/>
 		</form>
 		<table width="400px">
 		{% for dish in dishes %}
 			<tr><td><a href="?dishKey={{ dish.key() }}">{{ dish.title }}</a></td>
 			<td>{{ dish.category.name }}</td>
+			<td>{% if dish.eggFree %} Tojásmentes{% endif %}</td>
+			<td>{% if dish.milkFree %} Tejmentes {% endif %}</td>
 			<td align="right"><form action="deleteDish" method="post">
 				<input type="hidden" name="dishKey" value="{{ dish.key() }}"/>
 				<input type="submit" value="Törlés">

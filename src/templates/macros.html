@@ -9,6 +9,15 @@
 		{% endfor %}</p>
 {% endmacro %}
 
+{% macro menuItemTitleAndContentWithIndicatorImage(menuItem)%}
+		<h3 class='menuItamMainDish'>{{ menuItem.dish.title }}</h3>
+		<p class='menuItamSubDish'>{% for component in menuItem.components %}
+			{{ component.dish.title }} 
+		{% endfor %}
+		{% if menuItem.eggFree %}<img style="height: 40px; vertical-align: middle;" src="img/eggFree.png"/>{% endif %}
+		{% if menuItem.milkFree %}<img style="height: 40px; vertical-align: middle;" src="img/milkFree.png"/>{% endif %}</p>
+{% endmacro %}
+
 {% macro menuItemTitleAndContentSmall(menuItem)%}
 		{{ menuItem.dish.title }}
 		{% for component in menuItem.components %}
@@ -71,7 +80,7 @@
 		});
 		});
 		</script>
-		{{ menuItemTitleAndContent(menuItem) }}
+		{{ menuItemTitleAndContentWithIndicatorImage(menuItem) }}
 		{{ itemPrice(menuItem) }}
 		{{ orderQuantityBox(menuItem) }}
 	</div>
