@@ -6,6 +6,7 @@ from user_management import isUserAdmin
 import datetime
 from order import getOrderTotal
 from zipCodeInit import createZipCodeList
+from cache_helper import updateZipCodeEntry
 
 class AdminConsolePage(BaseHandler):
 	def get(self):
@@ -75,6 +76,7 @@ class ZipCodeEditorPage(BaseHandler):
 		sortedCodes =  sorted(codes.keys())
 		deliveryCosts = []
 		for code in sortedCodes:
+			updateZipCodeEntry(code, codes.get(code)['cost'], codes.get(code)['limit'])
 			deliveryCosts.append(code + " " + str(codes.get(code)['cost']) + " " + str(codes.get(code)['limit']))
 		rawCodes = ZipCodes.all().get()
 		if (rawCodes == None):

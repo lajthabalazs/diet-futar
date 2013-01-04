@@ -3,9 +3,9 @@
 import jinja2
 import os
 
-from base_handler import BaseHandler, getBaseDate, getMonday, getDeliveryCost
+from base_handler import BaseHandler, getBaseDate, getMonday, getZipBasedDeliveryCost
 import datetime
-from model import ROLE_ADMIN, Role, ROLE_DELIVERY_GUY, UserWeekOrder, Address,\
+from model import ROLE_ADMIN, Role, ROLE_DELIVERY_GUY, UserWeekOrder,\
 	User
 from order import dayNames, getOrderAddress, getOrderedItemsFromWeekData,\
 	getOrdersForWeek
@@ -121,7 +121,7 @@ class DeliveryReviewOrdersPage(BaseHandler):
 				orderAddress.week = week
 				orderAddress.dailyUserTotal = dailyUserTotal
 				deliveries.append(orderAddress)
-		sortedDeliveries = sorted(deliveries, key=lambda item:item.zipCode)
+		sortedDeliveries = sorted(deliveries, key=lambda item:item.zipNumCode)
 		admins=Role.all().filter("name = ", ROLE_ADMIN)[0].users
 		delivereryGuys=Role.all().filter("name = ", ROLE_DELIVERY_GUY)[0].users
 		deliverers=[]
@@ -178,10 +178,8 @@ class DeliveryPage(BaseHandler):
 				day['address'] = address
 				deliveryCost = 0
 				if address != None:
-					deliveryCost = getDeliveryCost(address.district, orderedPrice)
-					day["deliveryCost"] = deliveryCost
-				else:
-					day["deliveryCost"] = 0
+					deliveryCost = getZipBasedDeliveryCost(address.zipNumCode, orderedPrice)
+				day["deliveryCost"] = 0
 				weekDeliveryTotal = weekDeliveryTotal + deliveryCost
 			days.append(day)
 		template_values = {

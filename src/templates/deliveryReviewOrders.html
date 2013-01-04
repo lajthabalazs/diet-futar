@@ -11,14 +11,13 @@
 		Összesen: {{ dayTotal}} Ft
 		<table border="1">
 			<tr>
-				<th>Folyamatban</th><th>Kerület</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th><th>Összesen</th>
+				<th>Folyamatban</th><th>Irányítószám</th><th>Cím</th><th>Név</th><th>Rendelés</th><th>Összesen</th>
 			</tr>
 			{% for order in orders%}
 			<form method="post">
 				<tr>
 					<td><input type="checkbox" name="delivered" {% if order.delivered %} checked="checked" {% endif %}/></td>
-					<td>{{order.district}}</td>
-					<td>{{order.zipCode}}</td>
+					<td>{{order.zipNumCode}}</td>
 					<td>{{order.street}} {{order.streetNumber}}</td>
 					<td><a href="/deliverable?monday={{ order.week.monday }}&userKey={{ order.week.user.key() }}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a></td>
 					<td>

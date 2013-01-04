@@ -40,8 +40,8 @@ class User(db.Model):
 
 class Address (db.Model):
 	user = db.ReferenceProperty(User, collection_name='addresses')
-	district = db.StringProperty()
 	zipCode = db.StringProperty()
+	zipNumCode = db.IntegerProperty()
 	street = db.StringProperty()
 	streetNumber = db.StringProperty()
 	active = db.BooleanProperty(default=True)

@@ -23,8 +23,7 @@
 				<div class="span-22">
 					{% for address in user.addresses%}
 						<div class="span-9 prepend-1 profileColumn profileElement">
-							<label>Kerület <span>{{address.district}}</span></label>
-							<label>Irányítószám<span>{{address.zipCode}}</span></label>
+							<label>Irányítószám<span>{{address.zipNumCode}}</span></label>
 							<label>Utca név<span>{{address.street}}</span></label>
 							<label>Házszám, emelet<span>{{address.streetNumber}}</span></label>
 						</div>

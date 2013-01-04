@@ -23,7 +23,7 @@ class UserWebshopOrderListPage(BaseHandler):
 			orderedOrders = sorted(orders, key=lambda order: order.orderDate, reverse=True)
 			orders = []
 			for order in orderedOrders:
-				order.addressString = order.address.zipCode + " " + order.address.street + " " + order.address.streetNumber
+				order.addressString = order.address.zipNumCode + " " + order.address.street + " " + order.address.streetNumber
 				order.price = order.item.price * order.orderQuantity
 				orders.append(order)
 			template_values = {
@@ -42,7 +42,7 @@ class UserWebshopOrderDetailsPage(BaseHandler):
 		orderKey = self.request.get('orderKey')
 		if orderKey != None:
 			order = WebshopOrderItem.get(orderKey)
-			order.addressString = order.address.zipCode + " " + order.address.street + " " + order.address.streetNumber
+			order.addressString = order.address.zipNumCode + " " + order.address.street + " " + order.address.streetNumber
 			order.price = order.item.price * order.orderQuantity
 			if order != None:
 				formattedComments = []

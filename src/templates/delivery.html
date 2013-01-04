@@ -42,7 +42,7 @@
 				{% for day in days %}
 				<div class="span-4">
 					{% if day.has_key('address') %}
-						{{ day.address.zipCode }} {{ day.address.street }}  {{ day.address.streetNumber }}<br/>
+						{{ day.address.zipNumCode }} {{ day.address.street }}  {{ day.address.streetNumber }}<br/>
 						<strong>Szállítási költség:</strong> <strong id="deliveryCost{{day.date}}">{{ day.deliveryCost }}</strong> <strong>Ft</strong>
 					{% else %}
 						&nbsp;

@@ -14,98 +14,29 @@ import datetime
 from timezone import USTimeZone
 from model import Maintenence
 from string import replace, split
+from cache_helper import getZipCodeEntry
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 LAST_ORDER_HOUR=12
 timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 
-deliveryZones = [
-	{
-		"cost" : 0,
-		"limit" : 0,
-		"districts":["IV","XIII","XIV", "XV"]
-	},
-	{
-		"cost" : 300,
-		"limit" : 3000,
-		"districts":["V","VI","VII", "VIII", "XVI"]
-	},
-	{
-		"cost" : 500,
-		"limit" : 4000,
-		"districts":["I","II","III", "IX", "X"]
-	},
-	{
-		"cost" : 1000,
-		"limit" : 5000,
-	}
-]
-costs = {
-	"I":500,
-	"II":500,
-	"III":500,
-	"IV":0,
-	"V":300,
-	"VI":300,
-	"VII":300,
-	"VIII":300,
-	"IX":500,
-	"X":500,
-	"XIII":0,
-	"XIV":0,
-	"XV":0,
-	"XVI":300
-}
-limits = {
-	"I":4000,
-	"II":4000,
-	"III":4000,
-	"IV":0,
-	"V":3000,
-	"VI":3000,
-	"VII":3000,
-	"VIII":3000,
-	"IX":4000,
-	"X":4000,
-	"XIII":0,
-	"XIV":0,
-	"XV":0,
-	"XVI":3000
-}
-
-def getDeliveryCost(district, price):
-	if costs.has_key(district):
-		if (price < getDeliveryLimit(district)):
-			return costs.get(district)
+def getZipBasedDeliveryCost(code, price):
+	costs = getZipCodeEntry(code)
+	if costs != None:
+		if (price < costs['limit']):
+			return costs['cost']
 		else:
 			return 0
 	else:
-		if (price < getDeliveryLimit(district)):
+		if (price < 5000):
 			return 1000
 		else:
 			return 0
 	
-def getDeliveryLimit(district):
-	if limits.has_key(district):
-		return limits.get(district)
-	else:
-		return 5000
-
-def getZipBasedDeliveryCost(district, price):
-	if costs.has_key(district):
-		if (price < getDeliveryLimit(district)):
-			return costs.get(district)
-		else:
-			return 0
-	else:
-		if (price < getDeliveryLimit(district)):
-			return 1000
-		else:
-			return 0
-	
-def getZipBasedDeliveryLimit(district):
-	if limits.has_key(district):
-		return limits.get(district)
+def getZipBasedDeliveryLimit(code):
+	costs = getZipCodeEntry(code)
+	if costs != None:
+		return costs['limit']
 	else:
 		return 5000
 	

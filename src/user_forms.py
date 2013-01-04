@@ -10,7 +10,7 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler
-from model import User, Address, Role
+from model import User, Address
 from user_management import LOGIN_ERROR_KEY, REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
 	REGISTRATION_ERROR_KEY, clearRegistrationError, clearLoginError, USER,\
@@ -20,8 +20,6 @@ from xmlrpclib import datetime
 from google.appengine.api import mail
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-
-districts=["I","II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII","XXIII", "XXIV"]
 
 def clearNextPage(handler):
 	nextPage="/"
@@ -239,7 +237,6 @@ class UserProfilePage (BaseHandler):
 			user.role = None
 			template_values = {
 				'user': user,
-				'districts':districts,
 				LOGIN_ERROR_KEY:self.session.get(LOGIN_ERROR_KEY,0)
 			}
 			template = jinja_environment.get_template('templates/userForms/profile.html')
@@ -260,7 +257,6 @@ class UserProfilePage (BaseHandler):
 				user.role = None
 				template_values = {
 					'user': user,
-					'districts':districts
 				}
 				template = jinja_environment.get_template('templates/userForms/profile.html')
 				self.printPage("Profil", template.render(template_values), False, True)
@@ -293,8 +289,7 @@ class AddressPage (BaseHandler):
 			address = Address()
 		address.user = user
 		address.billingName = self.request.get("billingName")
-		address.district = self.request.get("district")
-		address.zipCode = self.request.get("zipCode")
+		address.zipNumCode = int(self.request.get("zipNumCode"))
 		address.street = self.request.get("street")
 		address.streetNumber = self.request.get("streetNumber")
 		address.put()

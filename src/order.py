@@ -5,7 +5,8 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
-	getFirstOrderableDate, getDeliveryCost, getDeliveryLimit, getMonday
+	getFirstOrderableDate, getMonday,\
+	getZipBasedDeliveryCost, getZipBasedDeliveryLimit
 import datetime
 from model import MenuItem, User, UserWeekOrder, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
@@ -452,7 +453,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 				if address == None:
 					address = user.addresses.get()
 				actualDayObject['address'] = address
-				actualDayObject["deliveryCost"] = getDeliveryCost(address.district, orderedPrice) 
+				actualDayObject["deliveryCost"] = getZipBasedDeliveryCost(address.zipNumCode, orderedPrice)
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
 		prevMonday=monday + datetime.timedelta(days=-7)
@@ -461,8 +462,8 @@ class ReviewOrderedMenuPage(BaseHandler):
 		actualMonday = getMonday(today)
 		availableAddresses = []
 		for address in user.addresses:
-			address.deliveryCost = getDeliveryCost(address.district,0)
-			address.deliveryLimit = getDeliveryLimit(address.district)
+			address.deliveryCost = getZipBasedDeliveryCost(address.zipNumCode, 0)
+			address.deliveryLimit = getZipBasedDeliveryLimit(address.zipNumCode)
 			availableAddresses.append(address)
 		template_values = {
 			'days':days,
