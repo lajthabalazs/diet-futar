@@ -14,6 +14,7 @@
 		<p class='menuItamSubDish'>{% for component in menuItem.components %}
 			{{ component.dish.title }} 
 		{% endfor %}
+		{% if menuItem.eggFree or menuItem.milkFree%}<br/>{% endif %}
 		{% if menuItem.eggFree %}<img style="height: 40px; vertical-align: middle;" src="img/eggFree.png"/>{% endif %}
 		{% if menuItem.milkFree %}<img style="height: 40px; vertical-align: middle;" src="img/milkFree.png"/>{% endif %}</p>
 {% endmacro %}

@@ -41,8 +41,7 @@ config = {}
 config['webapp2_extras.sessions'] = {'secret_key': 'my-super-secret-key'}
 # Check if site is under maintenence
 app = webapp2.WSGIApplication([
-										('/', NewYearPage),
-										#('/', MenuOrderPage),
+										('/', MenuOrderPage),
 										('/setup', SetupPage),
 										('/siteAdmin', AdminConsolePage),
 										('/maintenence', MaintenencePage),
