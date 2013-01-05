@@ -7,7 +7,6 @@
 			var selectedValue = document.getElementById('zips').options[selectedIndex].value;
 			var deliveryCost = addressCosts[selectedValue];
 			var freeLimit = addressLimits[selectedValue];
-			alert("zipChanged " + selectedValue + " " + deliveryCost + " " + freeLimit);
 			var message ="Szállítás költsége " + deliveryCost + " Ft, " + freeLimit + " Ft-os megrendelés fölött ingyenes.";
 			if (deliveryCost == 0) {
 				message = "A szállítás a kiválasztott irányítószámhoz ingyenes."
