@@ -6,7 +6,7 @@ from user_management import isUserAdmin
 import datetime
 from order import getOrderTotal
 from zipCodeInit import createZipCodeList
-from cache_helper import updateZipCodeEntry
+from cache_zips import updateZipCodeEntry, updateZipCodeScript
 
 class AdminConsolePage(BaseHandler):
 	def get(self):
@@ -83,6 +83,7 @@ class ZipCodeEditorPage(BaseHandler):
 			rawCodes = ZipCodes()
 		rawCodes.deliveryCosts = deliveryCosts
 		rawCodes.put()
+		updateZipCodeScript(rawCodes)
 		self.redirect("/editZipCodes")
 
 

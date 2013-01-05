@@ -22,7 +22,7 @@ from keys import DISH_CATEGORY_URL, DISH_CATEGORY_DELETE_URL
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
-from index import AboutDeliveryPage, CaloryCalculator, GooglePage, AboutPage,\
+from index import CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage, NewYearPage
 from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage,\
@@ -34,6 +34,7 @@ from webshopAdmin import ItemListPage, UsersOrdersPage
 from webshopUser import UserWebshopOrderListPage, UserWebshopOrderDetailsPage, UserWebshopPostMessagePage,\
 	WebshopItemDetailsPage
 from migrateAddresses import MigrateZipCodesToNumberFormat
+from deliveryCosts import AboutDeliveryPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 

@@ -1,15 +1,5 @@
-import jinja2
-import os
-from base_handler import BaseHandler
+from base_handler import BaseHandler, jinja_environment
 import webapp2
-
-
-jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-
-class AboutDeliveryPage(BaseHandler):
-	def get(self):
-		template = jinja_environment.get_template('templates/about/aboutDelivery.html')
-		self.printPage("Rendel&eacute;s", template.render(), True, True)
 
 class AboutPage(BaseHandler):
 	def get(self):

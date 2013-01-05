@@ -45,7 +45,7 @@
 				<div class="span-21">
 					<div class="span-9 prepend-1 profileColumn profileElement">
 						<form action="/address" method="post">
-							<label>Irányítószám<select name="zipNumCode" style="width: 55px">
+							<label>Irányítószám<select name="zipNumCode" style="width: 70px;">
 								<option value="1011">1011</option>
 								<option value="1012">1012</option>
 								<option value="1013">1013</option>
@@ -217,7 +217,7 @@
 							<div class="span-9 prepend-1 profileColumn profileElement">
 								<form name="address_{{address.key()}}" id="address_{{address.key()}}" action="/address" method="post">
 									<input type="hidden" name="addressKey" value="{{address.key()}}"/>
-									<label>Irányítószám <select name="zipNumCode" style="width: 55px">
+									<label>Irányítószám <select name="zipNumCode" style="width: 70px">
 										<option value="1011" {% if address.zipNumCode == 1011%} selected="selected" {% endif %}>1011</option>
 										<option value="1012" {% if address.zipNumCode == 1012%} selected="selected" {% endif %}>1012</option>
 										<option value="1013" {% if address.zipNumCode == 1013%} selected="selected" {% endif %}>1013</option>

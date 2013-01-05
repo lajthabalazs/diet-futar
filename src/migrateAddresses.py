@@ -1,7 +1,7 @@
 from base_handler import BaseHandler, jinja_environment
 from model import Address
 from user_management import isUserAdmin
-from cache_helper import getZipCodeEntry
+from cache_zips import getZipCodeEntry
 
 def isProperZipCode(code):
 	return (getZipCodeEntry(code) != None)

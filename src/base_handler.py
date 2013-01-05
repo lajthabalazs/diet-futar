@@ -14,7 +14,7 @@ import datetime
 from timezone import USTimeZone
 from model import Maintenence
 from string import replace, split
-from cache_helper import getZipCodeEntry
+from cache_zips import getZipCodeEntry
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 LAST_ORDER_HOUR=12

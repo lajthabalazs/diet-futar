@@ -1,4 +1,20 @@
 <div class="mainBg staticPage">
+	<script  type="text/javascript">
+		function zipChanged() {
+			var addressCosts = {{addressCosts}};
+			var addressLimits = {{addressLimits}};
+			var selectedIndex = document.getElementById('zips').selectedIndex;
+			var selectedValue = document.getElementById('zips').options[selectedIndex].value;
+			var deliveryCost = addressCosts[selectedValue];
+			var freeLimit = addressLimits[selectedValue];
+			alert("zipChanged " + selectedValue + " " + deliveryCost + " " + freeLimit);
+			var message ="Szállítás költsége " + deliveryCost + " Ft, " + freeLimit + " Ft-os megrendelés fölött ingyenes.";
+			if (deliveryCost == 0) {
+				message = "A szállítás a kiválasztott irányítószámhoz ingyenes."
+			}
+			document.getElementById('deliveryCostHolder').innerHTML = message
+		}
+	</script>
 	<div class="container">
 	<h2>Rendelés menete</h2>
 	
@@ -12,7 +28,174 @@
 	<h2>Szállítási feltételek</h2>
 	
 	<p>Az ételeket mindig frissen szállítjuk, ezért rendelést csak előző nap 14 óráig tudunk fogadni.</p>
-	
+	<p> 2013 januárjától a szállítási költségeket irányítószámonkét határozzuk meg. Tudja meg, hogy mennyiért szállítunk Önhöz, válassza ki irányítószámát!<br/>
+	<form id="zipForm" name="zipForm">
+		<select onchange="zipChanged();" id="zips" name="zips" style="width: 70px;">
+			<option value="c1011">1011</option>
+			<option value="c1012">1012</option>
+			<option value="c1013">1013</option>
+			<option value="c1014">1014</option>
+			<option value="c1015">1015</option>
+			<option value="c1016">1016</option>
+			<option value="c1021">1021</option>
+			<option value="c1022">1022</option>
+			<option value="c1023">1023</option>
+			<option value="c1024">1024</option>
+			<option value="c1025">1025</option>
+			<option value="c1026">1026</option>
+			<option value="c1027">1027</option>
+			<option value="c1028">1028</option>
+			<option value="c1029">1029</option>
+			<option value="c1031">1031</option>
+			<option value="c1032">1032</option>
+			<option value="c1033">1033</option>
+			<option value="c1034">1034</option>
+			<option value="c1035">1035</option>
+			<option value="c1036">1036</option>
+			<option value="c1037">1037</option>
+			<option value="c1038">1038</option>
+			<option value="c1039">1039</option>
+			<option value="c1041">1041</option>
+			<option value="c1042">1042</option>
+			<option value="c1043">1043</option>
+			<option value="c1044">1044</option>
+			<option value="c1045">1045</option>
+			<option value="c1046">1046</option>
+			<option value="c1047">1047</option>
+			<option value="c1048">1048</option>
+			<option value="c1051">1051</option>
+			<option value="c1052">1052</option>
+			<option value="c1053">1053</option>
+			<option value="c1054">1054</option>
+			<option value="c1055">1055</option>
+			<option value="c1056">1056</option>
+			<option value="c1061">1061</option>
+			<option value="c1062">1062</option>
+			<option value="c1063">1063</option>
+			<option value="c1064">1064</option>
+			<option value="c1065">1065</option>
+			<option value="c1066">1066</option>
+			<option value="c1067">1067</option>
+			<option value="c1068">1068</option>
+			<option value="c1071">1071</option>
+			<option value="c1072">1072</option>
+			<option value="c1073">1073</option>
+			<option value="c1074">1074</option>
+			<option value="c1075">1075</option>
+			<option value="c1076">1076</option>
+			<option value="c1077">1077</option>
+			<option value="c1078">1078</option>
+			<option value="c1081">1081</option>
+			<option value="c1082">1082</option>
+			<option value="c1083">1083</option>
+			<option value="c1084">1084</option>
+			<option value="c1085">1085</option>
+			<option value="c1086">1086</option>
+			<option value="c1087">1087</option>
+			<option value="c1088">1088</option>
+			<option value="c1089">1089</option>
+			<option value="c1091">1091</option>
+			<option value="c1092">1092</option>
+			<option value="c1093">1093</option>
+			<option value="c1094">1094</option>
+			<option value="c1095">1095</option>
+			<option value="c1096">1096</option>
+			<option value="c1097">1097</option>
+			<option value="c1098">1098</option>
+			<option value="c1101">1101</option>
+			<option value="c1102">1102</option>
+			<option value="c1103">1103</option>
+			<option value="c1104">1104</option>
+			<option value="c1105">1105</option>
+			<option value="c1106">1106</option>
+			<option value="c1107">1107</option>
+			<option value="c1108">1108</option>
+			<option value="c1111">1111</option>
+			<option value="c1112">1112</option>
+			<option value="c1113">1113</option>
+			<option value="c1114">1114</option>
+			<option value="c1115">1115</option>
+			<option value="c1116">1116</option>
+			<option value="c1117">1117</option>
+			<option value="c1118">1118</option>
+			<option value="c1119">1119</option>
+			<option value="c1121">1121</option>
+			<option value="c1122">1122</option>
+			<option value="c1123">1123</option>
+			<option value="c1124">1124</option>
+			<option value="c1125">1125</option>
+			<option value="c1126">1126</option>
+			<option value="c1131">1131</option>
+			<option value="c1132">1132</option>
+			<option value="c1133">1133</option>
+			<option value="c1134">1134</option>
+			<option value="c1135">1135</option>
+			<option value="c1136">1136</option>
+			<option value="c1137">1137</option>
+			<option value="c1138">1138</option>
+			<option value="c1139">1139</option>
+			<option value="c1141">1141</option>
+			<option value="c1142">1142</option>
+			<option value="c1143">1143</option>
+			<option value="c1144">1144</option>
+			<option value="c1145">1145</option>
+			<option value="c1146">1146</option>
+			<option value="c1147">1147</option>
+			<option value="c1148">1148</option>
+			<option value="c1149">1149</option>
+			<option value="c1151">1151</option>
+			<option value="c1152">1152</option>
+			<option value="c1153">1153</option>
+			<option value="c1154">1154</option>
+			<option value="c1155">1155</option>
+			<option value="c1156">1156</option>
+			<option value="c1157">1157</option>
+			<option value="c1158">1158</option>
+			<option value="c1161">1161</option>
+			<option value="c1162">1162</option>
+			<option value="c1163">1163</option>
+			<option value="c1164">1164</option>
+			<option value="c1165">1165</option>
+			<option value="c1171">1171</option>
+			<option value="c1172">1172</option>
+			<option value="c1173">1173</option>
+			<option value="c1174">1174</option>
+			<option value="c1181">1181</option>
+			<option value="c1182">1182</option>
+			<option value="c1183">1183</option>
+			<option value="c1184">1184</option>
+			<option value="c1185">1185</option>
+			<option value="c1186">1186</option>
+			<option value="c1188">1188</option>
+			<option value="c1191">1191</option>
+			<option value="c1192">1192</option>
+			<option value="c1193">1193</option>
+			<option value="c1194">1194</option>
+			<option value="c1195">1195</option>
+			<option value="c1196">1196</option>
+			<option value="c1201">1201</option>
+			<option value="c1202">1202</option>
+			<option value="c1203">1203</option>
+			<option value="c1204">1204</option>
+			<option value="c1205">1205</option>
+			<option value="c1211">1211</option>
+			<option value="c1212">1212</option>
+			<option value="c1213">1213</option>
+			<option value="c1214">1214</option>
+			<option value="c1215">1215</option>
+			<option value="c1221">1221</option>
+			<option value="c1222">1222</option>
+			<option value="c1223">1223</option>
+			<option value="c1224">1224</option>
+			<option value="c1225">1225</option>
+			<option value="c1237">1237</option>
+			<option value="c1238">1238</option>
+			<option value="c1239">1239</option>
+		</select>
+	</form>
+	<br/>
+	<strong id="deliveryCostHolder"></strong>
+		</p>
 	<p>A házhozsszállítás <strong style="color: #DD0000">ingyenes</strong> a <strong>IV., XIII., XIV, XV.</strong> kerületben.<br/>
 		Az <strong>V., VI., VII, VIII., XVI.</strong> kerületekben a házhozszállítás <strong style="color: #DD0000">300 Ft</strong>, vagy 3000 ft feletti rendelés esetén ingyenes.<br/>
 		Az <strong>I., II., III., IX., X.</strong> kerületekben <strong style="color: #DD0000">500 Ft</strong>, vagy ingyenes 4000 ft feletti rendelés esetén<br/>

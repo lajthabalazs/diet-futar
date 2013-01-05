@@ -3,40 +3,6 @@ Created on Aug 11, 2012
 
 @author: lajthabalazs
 '''
-from google.appengine.api import memcache
-from model import ZipCodes
-
-def getZipCodeEntry(code):
-	client = memcache.Client()
-	costs = client.get("zip_code_cost_" + str(code))
-	# If not in memcache, does nothing
-	if costs != None:
-		return costs
-	else:
-		rawCodes = ZipCodes.all().get()
-		if (rawCodes == None):
-			return None
-		ret = None
-		for code in rawCodes.deliveryCosts:
-			parts=code.rsplit(" ")
-			key = "zip_code_cost_" + parts[0]
-			costs = {
-					'cost':int(parts[1]),
-					'limit':int(parts[2])
-				}
-			client.add(key, costs)
-			if parts[0] == str(code):
-				ret = costs
-		return ret
-
-def updateZipCodeEntry(code, cost, limit):
-	client = memcache.Client()
-	key = "zip_code_cost_" + str(code)
-	client.add(key, {
-					'cost':cost,
-					'limit':limit
-				})
-
 def createIngredientCategoryDb(categoryDb):
 	if categoryDb == None:
 		return None
