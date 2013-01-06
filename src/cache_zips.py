@@ -64,4 +64,4 @@ def updateZipCodeEntry(code, cost, limit):
 					'cost':cost,
 					'limit':limit
 				})
-	updateZipCodeScript()
+	updateZipCodeScript(ZipCodes.all().get())
