@@ -52,11 +52,14 @@ def getMenuItem(key):
 	client = memcache.Client()
 	menuItem = client.get(key)
 	if menuItem == None:
-		menuItemDb = MenuItem.get(key)
-		if menuItemDb == None:
+		try:
+			menuItemDb = MenuItem.get(key)
+			if menuItemDb == None:
+				return None
+			menuItem = createMenuItemData(menuItemDb)
+			client.set(key,menuItem)
+		except:
 			return None
-		menuItem = createMenuItemData(menuItemDb)
-		client.set(key,menuItem)
 	# Fetch dish for menu item and fetch subitem
 	try:
 		dish = getDish(menuItem['dishKey'])
