@@ -55,6 +55,8 @@ class DishPage(BaseHandler):
 			dish.subtitle = self.request.get('subtitle')
 			dish.description = self.request.get('description')
 			dish.category = DishCategory.get(self.request.get('dishCategoryKey'))
+			eggFree = (self.request.get('eggFree') == "yes")
+			milkFree = (self.request.get('milkFree') == "yes")
 			dish.milkFree = milkFree
 			dish.eggFree = eggFree
 			dish.put()
