@@ -1,0 +1,1 @@
+{{now.strftime('%Y-%m-%d:%H:%M:%S'}} POST_ORDER {{ user.key()}} ({{user.familyName}} {{user.givenName}})

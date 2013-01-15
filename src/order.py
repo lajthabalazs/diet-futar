@@ -6,7 +6,7 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
 	getFirstOrderableDate, getMonday,\
-	getZipBasedDeliveryCost, getZipBasedDeliveryLimit
+	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, timeZone
 import datetime
 from model import MenuItem, User, UserWeekOrder, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
@@ -15,6 +15,7 @@ from cache_menu_item import getDaysMenuItems, getMenuItem
 from cache_composit import getDaysComposits, getComposit
 from google.appengine.api import mail
 from cache_dish_category import getDishCategories
+import logging
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -633,20 +634,26 @@ class ConfirmOrder(BaseHandler):
 					week.orderedMenuItems = orderedMenuItems
 					week.orderedComposits = orderedComposits
 					week.put()
-					
+				now=datetime.datetime.now(timeZone)
 				template_values = {
 					"user":user,
-					'userOrder':sortedItemsForMail
+					'userOrder':sortedItemsForMail,
+					'time':now
 				}
+				loggingTemplate = jinja_environment.get_template('templates/log/order_received.txt')
+				logging.info(loggingTemplate.render(template_values))
 				# Send email notification to the user
 				messageTxtTemplate = jinja_environment.get_template('templates/orderNotificationMail.txt')
 				messageHtmlTemplate = jinja_environment.get_template('templates/orderNotificationMail.html')
 				message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
 				message.subject="Diet-futar, rendeles visszaigazolasa"
 				message.to = user.email
+				message.bcc = "diet-futar@diet-futar.hu"
 				message.body = messageTxtTemplate.render(template_values)
 				message.html = messageHtmlTemplate.render(template_values)
 				message.send()
+
+
 				self.session[ACTUAL_ORDER]={}
 				#self.response.out.write(messageTemplate.render(template_values));
 				self.redirect("/personalMenu")
