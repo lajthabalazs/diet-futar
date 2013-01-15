@@ -22,7 +22,9 @@ class ViewLogs(BaseHandler):
 		messages = []
 		for log in logs:
 			for appLog in log.app_logs:
-				messages.append(unicode(appLog.message.strip(codecs.BOM_UTF8), 'utf-8'))
+				message = unicode(appLog.message.strip(codecs.BOM_UTF8), 'utf-8')
+				if message.startswith("2013"):
+					messages.append(message)
 		template_values = {
 			'messages':messages
 		}
