@@ -638,7 +638,7 @@ class ConfirmOrder(BaseHandler):
 				template_values = {
 					"user":user,
 					'userOrder':sortedItemsForMail,
-					'time':now
+					'now':now
 				}
 				loggingTemplate = jinja_environment.get_template('templates/log/order_received.txt')
 				logging.info(loggingTemplate.render(template_values))

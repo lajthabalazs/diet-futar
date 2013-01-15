@@ -35,6 +35,7 @@ from webshopUser import UserWebshopOrderListPage, UserWebshopOrderDetailsPage, U
 	WebshopItemDetailsPage
 from migrateAddresses import MigrateZipCodesToNumberFormat
 from deliveryCosts import AboutDeliveryPage
+from logViewer import ViewLogs
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -52,6 +53,7 @@ app = webapp2.WSGIApplication([
 										('/initChristmasLunch', InitChristmasLunchPage),
 										('/editZipCodes', ZipCodeEditorPage),
 										('/migrateAddresses', MigrateZipCodesToNumberFormat),
+										('/viewLogs', ViewLogs),
 										
 										
 										('/google24f0feb13afae7e0.html', GooglePage),

@@ -182,6 +182,10 @@ class BaseHandler(webapp2.RequestHandler):
 			siteAdmin["label"]="Adminisztraci&oacute;"
 			siteAdmin["target"]="/siteAdmin"
 			topMenu.append(siteAdmin)
+			viewLogs={}
+			viewLogs["label"]="Logok"
+			viewLogs["target"]="/viewLogs"
+			topMenu.append(viewLogs)
 		elif isUserCook(self):
 			dailyMenu={}
 			dailyMenu["label"]="Menu osszeallitas"
