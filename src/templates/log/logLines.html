@@ -1,11 +1,8 @@
 <div class="mainBg staticPage">
 	<div class="container">
 		<h3>Request logs ( {{from}} - {{to}} )</h3>
-		{% for log in logLines %}
-			LOG>
-			{% for appLog in log.app_logs%}
-			{{ appLog.message}}<br/>
-			{% endfor %}
+		{% for message in messages %}
+			{{ message }}<br/>
 		{% endfor %}
 	</div>
 </div>
