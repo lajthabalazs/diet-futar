@@ -28,10 +28,14 @@ class WeeksListPage(BaseHandler):
 				pass
 			if user != None:
 				weeks = user.weeks
-				orderedWeeks = sorted(weeks, key=lambda item:item.monday)
+				mondays = {}
+				for week in weeks:
+					if not mondays.has_key(week.monday):
+						mondays[week.monday] = week.monday
+				orderedMondays = sorted(mondays.keys())
 				template_values = {
 					'user':user,
-					'weeks':orderedWeeks
+					'mondays':orderedMondays
 				}
 				template = jinja_environment.get_template('templates/admin/userWeeksList.html')
 				userName = ""

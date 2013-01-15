@@ -2,8 +2,8 @@
 	<div class="container">
 		<strong><a href="/userOverview?userKey={{user.key()}}">{{user.familyName}} {{user.givenName}}</a>, {{user.email}}, {{user.phoneNumber}}</strong><br/>
 		<table width="400px">
-		{% for week in weeks %}
-			<tr><td><a href="/deliverable?weekKey={{ week.key() }}">{{ week.monday }}</a></td></tr>
+		{% for monday in mondays %}
+			<tr><td><a href="/deliverable?monday={{ monday }}&userKey={{user.key()}}">{{ monday }}</a></td></tr>
 		{% endfor %}
 		</table>
 	</div>

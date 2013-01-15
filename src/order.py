@@ -67,6 +67,8 @@ def getOrderedItemsFromWeekData (weeks, day):
 	return orderedItems
 
 def getOrderAddress (week, day):
+	if week == None:
+		return None
 	if day.weekday() == 0:
 		return week.mondayAddress
 	elif day.weekday() == 1:

@@ -23,7 +23,7 @@ from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, DeliveryPage
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
 from index import CaloryCalculator, GooglePage, AboutPage,\
-	ContactsPage, NewYearPage
+	ContactsPage
 from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage,\
 	ZipCodeEditorPage
