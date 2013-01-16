@@ -2,7 +2,7 @@ from google.appengine.ext import db
 import jinja2
 import os
 from base_handler import BaseHandler
-from user_management import isUserAdmin
+from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 import time
 from google.appengine.api.logservice import logservice
 from google.appengine.api.logservice.logservice import fetch
@@ -11,8 +11,10 @@ import codecs
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class ViewLogs(BaseHandler):
+	URL = '/viewLogs'
 	def get(self):
 		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		now = int(time.mktime(time.gmtime()))

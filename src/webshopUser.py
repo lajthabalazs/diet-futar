@@ -4,7 +4,7 @@ import jinja2
 import os
 
 from base_handler import BaseHandler
-from user_management import isUserLoggedIn, getUser
+from user_management import isUserLoggedIn, getUser, LOGIN_NEXT_PAGE_KEY
 from model import WebshopOrderItem, WebshopItem
 import datetime
 
@@ -13,8 +13,10 @@ import datetime
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class UserWebshopOrderListPage(BaseHandler):
+	URL = '/userOrderList'
 	def get(self):
 		if not isUserLoggedIn(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		user = getUser(self)
@@ -35,8 +37,10 @@ class UserWebshopOrderListPage(BaseHandler):
 			print "Error, no logged in user"
 
 class UserWebshopOrderDetailsPage(BaseHandler):
+	URL = '/webshopUserOrder'
 	def get(self):
 		if not isUserLoggedIn(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		orderKey = self.request.get('orderKey')
@@ -64,8 +68,10 @@ class UserWebshopOrderDetailsPage(BaseHandler):
 		self.printPage("Rendel&eacute;s r&eacute;szletei", "Missing parameter for user order", True, True)
 
 class WebshopItemDetailsPage(BaseHandler):
+	URL = '/webshopItem'
 	def get(self):
 		if not isUserLoggedIn(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		itemKey = self.request.get('itemKey')
@@ -77,8 +83,10 @@ class WebshopItemDetailsPage(BaseHandler):
 		self.printPage("Rendel&eacute;s r&eacute;szletei", template.render(template_values), True, True)
 
 class UserWebshopPostMessagePage(BaseHandler):
+	URL = '/postOrderComment'
 	def post(self):
 		if not isUserLoggedIn(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		orderKey = self.request.get('orderKey')

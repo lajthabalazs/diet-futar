@@ -6,8 +6,8 @@ import os
 from google.appengine.ext import db
 from model import Dish, IngredientListItem, DishCategory
 
-from base_handler import BaseHandler
-from user_management import isUserCook
+from base_handler import BaseHandler, logInfo
+from user_management import isUserCook, LOGIN_NEXT_PAGE_KEY
 from keys import DISH_CATEGORY_KEY
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from cache_dish import getDish, deleteDish, modifyDish, addDish
@@ -19,19 +19,23 @@ from cache_ingredient import getIngredients
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class DeleteDishPage(BaseHandler):
+	URL = '/deleteDish'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
 			return
 		dishKey = self.request.get('dishKey')
 		dish = db.get(dishKey)
-		dish.delete()
-		deleteDish(dishKey)
+		if dish != None:
+			dish.delete()
+			deleteDish(dishKey)
 		self.redirect('/dish')
 	
 class DishPage(BaseHandler):
+	URL = '/dish'
 	def post(self):
 		if not isUserCook(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		dishKey=self.request.get('dishKey')
@@ -64,6 +68,7 @@ class DishPage(BaseHandler):
 			self.redirect('/dish?dishKey=%s' % str(dish.key()))
 	def get(self):
 		if not isUserCook(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		dishKey=self.request.get('dishKey')
@@ -107,6 +112,7 @@ class DishPage(BaseHandler):
 			self.printPage("Receptek", template.render(template_values), False, False)
 
 class DishIngredientDeletePage(BaseHandler):
+	URL = '/deleteIngredientFromDish'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -119,6 +125,7 @@ class DishIngredientDeletePage(BaseHandler):
 		self.redirect('/dish?dishKey=%s' % str(dish.key()))
 
 class DishIngredientAddPage(BaseHandler):
+	URL = '/addIngredientToDish'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")

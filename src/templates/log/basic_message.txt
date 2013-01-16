@@ -1,0 +1,1 @@
+{{now.strftime('%Y-%m-%d:%H:%M:%S')}} {{url}} {{ message }} {% if user != None%}{{ user.key()}} ({{user.familyName}} {{user.givenName}}){% else %}UNKNOWN{% endif%}

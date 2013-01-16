@@ -6,11 +6,12 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
 	getFirstOrderableDate, getMonday,\
-	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, timeZone
+	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, timeZone, logInfo
 import datetime
 from model import MenuItem, User, UserWeekOrder, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
-from user_management import USER_KEY, getUser, isUserLoggedIn
+from user_management import USER_KEY, getUser, isUserLoggedIn,\
+	LOGIN_NEXT_PAGE_KEY
 from cache_menu_item import getDaysMenuItems, getMenuItem
 from cache_composit import getDaysComposits, getComposit
 from google.appengine.api import mail
@@ -138,6 +139,7 @@ def getOrderTotal(weeks):
 	return orderTotal
 
 class MenuOrderPage(BaseHandler):
+	URL = '/order'
 	def get(self):
 		firstOrderableDay=getFirstOrderableDate(self)
 		day=getOrderBaseDate(self)
@@ -251,6 +253,7 @@ class MenuOrderPage(BaseHandler):
 			template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/menuOrder.html')
+		logInfo(self, self.URL, "DISPLAY_MENU")
 		self.printPage(str(day), template.render(template_values), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
@@ -260,9 +263,11 @@ class MenuOrderPage(BaseHandler):
 			if (field[:3]=="MIC"):
 				actualOrder[field[3:]]=self.request.get(field)
 		self.session[ACTUAL_ORDER]=actualOrder
+		logInfo(self, self.URL, "SAVED_ORDER")
 		self.redirect("/order?day="+str(day))
 
 class ClearOrderPage(BaseHandler):
+	URL = '/clearOrder'
 	def get(self):
 		day=getFormDate(self)
 		self.session[ACTUAL_ORDER]={}
@@ -270,9 +275,11 @@ class ClearOrderPage(BaseHandler):
 	def post(self):
 		day=getFormDate(self)
 		self.session[ACTUAL_ORDER]={}
+		logInfo(self, self.URL, "CLEAR_ORDER")
 		self.redirect("/order?day="+str(day))
 
 class ReviewPendingOrderPage(BaseHandler):
+	URL = '/pendingOrder'
 	def get(self):
 		day=getOrderBaseDate(self)
 		monday = getMonday(day)
@@ -406,6 +413,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			self.printPage(str(day), template.render(template_values), True)
 		else:
 			template = jinja_environment.get_template('templates/noOrder.html')
+			logInfo(self, self.URL, "DISPLAY_BASKET")
 			self.printPage(None, template.render(), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
@@ -416,9 +424,11 @@ class ReviewPendingOrderPage(BaseHandler):
 				actualOrder[field[3:]]=self.request.get(field)
 		self.session[ACTUAL_ORDER]=actualOrder
 		# Get addresses and save them to the proper date
+		logInfo(self, self.URL, "MODIFIED_ADDRESS")
 		self.redirect("/pendingOrder?day="+str(day))
 
 class ReviewOrderedMenuPage(BaseHandler):
+	URL = '/personalMenu'
 	def get(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/")
@@ -478,6 +488,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 			template_values['prev'] = prevMonday
 		# A single dish with editable ingredient list
 		template = jinja_environment.get_template('templates/reviewOrderedMenu.html')
+		logInfo(self, self.URL, "REVIEW_PERSONAL_MENU")
 		self.printPage(str(day), template.render(template_values), False, True)
 	def post(self):
 		# Get addresses and save them to the proper day
@@ -513,9 +524,11 @@ class ReviewOrderedMenuPage(BaseHandler):
 						elif day.weekday() == 6:
 							week.sundayAddress = address
 						week.put()
+		logInfo(self, self.URL, "MODIFY_ADDRESS_ON_PERSONAL_MENU")
 		self.redirect("/personalMenu")
 
 class ConfirmOrder(BaseHandler):
+	URL = '/confirmOrder'
 	def post(self):
 		#One step ordering
 		if(not isUserLoggedIn(self)):
@@ -634,14 +647,11 @@ class ConfirmOrder(BaseHandler):
 					week.orderedMenuItems = orderedMenuItems
 					week.orderedComposits = orderedComposits
 					week.put()
-				now=datetime.datetime.now(timeZone)
 				template_values = {
 					"user":user,
 					'userOrder':sortedItemsForMail,
-					'now':now
 				}
-				loggingTemplate = jinja_environment.get_template('templates/log/order_received.txt')
-				logging.info(loggingTemplate.render(template_values))
+				logInfo(self, self.URL, "ORDER_POSTED")
 				# Send email notification to the user
 				messageTxtTemplate = jinja_environment.get_template('templates/orderNotificationMail.txt')
 				messageHtmlTemplate = jinja_environment.get_template('templates/orderNotificationMail.html')

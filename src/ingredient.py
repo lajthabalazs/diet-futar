@@ -3,16 +3,15 @@ from model import Ingredient, IngredientCategory
 import jinja2
 import os
 from base_handler import BaseHandler
-from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import isUserCook
 from cache_ingredient import getIngredient, modifyIngredient, addIngredient,\
 	getIngredients, deleteIngredient
-from cache_ingredient_category import getIngredientCategories,\
-	getIngredientCategoryWithIngredients
+from cache_ingredient_category import getIngredientCategories
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class IngredientPage(BaseHandler):
+	URL = '/ingredient'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -89,6 +88,7 @@ class IngredientPage(BaseHandler):
 			self.printPage("Alapanyagok", template.render(template_values), False, False)
 
 class IngredientDeletePage(BaseHandler):
+	URL = '/deleteIngredient'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -105,6 +105,7 @@ class IngredientDeletePage(BaseHandler):
 		self.redirect('/ingredient')
 
 class IngredientAddPage(BaseHandler):
+	URL = '/addIngredientToCategory'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")

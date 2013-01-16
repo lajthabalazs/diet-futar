@@ -12,6 +12,7 @@ from cache_ingredient_category import addIngredientCategory,\
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class CategoryIngredientDeletePage(BaseHandler):
+	URL = '/deleteIngredientFromCategory'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -24,6 +25,7 @@ class CategoryIngredientDeletePage(BaseHandler):
 		self.redirect('/ingredientCategory?ingredientCategoryKey=%s' % category.key())
 
 class IngredientCategoryPage(BaseHandler):
+	URL = '/ingredientCategory'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -59,6 +61,7 @@ class IngredientCategoryPage(BaseHandler):
 			self.printPage("Alapanyag kategoriak", template.render(template_values), False, False)
 
 class IngredientCategoryDeletePage(BaseHandler):
+	URL = '/deleteIngredientCategory'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")

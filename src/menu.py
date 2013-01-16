@@ -74,6 +74,7 @@ def getMenu(day, dayIndex, availableMenuItems):
 	return menu
 
 class MenuWeekEditPage(BaseHandler):
+	URL = '/menuWeekEdit'
 	def get(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -131,6 +132,7 @@ class MenuWeekEditPage(BaseHandler):
 			self.redirect("/menuWeekEdit?day="+str(day))
 
 class MenuEditPage(BaseHandler):
+	URL = '/menuEdit'
 	def get(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -182,6 +184,7 @@ class MenuEditPage(BaseHandler):
 			self.redirect("/menuEdit?day="+str(day))
 			
 class CreateComposit(BaseHandler):
+	URL = '/createComposit'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -194,6 +197,7 @@ class CreateComposit(BaseHandler):
 			self.redirect("/menuEdit?day="+str(day))
 
 class AddItemToComposit(BaseHandler):
+	URL = '/addItemToComposit'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -207,6 +211,7 @@ class AddItemToComposit(BaseHandler):
 			self.redirect("/menuEdit?day="+ str(day))
 
 class DeleteItemFromComposit(BaseHandler):
+	URL = '/deleteItemFromComposit'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -221,6 +226,7 @@ class DeleteItemFromComposit(BaseHandler):
 			self.redirect("/menuEdit?day="+str(day))
 			
 class ModifyComposit(BaseHandler):
+	URL = '/modifyComposit'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -239,6 +245,7 @@ class ModifyComposit(BaseHandler):
 			self.redirect("/menuEdit?day="+str(day))
 			
 class DeleteComposit(BaseHandler):
+	URL = '/deleteComposit'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -261,6 +268,7 @@ class DeleteComposit(BaseHandler):
 			self.redirect("/menuEdit?day="+str(day))
 
 class ModifyMenuItem(BaseHandler):
+	URL = '/modifyMenuItem'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -278,6 +286,7 @@ class ModifyMenuItem(BaseHandler):
 			self.redirect("/menuEdit?day="+str(day))
 
 class AddMenuItemComponent(BaseHandler):
+	URL = '/addMenuItemComponent'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -307,6 +316,7 @@ class AddMenuItemComponent(BaseHandler):
 			self.redirect("/menuEdit?day="+str(day))
 			
 class DeleteMenuItem(BaseHandler):
+	URL = '/deleteMenuItem'
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")

@@ -5,7 +5,7 @@ import os
 
 from base_handler import BaseHandler
 from model import User, Role
-from user_management import isUserAdmin, getUser, USER_KEY
+from user_management import isUserAdmin, getUser, USER_KEY, LOGIN_NEXT_PAGE_KEY
 from google.appengine.api.datastore_errors import BadKeyError
 #from user_management import getUserBox
 
@@ -15,8 +15,10 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 #An accumulated overview of every ordered item
 class UserListPage(BaseHandler):
+	URL = '/userList'
 	def get(self):
 		if(not isUserAdmin(self)):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		pageText=self.request.get("page")
@@ -73,6 +75,7 @@ class UserListPage(BaseHandler):
 		self.redirect("/userList")
 
 class SwitchToUserPage(BaseHandler):
+	URL = '/switchToUser'
 	def post(self):
 		if(not isUserAdmin(self)):
 			self.redirect("/")
@@ -91,8 +94,10 @@ class SwitchToUserPage(BaseHandler):
 				
 #An accumulated overview of every ordered item
 class UserOverviewPage(BaseHandler):
+	URL = '/userOverview'
 	def get(self):
 		if(not isUserAdmin(self)):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		userKey = self.request.get("userKey")

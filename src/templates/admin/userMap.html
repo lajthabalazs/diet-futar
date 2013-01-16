@@ -1,0 +1,17 @@
+<div class="mainBg staticPage">
+	<div class="container">
+		<script type="text/javascript"
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDut-2MZCMNG76_SBBZ_AdPn-msAdAiNNo&sensor=false">
+		</script>
+		<script type="text/javascript">
+			function initialize() {
+				var mapOptions = {
+					center: new google.maps.LatLng(-34.397, 150.644), zoom: 8, mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+				var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+			}
+		</script>
+		<button onclick="initialize();">Mutasd</button>
+		<div id="map_canvas" style="width:600px; height:400px; vertical-align:middle; background-color: #333333">Load map</div>
+	</div>
+</div>

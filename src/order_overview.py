@@ -9,7 +9,7 @@ from model import ROLE_ADMIN, Role, ROLE_DELIVERY_GUY, UserWeekOrder,\
 	User
 from order import dayNames, getOrderAddress, getOrderedItemsFromWeekData,\
 	getOrdersForWeek
-from user_management import isUserCook, isUserDelivery
+from user_management import isUserCook, isUserDelivery, LOGIN_NEXT_PAGE_KEY
 from cache_dish_category import getDishCategories
 from cache_menu_item import getDaysMenuItems
 from cache_composit import getDaysComposits
@@ -20,8 +20,10 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 #An accumulated overview of every ordered item
 class ChefReviewOrdersPage(BaseHandler):
+	URL = '/chefReviewOrders'
 	def get(self):
 		if not isUserCook(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		day=getBaseDate(self)
@@ -86,8 +88,10 @@ class ChefReviewOrdersPage(BaseHandler):
 		self.printPage(str(day), template.render(template_values), True)
 
 class DeliveryReviewOrdersPage(BaseHandler):
+	URL = '/deliveryReviewOrders'
 	def get(self):
 		if not isUserDelivery(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		day=getBaseDate(self)
@@ -142,8 +146,10 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		self.printPage(str(day), template.render(template_values), False, False)
 
 class DeliveryPage(BaseHandler):
+	URL = '/deliverable'
 	def get(self):
 		if not isUserDelivery(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return	
 		userKey = self.request.get("userKey")

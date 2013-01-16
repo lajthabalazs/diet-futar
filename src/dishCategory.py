@@ -25,6 +25,7 @@ class CategoryDishDeletePage(BaseHandler):
 		self.redirect(DISH_CATEGORY_URL+'?'+DISH_CATEGORY_KEY+'=%s' % category.key())
 
 class DishCategoryPage(BaseHandler):
+	URL = DISH_CATEGORY_URL
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")
@@ -77,6 +78,7 @@ class DishCategoryPage(BaseHandler):
 			self.printPage("Etel kategoriak", template.render(template_values), False, False)
 
 class DishCategoryDeletePage(BaseHandler):
+	URL = DISH_CATEGORY_DELETE_URL
 	def post(self):
 		if not isUserCook(self):
 			self.redirect("/")

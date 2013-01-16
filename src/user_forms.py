@@ -29,6 +29,7 @@ def clearNextPage(handler):
 	return nextPage
 
 class LoginPage(BaseHandler):
+	URL = '/login'
 	def post(self):
 		#Check login
 		email = self.request.get('email')
@@ -52,12 +53,14 @@ class LoginPage(BaseHandler):
 			self.redirect(clearNextPage(self))
 
 class LogoutPage(BaseHandler):
+	URL = '/logout'
 	def get(self):
 		if (USER_KEY in self.session):
 			del self.session[USER_KEY]
 		self.redirect(clearNextPage(self))
 
 class ForgotPassword(BaseHandler):
+	URL = '/forgotPassword'
 	def get(self):
 		email = self.session.get(EMAIL_KEY)
 		users = User.gql('WHERE email = :1', email)
@@ -95,6 +98,7 @@ class ForgotPassword(BaseHandler):
 		self.printPage("Uj jelszo", template.render(template_params), True, True)
 		
 class RegisterPage(BaseHandler):
+	URL = '/registration'
 	def get(self):
 		refererKey = self.request.get('refererKey')
 		template_params={
@@ -170,11 +174,13 @@ class RegisterPage(BaseHandler):
 			self.redirect("/activationPending")
 
 class ActivationPendingPage (BaseHandler):
+	URL = '/activationPending'
 	def get(self):
 			template = jinja_environment.get_template('templates/userForms/activation/activation_pending.html')
 			self.printPage("Aktivacio", template.render(), True)
 	
 class ActivatePage (BaseHandler):
+	URL = '/activate'
 	def get(self):
 		# Finds user with given email and activation code and activates it
 		email = self.request.get('email')
@@ -199,6 +205,7 @@ class ActivatePage (BaseHandler):
 		self.printPage("Aktivacio", template.render(template_values), True)
 
 class ChangePasswordPage (BaseHandler):
+	URL = '/changePassword'
 	def post(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
@@ -226,6 +233,7 @@ class ChangePasswordPage (BaseHandler):
 
 
 class UserProfilePage (BaseHandler):
+	URL = '/profile'
 	def get(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
@@ -266,6 +274,7 @@ class UserProfilePage (BaseHandler):
 			self.redirect("/registration")
 
 class AddressPage (BaseHandler):
+	URL = '/address'
 	def post(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
@@ -296,6 +305,7 @@ class AddressPage (BaseHandler):
 		self.redirect("/profile")
 
 class DeleteAddressPage (BaseHandler):
+	URL = '/deleteAddress'
 	def post(self):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
@@ -320,8 +330,10 @@ class DeleteAddressPage (BaseHandler):
 		self.redirect("/profile")
 
 class Referals (BaseHandler):
+	URL = '/referred'
 	def get(self):
 		if(not isUserLoggedIn(self)):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/registration")
 			return
 		user = None

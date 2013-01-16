@@ -1,15 +1,17 @@
 from base_handler import BaseHandler, jinja_environment
 from model import Address
-from user_management import isUserAdmin
+from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 from cache_zips import getZipCodeEntry
 
 def isProperZipCode(code):
 	return (getZipCodeEntry(code) != None)
 
 class MigrateZipCodesToNumberFormat(BaseHandler):
+	URL = '/migrateAddresses'
 	def get(self):
 		if not isUserAdmin(self):
-			self.printPage("Dashboard", "", True, True)
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL		
+			self.redirect("/")
 			return
 		addresses = Address.all()
 		address = Address()

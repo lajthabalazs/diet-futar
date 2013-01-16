@@ -6,7 +6,7 @@ Created on Aug 11, 2012
 import webapp2
 from webapp2_extras import sessions
 from user_management import getUserBox, isUserLoggedIn, isUserAdmin, isUserCook, isUserDelivery,\
-	isUserAgent
+	isUserAgent, getUser
 import jinja2
 import os
 from keys import DISH_CATEGORY_URL
@@ -15,6 +15,7 @@ from timezone import USTimeZone
 from model import Maintenence
 from string import replace, split
 from cache_zips import getZipCodeEntry
+import logging
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 LAST_ORDER_HOUR=11
@@ -40,6 +41,17 @@ def getZipBasedDeliveryLimit(code):
 	else:
 		return 5000
 	
+def logInfo(handler, url, message):
+	template_values_for_logging = {
+		"user":getUser(handler),
+		"url":url,
+		"message":message,
+		'now':datetime.datetime.now(timeZone)
+	}
+	
+	loggingTemplate = jinja_environment.get_template('templates/log/basic_message.txt')
+	logging.info(loggingTemplate.render(template_values_for_logging))
+
 def getFirstOrderableDate(handler):
 	today=datetime.date.today()
 	now=datetime.datetime.now(timeZone)

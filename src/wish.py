@@ -7,13 +7,15 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler
 from model import Wish
-from user_management import isUserAdmin
+from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class WishPage(BaseHandler):
+	URL = '/wish'
 	def post(self):
 		if(not isUserAdmin(self)):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 		if ((self.request.get('wishKey') != None) and (self.request.get('wishKey') != "")):
 		#Modification of basic data
@@ -49,6 +51,7 @@ class WishPage(BaseHandler):
 			self.printPage("Fejlesztesi kivansagok", template.render(template_values), False, False)
 
 class DeleteWishPage(BaseHandler):
+	URL = '/deleteWish'
 	def post(self):
 		if(not isUserAdmin(self)):
 			self.redirect("/")

@@ -1,7 +1,7 @@
 from base_handler import BaseHandler, jinja_environment, getMonday
 from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, User,\
 	Maintenence, ZipCodes
-from user_management import isUserAdmin
+from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 
 import datetime
 from order import getOrderTotal
@@ -9,9 +9,11 @@ from zipCodeInit import createZipCodeList
 from cache_zips import updateZipCodeEntry, updateZipCodeScript
 
 class AdminConsolePage(BaseHandler):
+	URL = "/siteAdmin"
 	def get(self):
 		if not isUserAdmin(self):
-			self.printPage("Dashboard", "", True, True)
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
 			return
 		orderedMaintenences = Maintenence.all().order('startDate')
 		template_values = {
@@ -21,9 +23,11 @@ class AdminConsolePage(BaseHandler):
 		self.printPage("dashboard", template.render(template_values), False, False)
 
 class ScheduleMainenencePage(BaseHandler):
+	URL ='/scheduleMainenence'
 	def post(self):
 		if not isUserAdmin(self):
-			self.printPage("Dashboard", "", True, True)
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
 			return
 		displayedDate = self.request.get('displayedDate')
 		features = self.request.get('features')
@@ -36,9 +40,11 @@ class ScheduleMainenencePage(BaseHandler):
 		self.redirect("/siteAdmin")
 
 class ZipCodeEditorPage(BaseHandler):
+	URL = '/editZipCodes'
 	def get(self):
 		if not isUserAdmin(self):
-			self.printPage("Dashboard", "", True, True)
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
 			return
 		rawCodes = ZipCodes.all().get()
 		if (rawCodes == None):
@@ -61,6 +67,11 @@ class ZipCodeEditorPage(BaseHandler):
 		template = jinja_environment.get_template('templates/admin/zipCodeEditor.html')
 		self.printPage("dashboard", template.render(template_values), False, False)
 	def post(self):
+		self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
 		codes = {}
 		for field in self.request.arguments():
 			code = field[:4]
@@ -88,9 +99,12 @@ class ZipCodeEditorPage(BaseHandler):
 
 
 class EndMainenencePage(BaseHandler):
+	URL = '/endMaintenence'
 	def post(self):
+		self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 		if not isUserAdmin(self):
-			self.printPage("Dashboard", "", True, True)
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
 			return
 		maintenenceKey = self.request.get('maintenenceKey')
 		maintenence = Maintenence.get(maintenenceKey)
@@ -100,6 +114,7 @@ class EndMainenencePage(BaseHandler):
 		self.redirect("/siteAdmin")
 
 class SetupPage(BaseHandler):
+	URL = "/setup"
 	def get(self):
 		roles=Role.all()
 		if roles.count() == 0:
@@ -109,6 +124,7 @@ class SetupPage(BaseHandler):
 			template = jinja_environment.get_template('templates/setup/alreadySetUp.html')
 			self.printPage("Kor&aacute;bban inicializ&aacute;lva", template.render(), True, True)
 	def post(self):
+		self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 		roles=Role.all()
 		if roles.count() == 0:
 			# No roles were set up, set them up now
@@ -137,9 +153,11 @@ class SetupPage(BaseHandler):
 			self.printPage("Kor&aacute;bban inicializ&aacute;lva", template.render(), True, True)
 
 class EveryUsersOrderPage(BaseHandler):
+	URL = '/everyUsersOrder'
 	def get(self):
 		if not isUserAdmin(self):
-			self.printPage("Dashboard", "", True, True)
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
 			return
 		user = User()
 		users = User.all()

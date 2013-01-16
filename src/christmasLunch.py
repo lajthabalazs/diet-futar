@@ -4,7 +4,8 @@ import jinja2
 import os
 
 from base_handler import BaseHandler
-from user_management import getUser, isUserAdmin, isUserLoggedIn
+from user_management import getUser, isUserAdmin, isUserLoggedIn,\
+	LOGIN_NEXT_PAGE_KEY
 from model import WebshopItem, WebshopOrderItem, Address
 import datetime
 
@@ -18,6 +19,7 @@ MAKOS_BEIGLI = "MAKOS_BEIGLI"
 DIOS_BEIGLI = "DIOS_BEIGLI"
 
 class ChristmasLunchPage(BaseHandler):
+	URL = '/christmasLunch'
 	def get(self):
 		template_values = {
 		}
@@ -105,8 +107,10 @@ class ChristmasLunchPage(BaseHandler):
 		self.redirect("/userOrderList")
 
 class InitChristmasLunchPage(BaseHandler):
+	URL = '/initChristmasLunch'
 	def get(self):
 		if (not isUserAdmin(self)):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		aMenus = WebshopItem.all().filter("code = ", CHRISTMAS_LUNCH_A)

@@ -3,10 +3,8 @@
 import jinja2
 import os
 
-from google.appengine.ext import db
-
 from base_handler import BaseHandler
-from user_management import USER_KEY, isUserAdmin
+from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 from model import User, WebshopItem, WebshopOrderItem
 
 #from user_management import getUserBox
@@ -14,8 +12,10 @@ from model import User, WebshopItem, WebshopOrderItem
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class ItemListPage(BaseHandler):
+	URL = '/itemList'
 	def get(self):
 		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		items = WebshopItem.all().order('title')
@@ -27,8 +27,10 @@ class ItemListPage(BaseHandler):
 		self.printPage("Term&eacute;kek", template.render(template_values), True, True)
 
 class UsersOrdersPage(BaseHandler):
+	URL = '/usersOrders'
 	def get(self):
 		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
 		userKey = self.request.get('userKey')
