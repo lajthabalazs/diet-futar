@@ -45,6 +45,8 @@ class Address (db.Model):
 	street = db.StringProperty()
 	streetNumber = db.StringProperty()
 	active = db.BooleanProperty(default=True)
+	lat = db.StringProperty(default=None)
+	lon = db.StringProperty(default=None)
 
 class DishCategory(db.Model):
 	name = db.StringProperty()
