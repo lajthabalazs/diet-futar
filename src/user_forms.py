@@ -225,11 +225,17 @@ class ChangePasswordPage (BaseHandler):
 			self.redirect("/registration")
 			return
 		else:
-			if user.password == self.request.get("oldPassword"):
+			m = hashlib.md5()
+			m.update(self.request.get("oldPassword"))
+			passwordHash = str(m.hexdigest())
+
+			if user.passwordHash == passwordHash:
 				passwd1 = self.request.get("newPassword")
 				passwd2 = self.request.get("passwordCheck")
 				if passwd1 == passwd2:
-					user.password = passwd1
+					m2 = hashlib.md5()
+					m2.update(passwd1)
+					user.passwordHash = str(m2.hexdigest())
 					user.put()
 				else:
 					self.session[LOGIN_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
