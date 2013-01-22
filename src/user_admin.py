@@ -143,7 +143,8 @@ class HashUserPasswordPage(BaseHandler):
 		for user in users:
 			if (user.password != "JELSZO_!@#"):
 				m = hashlib.md5()
-				m.update(user.password)
+				encodedString = user.password.encode('ascii', errors='replace')
+				m.update(encodedString)
 				user.passwordHash = str(m.hexdigest())
 				user.password = "JELSZO_!@#"
 				user.put()

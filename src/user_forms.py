@@ -36,14 +36,15 @@ class LoginPage(BaseHandler):
 		email = self.request.get('email')
 		password = self.request.get('password')
 		m = hashlib.md5()
-		m.update(password)
+		encodedString = password.encode('ascii', errors='replace')
+		m.update(encodedString)
 		passwordHash = str(m.hexdigest())
 		users= User.gql('WHERE email = :1', email)
 		if (users.count(1)==0):
 			self.session[EMAIL_KEY]=email
 			self.session[LOGIN_ERROR_KEY]="USER"
 			self.redirect(clearNextPage(self))
-		elif ((users[0].passwordHash != passwordHash) and (users[0].password != password)):
+		elif ((users[0].passwordHash != passwordHash) and (users[0].password != password)): #
 			self.session[EMAIL_KEY]=email
 			self.session[LOGIN_ERROR_KEY] = "PASS"
 			self.redirect(clearNextPage(self))
@@ -87,8 +88,9 @@ class ForgotPassword(BaseHandler):
 			user = users.get()
 			user.password = word
 			m = hashlib.md5()
-			m.update(word)
-			user.passwordHash = str(m.hexdigest())
+			encodedString = word.encode('ascii', errors='replace')
+			m.update(encodedString)
+			user.passwordHash = str(m.hexdigest()) 
 			user.put()
 			template_values = {
 				"password":word
@@ -226,7 +228,8 @@ class ChangePasswordPage (BaseHandler):
 			return
 		else:
 			m = hashlib.md5()
-			m.update(self.request.get("oldPassword"))
+			encodedString = self.request.get("oldPassword").encode('ascii', errors='replace')
+			m.update(encodedString)
 			passwordHash = str(m.hexdigest())
 
 			if user.passwordHash == passwordHash:
@@ -234,8 +237,9 @@ class ChangePasswordPage (BaseHandler):
 				passwd2 = self.request.get("passwordCheck")
 				if passwd1 == passwd2:
 					m2 = hashlib.md5()
-					m2.update(passwd1)
-					user.passwordHash = str(m2.hexdigest())
+					encodedString = passwd1.encode('ascii', errors='replace')
+					m2.update(encodedString)
+					user.passwordHash = str(m2.hexdigest()) 
 					user.put()
 				else:
 					self.session[LOGIN_ERROR_KEY] = REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH
