@@ -43,7 +43,7 @@ class LoginPage(BaseHandler):
 			self.session[EMAIL_KEY]=email
 			self.session[LOGIN_ERROR_KEY]="USER"
 			self.redirect(clearNextPage(self))
-		elif (users[0].passwordHash != passwordHash):
+		elif ((users[0].passwordHash != passwordHash) and (users[0].password != password)):
 			self.session[EMAIL_KEY]=email
 			self.session[LOGIN_ERROR_KEY] = "PASS"
 			self.redirect(clearNextPage(self))
