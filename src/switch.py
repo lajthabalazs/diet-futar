@@ -23,7 +23,7 @@ from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, Deliv
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage,\
 	HashUserPasswordPage
 from index import CaloryCalculator, GooglePage, AboutPage,\
-	ContactsPage
+	ContactsPage, PrivacyPage
 from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage,\
 	ZipCodeEditorPage
@@ -84,6 +84,7 @@ app = webapp2.WSGIApplication([
 										(UserWebshopPostMessagePage.URL, UserWebshopPostMessagePage),
 
 										(AboutPage.URL, AboutPage),
+										(PrivacyPage.URL, PrivacyPage),
 										(ContactsPage.URL, ContactsPage),
 										(AboutDeliveryPage.URL, AboutDeliveryPage),
 										(CaloryCalculator.URL, CaloryCalculator),

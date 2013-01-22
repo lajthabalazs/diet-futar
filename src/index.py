@@ -28,3 +28,9 @@ class NewYearPage(BaseHandler):
 	def get(self):
 		template = jinja_environment.get_template('templates/newYear.html')
 		self.printPage("Boldog &Uacute; &Eacute;vet!", template.render(), True, True)
+
+class PrivacyPage(BaseHandler):
+	URL = '/privacy'
+	def get(self):
+		template = jinja_environment.get_template('templates/userForms/privacy.html')
+		self.printPage("Adatv&eacute;delmi nyilatkozat", template.render(), True, True)
