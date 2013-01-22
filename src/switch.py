@@ -20,7 +20,8 @@ from ingredientCategory import CategoryIngredientDeletePage,\
 	IngredientCategoryPage, IngredientCategoryDeletePage
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
 from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, DeliveryPage
-from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage
+from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage,\
+	HashUserPasswordPage
 from index import CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage
 from siteAdmin import SetupPage, AdminConsolePage,\
@@ -53,6 +54,7 @@ app = webapp2.WSGIApplication([
 										(ZipCodeEditorPage.URL, ZipCodeEditorPage),
 										(ViewLogs.URL, ViewLogs),
 										(UserMapPage.URL, UserMapPage),
+										(HashUserPasswordPage.URL, HashUserPasswordPage),
 										
 										
 										('/google24f0feb13afae7e0.html', GooglePage),

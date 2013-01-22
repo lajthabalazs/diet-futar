@@ -7,6 +7,7 @@ from base_handler import BaseHandler
 from model import User, Role
 from user_management import isUserAdmin, getUser, USER_KEY, LOGIN_NEXT_PAGE_KEY
 from google.appengine.api.datastore_errors import BadKeyError
+import hashlib
 #from user_management import getUserBox
 
 ACTUAL_ORDER="actualOrder"
@@ -129,3 +130,32 @@ class UserOverviewPage(BaseHandler):
 				}
 				template = jinja_environment.get_template('templates/staticMessage.html')
 				self.printPage("User hiba", template.render(template_values), False, False)
+
+
+class HashUserPasswordPage(BaseHandler):
+	URL = '/hashUserPasswordPage'
+	def get(self):
+		if(not isUserAdmin(self)):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
+		users = User.all()
+		for user in users:
+			if (user.password != "JELSZO_!@#"):
+				m = hashlib.md5()
+				m.update(user.password)
+				user.passwordHash = str(m.hexdigest())
+				user.password = "JELSZO_!@#"
+				user.put()
+		template_values = {
+			"title":"Jelszo hash-ek generalva.",
+			"message":"Legeneraltuk a jelszo hash-ket"
+		}
+		template = jinja_environment.get_template('templates/staticMessage.html')
+		self.printPage("User hiba", template.render(template_values), False, False)
+
+
+
+
+
+

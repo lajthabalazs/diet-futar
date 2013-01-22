@@ -28,6 +28,7 @@ class User(db.Model):
 	referNumber = db.IntegerProperty()
 	email = db.StringProperty()
 	password = db.StringProperty()
+	passwordHash = db.StringProperty()
 	familyName = db.StringProperty()
 	givenName = db.StringProperty()
 	phoneNumber = db.StringProperty()

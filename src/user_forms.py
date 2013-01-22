@@ -18,6 +18,7 @@ from user_management import LOGIN_ERROR_KEY, REGISTRATION_ERROR_EXISTING_USER,\
 from random import Random
 from xmlrpclib import datetime
 from google.appengine.api import mail
+import hashlib
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -34,12 +35,15 @@ class LoginPage(BaseHandler):
 		#Check login
 		email = self.request.get('email')
 		password = self.request.get('password')
+		m = hashlib.md5()
+		m.update(password)
+		passwordHash = str(m.hexdigest())
 		users= User.gql('WHERE email = :1', email)
 		if (users.count(1)==0):
 			self.session[EMAIL_KEY]=email
 			self.session[LOGIN_ERROR_KEY]="USER"
 			self.redirect(clearNextPage(self))
-		elif (users[0].password != password):
+		elif (users[0].passwordHash != passwordHash):
 			self.session[EMAIL_KEY]=email
 			self.session[LOGIN_ERROR_KEY] = "PASS"
 			self.redirect(clearNextPage(self))
@@ -82,7 +86,10 @@ class ForgotPassword(BaseHandler):
 				word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
 			user = users.get()
 			user.password = word
-			# TODO send mail
+			m = hashlib.md5()
+			m.update(word)
+			user.passwordHash = str(m.hexdigest())
+			user.put()
 			template_values = {
 				"password":word
 			}
@@ -92,7 +99,6 @@ class ForgotPassword(BaseHandler):
 			message.to = email
 			message.html = messageTemplate.render(template_values)
 			message.send()
-			user.put()
 			template_params[EMAIL_KEY] = email
 		template = jinja_environment.get_template('templates/userForms/changePassSuccess.html')
 		self.printPage("Uj jelszo", template.render(template_params), True, True)
