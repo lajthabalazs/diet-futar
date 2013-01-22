@@ -461,13 +461,6 @@ a.userMenu:hover, input.userMenu:hover {
 	font-weight: normal;
 }
 
-.profileColumn input[type=checkbox] {
-	width: 210px;
-	position: absolute;
-	margin-top: 9px;
-	margin-left: -53px;
-	}
-
 .profileColumn label span { 
 	background: none;
 	background-color: none;

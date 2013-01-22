@@ -1,4 +1,9 @@
 ﻿<div class="mainBg staticPage">
+	<script language="JavaScript">
+		function privacyNoteStateChanged (value) {
+			{document.getElementById("submitRegistrationForm").disabled = !value;}
+		}
+	</script>
 	<form method="post">
 		<div class="container">
 			<div class="span-24 last profile">
@@ -16,7 +21,8 @@
 						{% else %}
 						<span style="color: #F60;">Minden mező kitöltése kötelező</span><br/>
 						{% endif %}
-						<input type="submit" value="Regisztráció"/>
+						<label><input onchange="privacyNoteStateChanged(this.checked);" type="checkbox"/>Elolvastam és elfogadom az <a href="/privacy" target="_blank">adatvédelmi nyilatkozatban foglaltakat</a>.</label>
+						<input id="submitRegistrationForm" type="submit" disabled="disabled" value="Regisztráció"/>
 					</div>
 					{% if referer %}
 					<div class="span-5 prepend-1 profileColumn profileElement">
