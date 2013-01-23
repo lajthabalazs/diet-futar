@@ -157,6 +157,13 @@ class RegisterPage(BaseHandler):
 			user.familyName=familyName
 			user.givenName=givenName
 			user.password = password
+			
+
+			m = hashlib.md5()
+			encodedString = password.encode('ascii', errors='replace')
+			m.update(encodedString)
+			user.passwordHash = str(m.hexdigest())
+
 			user.phoneNumber=phoneNumber
 			user.activated = False
 			user.registrationDate=datetime.date.today()
@@ -166,7 +173,7 @@ class RegisterPage(BaseHandler):
 			random = Random()
 			for i in range(1,32):
 				word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
-			user.activationCode = word
+			user.activationCode = word			
 			user.put()
 			template_values = {
 				'email':email,
