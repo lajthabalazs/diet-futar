@@ -7,12 +7,12 @@ from base_handler import BaseHandler, getBaseDate, getMonday, getZipBasedDeliver
 import datetime
 from model import ROLE_ADMIN, Role, ROLE_DELIVERY_GUY, UserWeekOrder,\
 	User
-from order import dayNames, getOrderAddress, getOrderedItemsFromWeekData,\
-	getOrdersForWeek
+from order import dayNames, getOrderAddress, getOrderedItemsFromWeekData
 from user_management import isUserCook, isUserDelivery, LOGIN_NEXT_PAGE_KEY
 from cache_dish_category import getDishCategories
 from cache_menu_item import getDaysMenuItems
 from cache_composit import getDaysComposits
+from orderHelper import getOrdersForWeek
 
 ACTUAL_ORDER="actualOrder"
 

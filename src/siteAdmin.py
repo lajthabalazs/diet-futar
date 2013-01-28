@@ -4,9 +4,10 @@ from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, Us
 from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 
 import datetime
-from order import getOrderTotal
 from zipCodeInit import createZipCodeList
 from cache_zips import updateZipCodeEntry, updateZipCodeScript
+from cacheWeek import getUsers, getUserWeekForDay
+from orderHelper import getOrderTotal
 
 class AdminConsolePage(BaseHandler):
 	URL = "/siteAdmin"
@@ -159,7 +160,6 @@ class EveryUsersOrderPage(BaseHandler):
 			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
-		user = User()
 		users = User.all()
 		allUsers = []
 		today=datetime.date.today()
@@ -200,4 +200,54 @@ class EveryUsersOrderPage(BaseHandler):
 		}
 		template = jinja_environment.get_template('templates/admin/everyUsersOrder.html')
 		self.printPage("Rendel&eacute;sek", template.render(template_values), False, False)
+
+
+
+
+class UsersFromCachePage(BaseHandler):
+	URL = '/cachedUsers'
+	def get(self):
 		
+		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
+		users = getUsers()
+		allUsers = []
+		today=datetime.date.today()
+		monday = getMonday(today)
+		maxWeeks = 20
+		weekTotals = []
+		for i in range(0, maxWeeks):
+			weekTotalITem = {
+					'total' : 0,
+					'monday' : monday + datetime.timedelta(days = (i - maxWeeks + 1) * 7)
+				}
+			weekTotals.append(weekTotalITem)
+		for user in users:
+			orderTotal = 0
+			computedWeeks = []
+			for i in range(0, maxWeeks):
+				actualMonday = monday + datetime.timedelta(days = (i - maxWeeks + 1) * 7)
+				week = getUserWeekForDay(user['key'], actualMonday)
+				if week != None:
+					weekTotals[i]['total'] = weekTotals[i]['total'] + week['weekTotal']
+					computedWeek = {
+						'itemPrice': week['weekTotal'],
+						'userKey':user['key'],
+						'monday': actualMonday,
+					}
+					orderTotal = orderTotal + week['weekTotal']
+				else:
+					computedWeek = {'itemPrice': 0}
+				computedWeeks.append(computedWeek)
+			user['computedWeeks'] = computedWeeks
+			user['orderTotal'] = orderTotal
+			allUsers.append(user)
+		orderedUsers = sorted(allUsers, key=lambda item:item['orderTotal'], reverse=True)
+		template_values = {
+			'users':orderedUsers,
+			'weekTotals':weekTotals
+		}
+		template = jinja_environment.get_template('templates/admin/users.html')
+		self.printPage("Rendel&eacute;sek", template.render(template_values), False, False)

@@ -6,17 +6,17 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
 	getFirstOrderableDate, getMonday,\
-	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, timeZone, logInfo
+	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, logInfo
 import datetime
 from model import MenuItem, User, UserWeekOrder, Address
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
-from user_management import USER_KEY, getUser, isUserLoggedIn,\
-	LOGIN_NEXT_PAGE_KEY
+from user_management import USER_KEY, getUser, isUserLoggedIn
 from cache_menu_item import getDaysMenuItems, getMenuItem
 from cache_composit import getDaysComposits, getComposit
 from google.appengine.api import mail
 from cache_dish_category import getDishCategories
-import logging
+from orderHelper import getUserOrdersForWeek, getOrderedItemsFromWeekData,\
+	getOrderAddress, isMenuItem
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -24,119 +24,6 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 ACTUAL_ORDER="actualOrder"
 FURTHEST_DAY_DISPLAYED=14
 dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
-
-def isMenuItem(key):
-	# What better way than to get it from cache
-	return (getMenuItem(key) != None)
-
-def getOrderedItemsFromWeekData (weeks, day):
-	orderedMenuItemIndexes={}
-	orderedCompositIndexes={}
-	orderedMenuItems=[]
-	orderedComposits=[]
-	for week in weeks:
-		for menuItemString in week.orderedMenuItems:
-			parts = menuItemString.split(" ")
-			orderedQuantity = int(parts[0])
-			menuItemKey = parts[1]
-			menuItem = getMenuItem(menuItemKey)
-			if menuItem != None and menuItem['day'] == day:
-				if orderedMenuItemIndexes.has_key(menuItemKey):
-					index = orderedMenuItemIndexes.get(menuItemKey)
-					orderedMenuItems[index]['orderedQuantity'] = orderedQuantity + orderedMenuItems[index]['orderedQuantity']
-				else:
-					menuItem['orderedQuantity'] = orderedQuantity
-					menuItem['isMenuItem'] = True
-					orderedMenuItemIndexes[menuItemKey] = len(orderedMenuItems)
-					orderedMenuItems.append(menuItem)
-		for compositString in week.orderedComposits:
-			parts = compositString.split(" ")
-			orderedQuantity = int(parts[0])
-			compositKey = parts[1]
-			composit = getComposit(compositKey)
-			if composit != None and composit['day'] == day:
-				if orderedCompositIndexes.has_key(compositKey):
-					index = orderedCompositIndexes.get(compositKey)
-					orderedComposits[index]['orderedQuantity'] = orderedQuantity + orderedComposits[index]['orderedQuantity']
-				else:
-					composit['orderedQuantity'] = orderedQuantity
-					composit['isMenuItem'] = False
-					orderedCompositIndexes[compositKey] = len(orderedComposits)
-					orderedComposits.append(composit)
-	orderedItems = []
-	orderedItems.extend(orderedComposits)
-	orderedItems.extend(orderedMenuItems)
-	return orderedItems
-
-def getOrderAddress (week, day):
-	if week == None:
-		return None
-	if day.weekday() == 0:
-		return week.mondayAddress
-	elif day.weekday() == 1:
-		return week.tuesdayAddress
-	elif day.weekday() == 2:
-		return week.wednesdayAddress
-	elif day.weekday() == 3:
-		return week.thursdayAddress
-	elif day.weekday() == 4:
-		return week.fridayAddress
-	elif day.weekday() == 5:
-		return week.saturdayAddress
-	elif day.weekday() == 6:
-		return week.sundayAddress
-
-def getOrdersFromWeeks(weeks):
-	orders={}
-	for week in weeks:
-		for orderedComposit in week.orderedComposits:
-			parts = orderedComposit.split(" ")
-			orderedQuantity = int(parts[0])
-			orderedItemKey = parts[1]
-			oldValue = 0
-			try:
-				oldValue = int(orders[orderedItemKey])
-			except:
-				pass
-			orders[orderedItemKey] = orderedQuantity + oldValue
-		for orderedMenuItem in week.orderedMenuItems:
-			parts = orderedMenuItem.split(" ")
-			orderedQuantity = int(parts[0])
-			orderedItemKey = parts[1]
-			oldValue = 0
-			try:
-				oldValue = int(orders[orderedItemKey])
-			except:
-				pass
-			orders[orderedItemKey] = orderedQuantity + oldValue
-	return orders
-
-def getOrdersForWeek(monday):
-	weeks = UserWeekOrder.all().filter("monday = ", monday)
-	return getOrdersFromWeeks(weeks)
-
-def getUserOrdersForWeek(user, monday):
-	weeks = user.weeks.filter("monday = ", monday)
-	return getOrdersFromWeeks(weeks)
-
-def getOrderTotal(weeks):
-	orderTotal = 0
-	for week in weeks:
-		for orderedComposit in week.orderedComposits:
-			parts = orderedComposit.split(" ")
-			orderedQuantity = int(parts[0])
-			orderedItemKey = parts[1]
-			composit = getComposit(orderedItemKey)
-			if composit['price'] != 0:
-				orderTotal = orderTotal + composit['price'] * orderedQuantity
-		for orderedMenuItem in week.orderedMenuItems:
-			parts = orderedMenuItem.split(" ")
-			orderedQuantity = int(parts[0])
-			orderedItemKey = parts[1]
-			menuItem = getMenuItem(orderedItemKey)
-			if menuItem['price'] != 0:
-				orderTotal = orderTotal + menuItem['price'] * orderedQuantity
-	return orderTotal
 
 class MenuOrderPage(BaseHandler):
 	URL = '/order'

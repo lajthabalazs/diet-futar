@@ -26,7 +26,7 @@ from index import CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage, PrivacyPage
 from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage,\
-	ZipCodeEditorPage
+	ZipCodeEditorPage, UsersFromCachePage
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
 from christmasLunch import ChristmasLunchPage, InitChristmasLunchPage
@@ -55,6 +55,7 @@ app = webapp2.WSGIApplication([
 										(ViewLogs.URL, ViewLogs),
 										(UserMapPage.URL, UserMapPage),
 										(HashUserPasswordPage.URL, HashUserPasswordPage),
+										(UsersFromCachePage.URL, UsersFromCachePage),
 										
 										
 										('/google24f0feb13afae7e0.html', GooglePage),
