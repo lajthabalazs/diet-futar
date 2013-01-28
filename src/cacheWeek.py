@@ -17,14 +17,6 @@ def createWeekDb (weekDb):
 		'monday':weekDb.monday,
 		'orderedComposits':weekDb.orderedComposits,
 		'orderedMenuItems':weekDb.orderedMenuItems,
-		'orderHistory':weekDb.orderHistory,
-		'mondayAddress':weekDb.mondayAddress,
-		'tuesdayAddress':weekDb.tuesdayAddress,
-		'wednesdayAddress':weekDb.wednesdayAddress,
-		'thursdayAddress':weekDb.thursdayAddress,
-		'fridayAddress':weekDb.fridayAddress,
-		'saturdayAddress':weekDb.saturdayAddress,
-		'sundayAddress':weekDb.sundayAddress,
 		'weekTotal':weekTotal
 	}
 	# TODO cache week total
