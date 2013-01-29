@@ -17,6 +17,7 @@ from google.appengine.api import mail
 from cache_dish_category import getDishCategories
 from orderHelper import getUserOrdersForWeek, getOrderedItemsFromWeekData,\
 	getOrderAddress, isMenuItem
+from cacheWeek import updateUser
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -534,6 +535,7 @@ class ConfirmOrder(BaseHandler):
 					week.orderedMenuItems = orderedMenuItems
 					week.orderedComposits = orderedComposits
 					week.put()
+				updateUser(user)
 				template_values = {
 					"user":user,
 					'userOrder':sortedItemsForMail,
