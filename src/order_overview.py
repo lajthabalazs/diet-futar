@@ -68,9 +68,11 @@ class ChefReviewOrdersPage(BaseHandler):
 			actualCategoryObject["days"]=items
 			menu.append(actualCategoryObject)
 		days=[]
+		totalPrice = 0
 		for i in range(0,5):
 			actualDayObject={}
 			actualDayObject["orderedPrice"] = orderedPrice[i]
+			totalPrice = totalPrice + orderedPrice[i]
 			actualDayObject["day"]=dayNames[i]
 			actualDayObject["date"]=monday+datetime.timedelta(days=i)
 			days.append(actualDayObject)
@@ -79,7 +81,8 @@ class ChefReviewOrdersPage(BaseHandler):
 		nextMonday=monday + datetime.timedelta(days=7)
 		template_values = {
 			'days':days,
-			'menu':menu
+			'menu':menu,
+			'totalPrice':totalPrice
 		}
 		template_values['next'] = nextMonday
 		template_values['prev'] = prevMonday
