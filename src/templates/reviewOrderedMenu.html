@@ -71,7 +71,7 @@
 					{% for day in days %}
 					<div class="span-4">
 						{% if day.has_key('address') %}
-							<textarea name="comment_{{day.date}}" id="comment_{{day.date}}" rows="4" cols="20" style="width: 100%; height: 100%; margin: 0px; resize: none;">{{day.comment}}</textarea>
+							<textarea name="comment_{{day.date}}" id="comment_{{day.date}}" rows="4" cols="20" {% if day.changable == False %}disabled="disabled" {% endif%} style="width: 100%; height: 100%; margin: 0px; resize: none;">{{day.comment}}</textarea>
 						{% else %}
 							&nbsp;
 						{% endif %}
