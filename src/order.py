@@ -6,9 +6,9 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
 	getFirstOrderableDate, getMonday,\
-	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, logInfo
+	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, logInfo, timeZone
 import datetime
-from model import MenuItem, User, UserWeekOrder, Address
+from model import MenuItem, User, UserWeekOrder, Address, UserOrderEvent
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from user_management import USER_KEY, getUser, isUserLoggedIn
 from cache_menu_item import getDaysMenuItems, getMenuItem
@@ -459,7 +459,8 @@ class ConfirmOrder(BaseHandler):
 			return
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
 		firstOrderableDay = getFirstOrderableDate(self)
-
+		orderTotal = 0
+		orderedItems = []
 		if (len(actualOrder) > 0):
 			# Organize actual order into weeks
 			ordersInWeeks = {} # A map holding ordered items with ordered quantiy
@@ -491,12 +492,19 @@ class ConfirmOrder(BaseHandler):
 					for item in weekHolder:
 						orderedQuantity = item['quantity']
 						orderItemKey = item['key']
+						# Order should not remove more items than already ordered
+						if alreadyOrdered.has_key(orderItemKey):
+							alreadyOrderedQuantity = alreadyOrdered.get(orderItemKey)
+							if alreadyOrderedQuantity + orderedQuantity < 0:
+								orderedQuantity = 0 - alreadyOrderedQuantity
 						if isMenuItem(orderItemKey):
 							menuItem = getMenuItem(orderItemKey)
+							day = menuItem['day']
 							menuItem['quantity'] = orderedQuantity
 							menuItem['totalPrice'] = orderedQuantity * menuItem['price']
 							menuItem['isMenuItem'] = True
-							day = menuItem['day']
+							orderTotal = orderTotal + orderedQuantity * menuItem['price']
+							orderedItems.append(str(day) + " " + str(orderItemKey) + " " + str(orderedQuantity) + " " + str(menuItem['price']))
 							if orderedItemsForMail.has_key(day):
 								daysItems = orderedItemsForMail.get(day)
 								daysItems.append(menuItem)
@@ -510,6 +518,8 @@ class ConfirmOrder(BaseHandler):
 							composit['quantity'] = orderedQuantity
 							composit['totalPrice'] = orderedQuantity * composit['price']
 							composit['isMenuItem'] = False
+							orderTotal = orderTotal + orderedQuantity * composit['price']
+							orderedItems.append(str(day) + " " + str(orderItemKey) + " " + str(orderedQuantity) + " " + str(composit['price']))
 							if orderedItemsForMail.has_key(day):
 								daysItems = orderedItemsForMail.get(day)
 								daysItems.append(composit)
@@ -567,6 +577,12 @@ class ConfirmOrder(BaseHandler):
 					'userOrder':sortedItemsForMail,
 				}
 				logInfo(self, self.URL, "ORDER_POSTED")
+				event = UserOrderEvent()
+				event.orderDate = datetime.datetime.now(timeZone)
+				event.user = user
+				event.price = orderTotal
+				event.orderedItems = orderedItems
+				event.put()
 				# Send email notification to the user
 				messageTxtTemplate = jinja_environment.get_template('templates/orderNotificationMail.txt')
 				messageHtmlTemplate = jinja_environment.get_template('templates/orderNotificationMail.html')

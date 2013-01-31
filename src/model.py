@@ -153,6 +153,11 @@ class Wish(db.Model):
 	description=db.StringProperty(multiline=True)
 	ready=db.BooleanProperty()
 
+class UserOrderEvent(db.Model):
+	orderDate=db.DateTimeProperty()
+	price=db.IntegerProperty()
+	user=db.ReferenceProperty(User, collection_name='userOrderEvents')
+	orderedItems = db.StringListProperty()
 
 # OLD STUFF Needed only for migration
 
