@@ -157,7 +157,7 @@ class RegisterPage(BaseHandler):
 			user.email = email
 			user.familyName=familyName
 			user.givenName=givenName
-			user.password = password
+			user.password = "JELSZO_!@#"
 			m = hashlib.md5()
 			encodedString = password.encode('ascii', errors='replace')
 			m.update(encodedString)
