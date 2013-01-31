@@ -16,7 +16,7 @@ from cache_composit import getDaysComposits, getComposit
 from google.appengine.api import mail
 from cache_dish_category import getDishCategories
 from orderHelper import getUserOrdersForWeek, getOrderedItemsFromWeekData,\
-	getOrderAddress, isMenuItem
+	getOrderAddress, isMenuItem, getOrderComment
 from cacheWeek import updateUser
 #from user_management import getUserBox
 
@@ -351,9 +351,11 @@ class ReviewOrderedMenuPage(BaseHandler):
 				else:
 					week = UserWeekOrder()
 				address = getOrderAddress(week, actualDay)
+				comment = getOrderComment(week, actualDay)
 				if address == None:
 					address = user.addresses.get()
 				actualDayObject['address'] = address
+				actualDayObject['comment'] = comment
 				actualDayObject["deliveryCost"] = getZipBasedDeliveryCost(address.zipNumCode, orderedPrice)
 			days.append(actualDayObject)
 		# A single dish with editable ingredient list
@@ -379,46 +381,70 @@ class ReviewOrderedMenuPage(BaseHandler):
 		logInfo(self, self.URL, "REVIEW_PERSONAL_MENU")
 		self.printPage(str(day), template.render(template_values), False, True)
 	def post(self):
-		# Get addresses and save them to the proper day
+		# Get addresses and comments and save them to the proper day
+		# Works only for a singe week view
 		if(not isUserLoggedIn(self)):
 			self.redirect("/")
 			return
 		firstOrderableDay=getFirstOrderableDate(self);
+		week = None
 		for field in self.request.arguments():
-			if (field[:8]=="address_"):
+			if ((field[:8]=="address_") or (field[:8]=="comment_")):
 				day=datetime.datetime.strptime(field[8:], "%Y-%m-%d").date()
 				if day < firstOrderableDay:
 					continue
-				user = getUser(self)
-				monday = getMonday(day)
-				firstOrderableDay=getFirstOrderableDate(self);
-				if day >= firstOrderableDay:
+				if week == None:
+					user = getUser(self)
+					monday = getMonday(day)
 					weeks = user.weeks.filter("monday = ", monday)
 					if weeks.count() == 1:
 						week = weeks.get()
-						address=Address.get(self.request.get(field))
-						if day.weekday() == 0:
-							week.mondayAddress = address
-						elif day.weekday() == 1:
-							week.tuesdayAddress = address
-						elif day.weekday() == 2:
-							week.wednesdayAddress = address
-						elif day.weekday() == 3:
-							week.thursdayAddress = address
-						elif day.weekday() == 4:
-							week.fridayAddress = address
-						elif day.weekday() == 5:
-							week.saturdayAddress = address
-						elif day.weekday() == 6:
-							week.sundayAddress = address
-						week.put()
+				# If no week was determined, continue, nothing to save here
+				if week == None:
+					continue
+				if field[:8]=="address_":
+					address=Address.get(self.request.get(field))
+					if day.weekday() == 0:
+						week.mondayAddress = address
+					elif day.weekday() == 1:
+						week.tuesdayAddress = address
+					elif day.weekday() == 2:
+						week.wednesdayAddress = address
+					elif day.weekday() == 3:
+						week.thursdayAddress = address
+					elif day.weekday() == 4:
+						week.fridayAddress = address
+					elif day.weekday() == 5:
+						week.saturdayAddress = address
+					elif day.weekday() == 6:
+						week.sundayAddress = address
+	
+				if (field[:8]=="comment_"):
+					comment = self.request.get(field)
+					if day.weekday() == 0:
+						week.mondayComment = comment
+					elif day.weekday() == 1:
+						week.tuesdayComment = comment
+					elif day.weekday() == 2:
+						week.wednesdayComment = comment
+					elif day.weekday() == 3:
+						week.thursdayComment = comment
+					elif day.weekday() == 4:
+						week.fridayComment = comment
+					elif day.weekday() == 5:
+						week.saturdayComment = comment
+					elif day.weekday() == 6:
+						week.sundayComment = comment
+
+		if week != None:
+			week.put()
+
 		logInfo(self, self.URL, "MODIFY_ADDRESS_ON_PERSONAL_MENU")
 		self.redirect("/personalMenu")
 
 class ConfirmOrder(BaseHandler):
 	URL = '/confirmOrder'
 	def post(self):
-		#One step ordering
 		if(not isUserLoggedIn(self)):
 			self.redirect("/registration")
 			return

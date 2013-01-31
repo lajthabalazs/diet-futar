@@ -62,6 +62,24 @@ def getOrderAddress (week, day):
 	elif day.weekday() == 6:
 		return week.sundayAddress
 
+def getOrderComment (week, day):
+	if week == None:
+		return None
+	if day.weekday() == 0:
+		return week.mondayComment
+	elif day.weekday() == 1:
+		return week.tuesdayComment
+	elif day.weekday() == 2:
+		return week.wednesdayComment
+	elif day.weekday() == 3:
+		return week.thursdayComment
+	elif day.weekday() == 4:
+		return week.fridayComment
+	elif day.weekday() == 5:
+		return week.saturdayComment
+	elif day.weekday() == 6:
+		return week.sundayComment
+
 def getOrdersFromWeeks(weeks):
 	orders={}
 	for week in weeks:

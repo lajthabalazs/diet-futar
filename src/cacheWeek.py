@@ -67,7 +67,7 @@ def updateUser(userDb):
 	client = memcache.Client()
 	users = client.get(USERS_KEY)
 	key = str(userDb.key())
-	if users != None:
+	if users == None:
 		return
 	newUsers = []
 	for user in users:

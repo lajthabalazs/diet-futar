@@ -48,14 +48,14 @@
 				{% endfor%}
 			</div>
 			<form method="post">
-				<div class="span-24 last subTotal">
+				<div class="span-24 subTotal">
 					<h2 class="span-2">Szállítási cím</h2>
 					{% for day in days %}
 					<div class="span-4">
 						{% if day.has_key('address') %}
 							<select onchange="addressChangeListener('{{day.date}}',{{day.orderedPrice}} );" name="address_{{day.date}}" id="address_{{day.date}}" {% if day.changable == False %}disabled="disabled" {% endif%} style="width: 120px">
 								{% for address in addresses %}
-									<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and day.address != None and address.key() == day.address.key() %}selected="selected"{% endif %}></option>
+									<option value="{{address.key()}}" label="{{address.street}} {{address.streetNumber}}" {% if  day.has_key('address') and day.address != None and address.key() == day.address.key() %}selected="selected"{% endif %}>{{address.street}} {{address.streetNumber}}</option>
 								{% endfor %}
 							</select><br/>
 							<strong>Szállítási költség:</strong> <strong id="deliveryCost{{day.date}}">{{ day.deliveryCost }}</strong> <strong>Ft</strong>
@@ -65,6 +65,20 @@
 					</div>
 					{% endfor%}
 				</div>
+
+				<div class="span-24 last subTotal" style="padding-bottom: 10px;">
+					<h2 class="span-2">Megjegy- zés</h2>
+					{% for day in days %}
+					<div class="span-4">
+						{% if day.has_key('address') %}
+							<textarea name="comment_{{day.date}}" id="comment_{{day.date}}" rows="4" cols="20" style="width: 100%; height: 100%; margin: 0px; resize: none;">{{day.comment}}</textarea>
+						{% else %}
+							&nbsp;
+						{% endif %}
+					</div>
+					{% endfor%}
+				</div>
+
 				<div class="span-24 total last">
 					<input id="saveAddress" type="submit" name="" value="Címek mentése" id=""/>
 				</div>

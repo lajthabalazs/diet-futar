@@ -12,7 +12,7 @@ from user_management import isUserCook, isUserDelivery, LOGIN_NEXT_PAGE_KEY
 from cache_dish_category import getDishCategories
 from cache_menu_item import getDaysMenuItems
 from cache_composit import getDaysComposits
-from orderHelper import getOrdersForWeek
+from orderHelper import getOrdersForWeek, getOrderComment
 
 ACTUAL_ORDER="actualOrder"
 
@@ -119,6 +119,7 @@ class DeliveryReviewOrdersPage(BaseHandler):
 					dayTotal = dayTotal + item['orderedQuantity'] * item['price']
 					dailyUserTotal = dailyUserTotal + item['orderedQuantity'] * item['price']
 				orderAddress = getOrderAddress(week, day)
+				orderAddress.comment = getOrderComment(week, day)
 				if orderAddress == None:
 					orderAddress = week.user.addresses.get(0)
 				orderAddress.orderedItems = items

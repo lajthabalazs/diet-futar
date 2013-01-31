@@ -117,6 +117,13 @@ class UserWeekOrder(db.Model):
 	fridayAddress=db.ReferenceProperty(Address, collection_name='fridays')
 	saturdayAddress=db.ReferenceProperty(Address, collection_name='saturdays')
 	sundayAddress=db.ReferenceProperty(Address, collection_name='sundays')
+	mondayComment=db.StringProperty(default="")
+	tuesdayComment=db.StringProperty(default="")
+	wednesdayComment=db.StringProperty(default="")
+	thursdayComment=db.StringProperty(default="")
+	fridayComment=db.StringProperty(default="")
+	saturdayComment=db.StringProperty(default="")
+	sundayComment=db.StringProperty(default="")
 
 class WebshopItem(db.Model):
 	title=db.StringProperty()
