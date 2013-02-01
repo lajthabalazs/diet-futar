@@ -149,7 +149,7 @@ class DishIngredientAddPage(BaseHandler):
 			ingredientListItem.dish = dish
 			ingredientListItem.ingredient = ingredient
 			ingredientListItem.put()
-			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category)
+			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree)
 		self.redirect('/dish?dishKey=%s' % str(dish.key()))
 
 
