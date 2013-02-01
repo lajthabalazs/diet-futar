@@ -16,6 +16,9 @@ from model import Maintenence
 from string import replace, split
 from cache_zips import getZipCodeEntry
 import logging
+from orderHelper import isMenuItem
+from cache_menu_item import getMenuItem
+from cache_composit import getComposit
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 LAST_ORDER_HOUR=11
@@ -81,6 +84,33 @@ def getOrderBaseDate(handler):
 			day=day+datetime.timedelta(days=1)
 	return day
 
+# Returns the first date the user has an ordered item
+def getBasketBaseDate(actualOrder, handler):
+	requestDay=handler.request.get('day')
+	if ((requestDay != None) and (requestDay != "")):
+		parts=requestDay.rsplit("-")
+		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+		return day
+	firstDay = None
+	if actualOrder != None and len(actualOrder) > 0:
+		orderedMenuItemKeys=[]
+		for key in actualOrder.keys():
+			orderedMenuItemKeys.append(key)
+		for key in orderedMenuItemKeys:
+			if isMenuItem(key):
+				menuItem = getMenuItem(key)
+				actualDay = menuItem['day']
+			else:
+				composit = getComposit(key)
+				actualDay = composit['day']
+			if (firstDay == None):
+				firstDay = actualDay
+			elif firstDay > actualDay:
+				firstDay = actualDay
+	if firstDay == None:
+		return getOrderBaseDate(handler)
+	else:
+		return firstDay
 # Returns the first date user can order or the date indicated by the request
 def getBaseDate(handler):
 	day=datetime.date.today()	

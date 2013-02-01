@@ -6,7 +6,8 @@ from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
 	getFirstOrderableDate, getMonday,\
-	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, logInfo, timeZone
+	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, logInfo, timeZone,\
+	getBasketBaseDate
 import datetime
 from model import MenuItem, User, UserWeekOrder, Address, UserOrderEvent
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
@@ -169,9 +170,9 @@ class ClearOrderPage(BaseHandler):
 class ReviewPendingOrderPage(BaseHandler):
 	URL = '/pendingOrder'
 	def get(self):
-		day=getOrderBaseDate(self)
-		monday = getMonday(day)
 		actualOrder=self.session.get(ACTUAL_ORDER,{})
+		day=getBasketBaseDate(actualOrder, self)
+		monday = getMonday(day)
 		if (len(actualOrder) > 0):
 			orderedMenuItemKeys=[]
 			for key in actualOrder.keys():
