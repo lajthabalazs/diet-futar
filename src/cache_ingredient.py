@@ -150,7 +150,7 @@ def modifyIngredient(ingredientDb):
 			subtitle = dishIngredient.dish.subtitle
 			description = dishIngredient.dish.description
 			dishCategory = dishIngredient.dish.category
-			modifyDish(dishKey, title, subtitle, description, dishCategory)
+			modifyDish(dishKey, title, subtitle, description, dishCategory, dishIngredient.dish.eggFree, dishIngredient.dish.milkFree)
 	client.set(key, newIngredientObject)
 	# Adds ingredient to ingredient list
 	ingredients = client.get(INGREDIENTS_KEY)

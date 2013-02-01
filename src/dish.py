@@ -121,7 +121,7 @@ class DishIngredientDeletePage(BaseHandler):
 		dish = db.get(self.request.get('dishKey'))
 		ingredientToDish = db.get(self.request.get('dishIngredientKey'))
 		ingredientToDish.delete()
-		modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category)
+		modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree)
 		self.redirect('/dish?dishKey=%s' % str(dish.key()))
 
 class DishIngredientAddPage(BaseHandler):
@@ -138,7 +138,7 @@ class DishIngredientAddPage(BaseHandler):
 			ingredientToDish.quantity = float(self.request.get('quantity'))
 			ingredientToDish.put()
 			#Modification of basic data
-			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category)
+			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree)
 		else:
 			# Retrieve the ingredient
 			ingredientKey = self.request.get('ingredientKey')
