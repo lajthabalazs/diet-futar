@@ -228,6 +228,10 @@ class BaseHandler(webapp2.RequestHandler):
 			viewLogs["label"]="Logok"
 			viewLogs["target"]="/viewLogs"
 			topMenu.append(viewLogs)
+			crm={}
+			crm["label"]="CRM"
+			crm["target"]="/crmMainPage"
+			topMenu.append(crm)
 		elif isUserCook(self):
 			dailyMenu={}
 			dailyMenu["label"]="Menu osszeallitas"

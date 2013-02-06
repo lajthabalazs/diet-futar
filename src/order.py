@@ -572,6 +572,9 @@ class ConfirmOrder(BaseHandler):
 					week.orderedMenuItems = orderedMenuItems
 					week.orderedComposits = orderedComposits
 					week.put()
+					user.lastOrder = datetime.datetime.now(timeZone)
+					user.lastOrderFlag = True
+					user.put()
 				updateUser(user)
 				template_values = {
 					"user":user,

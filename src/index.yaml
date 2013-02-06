@@ -24,3 +24,9 @@ indexes:
   properties:
   - name: user
   - name: day
+
+- kind: UserWeekOrder
+  properties:
+  - name: user
+  - name: monday
+    direction: desc

@@ -38,7 +38,13 @@ class User(db.Model):
 	referer = db.SelfReferenceProperty('The user who suggested this page', "referred")
 	sourceOfInfo = db.StringProperty()
 	role=db.ReferenceProperty(Role, collection_name='users')
-
+	#CRM fields
+	lastOrder = db.DateProperty()
+	lastOrderFlag = db.BooleanProperty(default=True)
+	lastContact = db.DateProperty()
+	todoList = db.StringListProperty()
+	contactHistory = db.StringListProperty()
+	
 class Address (db.Model):
 	user = db.ReferenceProperty(User, collection_name='addresses')
 	zipCode = db.StringProperty()

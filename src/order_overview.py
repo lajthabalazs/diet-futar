@@ -189,7 +189,7 @@ class DeliveryPage(BaseHandler):
 				deliveryCost = 0
 				if address != None:
 					deliveryCost = getZipBasedDeliveryCost(address.zipNumCode, orderedPrice)
-				day["deliveryCost"] = 0
+				day["deliveryCost"] = deliveryCost
 				weekDeliveryTotal = weekDeliveryTotal + deliveryCost
 			days.append(day)
 		template_values = {
