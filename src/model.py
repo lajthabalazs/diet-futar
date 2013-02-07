@@ -39,10 +39,13 @@ class User(db.Model):
 	sourceOfInfo = db.StringProperty()
 	role=db.ReferenceProperty(Role, collection_name='users')
 	#CRM fields
+	customerStatus=db.StringProperty()
+	customerStatusHistory = db.StringListProperty()
 	lastOrder = db.DateProperty()
 	lastOrderFlag = db.BooleanProperty(default=True)
-	lastContact = db.DateProperty()
-	todoList = db.StringListProperty()
+	lastContact = db.DateTimeProperty()
+	taskList = db.StringListProperty()
+	doneTasks = db.StringListProperty()
 	contactHistory = db.StringListProperty()
 	
 class Address (db.Model):

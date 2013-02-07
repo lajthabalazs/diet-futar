@@ -572,7 +572,7 @@ class ConfirmOrder(BaseHandler):
 					week.orderedMenuItems = orderedMenuItems
 					week.orderedComposits = orderedComposits
 					week.put()
-					user.lastOrder = datetime.datetime.now(timeZone)
+					user.lastOrder = datetime.datetime.now(timeZone).date()
 					user.lastOrderFlag = True
 					user.put()
 				updateUser(user)

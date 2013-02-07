@@ -36,7 +36,8 @@ from webshopUser import UserWebshopOrderListPage, UserWebshopOrderDetailsPage, U
 from deliveryCosts import AboutDeliveryPage
 from logViewer import ViewLogs
 from userMap import UserMapPage
-from crm import CRMLastOrders, CRMInitUsers, CRMMainPage, CRMUserDetails
+from crm import CRMUsersWithTasks, CRMInitUsers, CRMMainPage, CRMUserDetails,\
+	AddHistoryEntry, AddTaskToUser, TaskAccomplished
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -58,9 +59,12 @@ app = webapp2.WSGIApplication([
 										(HashUserPasswordPage.URL, HashUserPasswordPage),
 										(UsersFromCachePage.URL, UsersFromCachePage),
 										(CRMMainPage.URL, CRMMainPage),
-										(CRMLastOrders.URL, CRMLastOrders),
+										(CRMUsersWithTasks.URL, CRMUsersWithTasks),
 										(CRMInitUsers.URL, CRMInitUsers),
 										(CRMUserDetails.URL, CRMUserDetails),
+										(AddHistoryEntry.URL, AddHistoryEntry),
+										(AddTaskToUser.URL, AddTaskToUser),
+										(TaskAccomplished.URL, TaskAccomplished),
 										
 										
 										('/google24f0feb13afae7e0.html', GooglePage),

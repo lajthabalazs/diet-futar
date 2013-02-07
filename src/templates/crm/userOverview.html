@@ -1,34 +1,60 @@
 <div class="mainBg">
 	<div class="container">
 		<div class="span-24 last profile">
-			<div class="span-24 last profileRow">
-				<h2 style="text-align: left;">{{user.familyName}} {{user.givenName}}</h2>
-				<a href="/weeksList?userKey={{user.key()}}">Rendelések</a>
+			<div class="span-12 profileRow">
+				<strong>{{user.familyName}} {{user.givenName}}</strong> {% if user.customerStatus != None %} ({{user.customerStatus}}) {% endif %}<br/>
+				<label style="clear: all;">E-mail </label><a href="mailto:{{ user.email }}">{{ user.email }}</a><br/>
+				<label>Telefonszám <strong>{{user.phoneNumber}}</strong></label><br/>
 				<a href="/usersOrders?userKey={{user.key()}}">Webshop rendelések</a>
-				<p>
-					<label>E-mail <strong>{{ user.email }}</strong></label><br/>
-					<label>Telefonszám <strong>{{user.phoneNumber}}</strong></label>
-				</p>
-
-				<form method="post" action="switchToUser">
-					<input type="hidden" name="userKey" value="{{user.key()}}"/>
-					<td><input type="submit" value="Váltás"/></td>
-				</form>
-				
-				<h2 style="text-align: left;">Ajánló link</h2>
-				<p><a href="http://diet-futar.hu/registration?refererKey={{ user.key() }}">http://diet-futar.hu/registration?refererKey={{ user.key() }}</a></p>
 			</div>
-			<div class="span-24 profileRow">
-				<h2 class="span-2">Címek</h2>
-				<div class="span-22">
-					{% for address in user.addresses%}
-						<div class="span-9 prepend-1 profileColumn profileElement">
-							<label>Irányítószám<span>{{address.zipNumCode}}</span></label>
-							<label>Utca név<span>{{address.street}}</span></label>
-							<label>Házszám, emelet<span>{{address.streetNumber}}</span></label>
-						</div>
-					{% endfor %}
-				</div>
+			<div class="span-11" style="padding-top: 20px;">
+				<span style="font-weight: bold;">Címek</span><br/>
+				{% for address in user.addresses%}
+						{{address.zipNumCode}} {{address.street}} {{address.streetNumber}}<br/>
+				{% endfor %}
+				<strong>Rendelések</strong>
+				{% for week in user.weeks%}
+					<a href="/deliverable?monday={{ week.monday }}&userKey={{user.key()}}">{{week.monday}}</a><br/>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="span-24 profile">
+			<div class="span-11">
+				<strong>Feladatok</strong>
+				<form method="post" action="/addTaskToUser">
+					<input type="hidden" name="userKey" id="userKey" value="{{user.key()}}"/>
+					<textarea name="task" id="task" rows="4" cols="20" style="width: 100%; height: 100%; margin: 0px; resize: none;"></textarea>
+					<input type="submit" value="Hozzáadás"/>
+				</form>
+				{% for task in user.processedTasks %}
+					<strong>{{task.date}}</strong><br/>
+					<p>{{task.message}}</p>
+					<form method="post" action="/taskAccomplished">
+						<input type="hidden" name="userKey" id="userKey" value="{{user.key()}}"/>
+						<input type="hidden" name="taskId" id="taskId" value="{{task.id}}"/>
+						<input type="submit" value="Elvégezve"/>
+					</form>
+				{% endfor %}
+				{% for task in user.processedDoneTasks %}
+					<strong style="opacity: 0.6">{{task.date}} - {{task.doneDate}}</strong><br/>
+					<p style="opacity: 0.6">{{task.message}}</p>
+				{% endfor %}
+			</div>
+			<div class="span-1">
+				&nbsp;
+			</div>
+			<div class="span-11">
+				<strong>Történet</strong><br/>
+				<form method="post" action="/addHistoryEntry">
+					<input type="hidden" name="userKey" id="userKey" value="{{user.key()}}"/>
+					<textarea name="historyText" id="historyText" rows="4" cols="20" style="width: 100%; height: 100%; margin: 0px; resize: none;"></textarea>
+					<input type="submit" value="Hozzáadás"/>
+				</form>
+				{% for entry in user.processedHistory %}
+					<strong>{{entry.date}}</strong><br/>
+					{{entry.admin.familyName}} {{entry.admin.givenName}}<br/>
+					<p>{{entry.message}}</p>
+				{% endfor %}
 			</div>
 		</div>
 	</div>
