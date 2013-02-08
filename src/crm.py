@@ -8,7 +8,6 @@ from model import User
 from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY, getUser
 from xmlrpclib import datetime
 from timeit import itertools
-import time
 
 ACTUAL_ORDER="actualOrder"
 
