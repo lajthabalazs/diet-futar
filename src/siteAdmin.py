@@ -201,9 +201,6 @@ class EveryUsersOrderPage(BaseHandler):
 		template = jinja_environment.get_template('templates/admin/everyUsersOrder.html')
 		self.printPage("Rendel&eacute;sek", template.render(template_values), False, False)
 
-
-
-
 class UsersFromCachePage(BaseHandler):
 	URL = '/cachedUsers'
 	def get(self):
@@ -221,14 +218,14 @@ class UsersFromCachePage(BaseHandler):
 		for i in range(0, maxWeeks):
 			weekTotalITem = {
 					'total' : 0,
-					'monday' : monday + datetime.timedelta(days = (i - maxWeeks + 1) * 7)
+					'monday' : monday + datetime.timedelta(days = (i - maxWeeks + 2) * 7)
 				}
 			weekTotals.append(weekTotalITem)
 		for user in users:
 			orderTotal = 0
 			computedWeeks = []
 			for i in range(0, maxWeeks):
-				actualMonday = monday + datetime.timedelta(days = (i - maxWeeks + 1) * 7)
+				actualMonday = monday + datetime.timedelta(days = (i - maxWeeks + 2) * 7)
 				week = getUserWeekForDay(user['key'], actualMonday)
 				if week != None:
 					weekTotals[i]['total'] = weekTotals[i]['total'] + week['weekTotal']

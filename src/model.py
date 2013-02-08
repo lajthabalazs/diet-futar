@@ -168,6 +168,16 @@ class UserOrderEvent(db.Model):
 	user=db.ReferenceProperty(User, collection_name='userOrderEvents')
 	orderedItems = db.StringListProperty()
 
+class Books(db.Model):
+	monday=db.DateProperty()
+	mondayIncome=db.IntegerProperty(default=0)
+	tuesdayIncome=db.IntegerProperty(default=0)
+	wednesdayIncome=db.IntegerProperty(default=0)
+	thursdayIncome=db.IntegerProperty(default=0)
+	fridayIncome=db.IntegerProperty(default=0)
+	saturdayIncome=db.IntegerProperty(default=0)
+	sundayIncome=db.IntegerProperty(default=0)
+
 # OLD STUFF Needed only for migration
 
 class UserOrder(db.Model):

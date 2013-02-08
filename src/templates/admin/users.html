@@ -9,7 +9,7 @@
 						{% if weekTotal.total == 0 %}
 							-
 						{% else %}
-							<a href="/chefReviewOrders?day={{ weekTotal.monday }}">{{weekTotal.total}} Ft</a>
+							<a href="/chefReviewOrders?day={{ weekTotal.monday }}">{{weekTotal.total}}</a>
 						{% endif %}
 					</th>
 				{% endfor %}
@@ -17,13 +17,13 @@
 			{% for user in users %}
 				<tr>
 					<td><a href="/userOverview?userKey={{ user.key }}">{{ user.familyName }} {{ user.givenName }}</a></td>
-					<td> <strong>{{user.orderTotal}} Ft</strong></td>
+					<td> <strong>{{user.orderTotal}}</strong></td>
 					{% for week in user.computedWeeks %}
 						<td>
 							{% if week.itemPrice == 0 %}
 								-
 							{% else %}
-								<a href="/deliverable?monday={{ week.monday }}&userKey={{user.key}}">{{week.itemPrice}} Ft</a>
+								<a href="/deliverable?monday={{ week.monday }}&userKey={{user.key}}">{{week.itemPrice}}</a>
 							{% endif %}
 						</td>
 					{% endfor %}

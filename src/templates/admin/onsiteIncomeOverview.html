@@ -1,0 +1,34 @@
+﻿<div class="mainBg staticPage">
+	<div class="container">
+		<table width="400px">
+			<tr>
+				<th>&nbsp;</th>
+				{% for weekTotal in weekTotals %}
+					<th style="text-align: center"><a href="/weeklyIncome?formDay={{weekTotal.monday}}">
+						{{weekTotal.monday.strftime('%m')}}<br/>
+						{{weekTotal.monday.strftime('%d')}}
+						</a>
+					</th>
+				{% endfor %}
+			</tr>
+			{% for dayOfWeek in daysOfWeek %}
+				<tr>
+					<td>{{dayOfWeek.name}}</td>
+					{% for total in dayOfWeek.dailyTotals %}
+						<td style="text-align: right">
+							{{total}}
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+			<tr>
+				<th>Heti összesítés</th>
+				{% for weekTotal in weekTotals %}
+					<th style="text-align: right">
+						{{weekTotal.total}}
+					</th>
+				{% endfor %}
+			</tr>
+		</table>
+	</div>
+</div>

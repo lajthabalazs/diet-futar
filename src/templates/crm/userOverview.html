@@ -14,7 +14,7 @@
 				{% endfor %}
 				<strong>Rendelések</strong>
 				{% for week in user.weeks%}
-					<a href="/deliverable?monday={{ week.monday }}&userKey={{user.key()}}">{{week.monday}}</a><br/>
+					<a href="/deliverable?monday={{ week.monday }}&userKey={{user.key()}}">{{week.monday}}</a> 
 				{% endfor %}
 			</div>
 		</div>

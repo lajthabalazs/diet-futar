@@ -7,7 +7,7 @@ from google.appengine.ext import db
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
 	getFirstOrderableDate, getMonday,\
 	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, logInfo, timeZone,\
-	getBasketBaseDate
+	getBasketBaseDate, dayNames
 import datetime
 from model import MenuItem, User, UserWeekOrder, Address, UserOrderEvent
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
@@ -25,7 +25,6 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 ACTUAL_ORDER="actualOrder"
 FURTHEST_DAY_DISPLAYED=14
-dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
 
 class MenuOrderPage(BaseHandler):
 	URL = '/order'

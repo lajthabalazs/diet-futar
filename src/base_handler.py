@@ -23,6 +23,8 @@ from cache_composit import getComposit
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 LAST_ORDER_HOUR=11
 timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
+dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
+FORM_DAY = "formDay"
 
 def getZipBasedDeliveryCost(code, price):
 	costs = getZipCodeEntry(code)
@@ -133,7 +135,7 @@ def getBaseDate(handler):
 # Returns the day indicated by the posted form if any otherwise the current day
 def getFormDate(handler):
 	day=datetime.date.today()
-	requestDay=handler.request.get('formDay')
+	requestDay=handler.request.get(FORM_DAY)
 	if ((requestDay != None) and (requestDay != "")):
 		parts=requestDay.rsplit("-")
 		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
@@ -232,6 +234,10 @@ class BaseHandler(webapp2.RequestHandler):
 			crm["label"]="CRM"
 			crm["target"]="/crmMainPage"
 			topMenu.append(crm)
+			onsiteIncome={}
+			onsiteIncome["label"]="Helysz&iacute;ni bev&eacute;tel"
+			onsiteIncome["target"]="/weeklyIncome"
+			topMenu.append(onsiteIncome)
 		elif isUserCook(self):
 			dailyMenu={}
 			dailyMenu["label"]="Menu osszeallitas"

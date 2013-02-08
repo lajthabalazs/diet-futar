@@ -38,6 +38,7 @@ from logViewer import ViewLogs
 from userMap import UserMapPage
 from crm import CRMUsersWithTasks, CRMInitUsers, CRMMainPage, CRMUserDetails,\
 	AddHistoryEntry, AddTaskToUser, TaskAccomplished
+from books import WeeklyIncome, WeeklyOnsiteIncome
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -58,6 +59,9 @@ app = webapp2.WSGIApplication([
 										(UserMapPage.URL, UserMapPage),
 										(HashUserPasswordPage.URL, HashUserPasswordPage),
 										(UsersFromCachePage.URL, UsersFromCachePage),
+										(WeeklyIncome.URL, WeeklyIncome),
+										(WeeklyOnsiteIncome.URL, WeeklyOnsiteIncome),
+										#CRM
 										(CRMMainPage.URL, CRMMainPage),
 										(CRMUsersWithTasks.URL, CRMUsersWithTasks),
 										(CRMInitUsers.URL, CRMInitUsers),
