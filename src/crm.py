@@ -8,6 +8,7 @@ from model import User
 from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY, getUser
 from xmlrpclib import datetime
 from timeit import itertools
+import time
 
 ACTUAL_ORDER="actualOrder"
 
@@ -60,6 +61,8 @@ class CRMInitUsers(BaseHandler):
 				monday = week.monday
 			user.lastOrder = monday
 			user.lastOrderFlag = True
+			if (user.registrationDate !=None):
+				user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
 			user.put()
 		self.redirect(CRMUsersWithTasks.URL)
 

@@ -25,7 +25,7 @@
 			<th>Szerep</th>
 		{% for user in userList%}
 			<tr>
-			<td>{{ user.registrationDate}}</td>
+			<td>{% if user.registrationDate != None%}{{ user.registrationDate.strftime('%Y-%m-%d %H:%M') }}{%else%}-{% endif%}</td>
 			<td><a href="/userOverview?userKey={{user.key()}}">{{ user.familyName }} {{user.givenName}}</a></td>
 			<td>{{ user.email }}</td>
 			<td><a href="/weeksList?userKey={{user.key()}}">Heti rendelések</a></td>

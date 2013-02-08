@@ -34,7 +34,7 @@ class User(db.Model):
 	phoneNumber = db.StringProperty()
 	activated = db.BooleanProperty()
 	activationCode = db.StringProperty()
-	registrationDate=db.DateProperty()
+	registrationDate=db.DateTimeProperty()
 	referer = db.SelfReferenceProperty('The user who suggested this page', "referred")
 	sourceOfInfo = db.StringProperty()
 	role=db.ReferenceProperty(Role, collection_name='users')

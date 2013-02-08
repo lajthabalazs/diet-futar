@@ -9,7 +9,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler
+from base_handler import BaseHandler, timeZone
 from model import User, Address
 from user_management import LOGIN_ERROR_KEY, REGISTRATION_ERROR_EXISTING_USER,\
 	REGISTRATION_ERROR_PASSWORD_DOESNT_MATCH, USER_KEY, LOGIN_NEXT_PAGE_KEY,\
@@ -164,7 +164,7 @@ class RegisterPage(BaseHandler):
 			user.passwordHash = str(m.hexdigest())
 			user.phoneNumber=phoneNumber
 			user.activated = False
-			user.registrationDate=datetime.date.today()
+			user.registrationDate=datetime.datetime.now(timeZone)
 			user.referer = referer
 			user.sourceOfInfo = sourceOfInfo
 			word = ''
