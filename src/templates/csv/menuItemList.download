@@ -1,0 +1,2 @@
+{% for menuItem in menuItems%}{{menuItem.key()}},{{menuItem.day}},{{menuItem.dish.key()}},{% if menuItem.containingMenuItem !=None %}{{menuItem.containingMenuItem.key()}}{% else %}None{% endif %}
+{% endfor %}

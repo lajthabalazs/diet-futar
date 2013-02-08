@@ -1,0 +1,3 @@
+{% for composit in composits%}{% for menuItem in composit.components %}{{composit.key()}},{{composit.day}},None,{{menuItem.menuItem.key()}}{% for subItem in menuItem.menuItem.components%}
+{{composit.key()}},{{composit.day}},{{menuItem.menuItem.key()}},{{subItem.key()}}{% endfor %}
+{% endfor %}{% endfor %}

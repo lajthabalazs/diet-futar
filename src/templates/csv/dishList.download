@@ -1,0 +1,2 @@
+{% for dish in dishes%}{{dish.key()}},{{dish.title}},{{dish.category.key()}}
+{% endfor %}

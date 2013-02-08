@@ -39,6 +39,8 @@ from userMap import UserMapPage
 from crm import CRMUsersWithTasks, CRMInitUsers, CRMMainPage, CRMUserDetails,\
 	AddHistoryEntry, AddTaskToUser, TaskAccomplished
 from books import WeeklyIncome, WeeklyOnsiteIncome
+from downloadData import DishListCsv, MenuItemListCsv, CompositListCsv,\
+	UserListCsv, WeeksCsv
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -69,7 +71,12 @@ app = webapp2.WSGIApplication([
 										(AddHistoryEntry.URL, AddHistoryEntry),
 										(AddTaskToUser.URL, AddTaskToUser),
 										(TaskAccomplished.URL, TaskAccomplished),
-										
+										#Data download
+										(DishListCsv.URL, DishListCsv),
+										(MenuItemListCsv.URL, MenuItemListCsv),
+										(CompositListCsv.URL, CompositListCsv),
+										(UserListCsv.URL, UserListCsv),
+										(WeeksCsv.URL, WeeksCsv),
 										
 										('/google24f0feb13afae7e0.html', GooglePage),
 										(LoginPage.URL, LoginPage),

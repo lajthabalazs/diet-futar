@@ -1,0 +1,3 @@
+{% for week in weeks%}{% for item in week.orderedMenuItems %}{{week.user.key()}},{{week.monday}},{{item}}
+{% endfor %}{% for item in week.orderedComposits %}{{week.user.key()}},{{week.monday}},{{item}}
+{% endfor %}{% endfor %}
