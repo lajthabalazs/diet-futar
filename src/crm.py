@@ -14,8 +14,8 @@ ACTUAL_ORDER="actualOrder"
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 def getLastOrderDate(x):
-	return x.lastOrder or x.registrationDate
- 
+	return x.lastOrder or x.registrationDate.date()
+
 class CRMMainPage(BaseHandler):
 	URL = '/crmMainPage'
 	def get(self):
@@ -62,11 +62,13 @@ class CRMInitUsers(BaseHandler):
 			user.lastOrderFlag = True
 			if (user.registrationDate !=None):
 				try:
-					user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
+					#user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
 					self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " OK<br/>")
 				except:
 					self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " FAILED<br/>")
 					pass
+			else:
+				self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " FAILED<br/>")
 			user.put()
 		#self.redirect(CRMUsersWithTasks.URL)
 
