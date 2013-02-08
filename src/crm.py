@@ -62,7 +62,10 @@ class CRMInitUsers(BaseHandler):
 			user.lastOrder = monday
 			user.lastOrderFlag = True
 			if (user.registrationDate !=None):
-				user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
+				try:
+					user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
+				except:
+					pass
 			user.put()
 		self.redirect(CRMUsersWithTasks.URL)
 
