@@ -63,9 +63,9 @@ class CRMInitUsers(BaseHandler):
 			if (user.registrationDate !=None):
 				try:
 					user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
-					self.response.out.write( user.familyName + " " + user.givenName + " OK<br/>")
+					self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " OK<br/>")
 				except:
-					self.response.out.write( user.familyName + " " + user.givenName + " FAILED<br/>")
+					self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " FAILED<br/>")
 					pass
 			user.put()
 		#self.redirect(CRMUsersWithTasks.URL)
