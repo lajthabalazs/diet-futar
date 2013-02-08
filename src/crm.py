@@ -63,10 +63,12 @@ class CRMInitUsers(BaseHandler):
 			if (user.registrationDate !=None):
 				try:
 					user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
+					print user.familyName + " " + user.givenName + " OK<br/>"
 				except:
+					print user.familyName + " " + user.givenName + " FAILED<br/>"
 					pass
 			user.put()
-		self.redirect(CRMUsersWithTasks.URL)
+		#self.redirect(CRMUsersWithTasks.URL)
 
 class CRMUserDetails(BaseHandler):
 	URL = '/crmUserDetails'
