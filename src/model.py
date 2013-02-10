@@ -42,6 +42,7 @@ class User(db.Model):
 	customerStatus=db.StringProperty()
 	customerStatusHistory = db.StringListProperty()
 	lastOrder = db.DateProperty()
+	lastPageAccess = db.DateTimeProperty()
 	lastOrderFlag = db.BooleanProperty(default=True)
 	lastContact = db.DateTimeProperty()
 	taskList = db.StringListProperty()

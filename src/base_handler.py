@@ -173,6 +173,10 @@ class BaseHandler(webapp2.RequestHandler):
 		}
 		ret=jinja_environment.get_template('templates/headers/header_part_zero.html').render(template_params)
 		topMenu=[]
+		user = getUser(self)
+		if (user != None):
+			user.lastPageAccess = datetime.datetime.now(timeZone)
+			user.put()
 		if isUserAdmin(self):
 			dailyMenu={}
 			dailyMenu["label"]="Napi menu"
@@ -310,3 +314,16 @@ class BaseHandler(webapp2.RequestHandler):
 	def session(self):
 		# Returns a session using the default cookie key.
 		return self.session_store.get_session()
+
+
+
+
+
+
+
+
+
+
+
+
+
