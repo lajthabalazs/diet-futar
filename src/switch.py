@@ -36,7 +36,7 @@ from webshopUser import UserWebshopOrderListPage, UserWebshopOrderDetailsPage, U
 from deliveryCosts import AboutDeliveryPage
 from logViewer import ViewLogs
 from userMap import UserMapPage
-from crm import CRMUsersWithTasks, CRMInitUsers, CRMMainPage, CRMUserDetails,\
+from crm import CRMUsersWithTasks, CRMMainPage, CRMUserDetails,\
 	AddHistoryEntry, AddTaskToUser, TaskAccomplished
 from books import WeeklyIncome, WeeklyOnsiteIncome
 from downloadData import DishListCsv, MenuItemListCsv, CompositListCsv,\
@@ -66,7 +66,6 @@ app = webapp2.WSGIApplication([
 										#CRM
 										(CRMMainPage.URL, CRMMainPage),
 										(CRMUsersWithTasks.URL, CRMUsersWithTasks),
-										(CRMInitUsers.URL, CRMInitUsers),
 										(CRMUserDetails.URL, CRMUserDetails),
 										(AddHistoryEntry.URL, AddHistoryEntry),
 										(AddTaskToUser.URL, AddTaskToUser),

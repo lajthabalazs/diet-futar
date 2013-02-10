@@ -45,33 +45,6 @@ class CRMUsersWithTasks(BaseHandler):
 		template = jinja_environment.get_template('templates/crm/crmTaskList.html')
 		self.printPage("Felhaszn&aacute;l&oacute;k", template.render(template_values), False, False)
 
-class CRMInitUsers(BaseHandler):
-	URL = '/crmInitUsers'
-	def get(self):
-		if(not isUserAdmin(self)):
-			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
-			self.redirect("/")
-			return
-		users = User.all()
-		for user in users:
-			monday = None
-			week = user.weeks.order("-monday").get()
-			if (week != None):
-				monday = week.monday
-			user.lastOrder = monday
-			user.lastOrderFlag = True
-			if (user.registrationDate !=None):
-				try:
-					#user.registrationDate = datetime.datetime.combine(user.registrationDate, datetime.time())
-					self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " OK<br/>")
-				except:
-					self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " FAILED<br/>")
-					pass
-			else:
-				self.response.out.write( user.familyName.encode("ascii","ignore") + " " + user.givenName.encode("ascii","ignore") + " FAILED<br/>")
-			user.put()
-		#self.redirect(CRMUsersWithTasks.URL)
-
 class CRMUserDetails(BaseHandler):
 	URL = '/crmUserDetails'
 	def get(self):
