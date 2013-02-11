@@ -240,7 +240,7 @@ class BaseHandler(webapp2.RequestHandler):
 			topMenu.append(crm)
 			onsiteIncome={}
 			onsiteIncome["label"]="Helysz&iacute;ni bev&eacute;tel"
-			onsiteIncome["target"]="/weeklyIncome"
+			onsiteIncome["target"]="/weeklyFacebookVisits"
 			topMenu.append(onsiteIncome)
 		elif isUserCook(self):
 			dailyMenu={}

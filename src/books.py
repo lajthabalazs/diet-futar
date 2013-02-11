@@ -12,8 +12,8 @@ ACTUAL_ORDER="actualOrder"
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
-class WeeklyIncome(BaseHandler):
-	URL = '/weeklyIncome'
+class weeklyFacebookVisits(BaseHandler):
+	URL = '/weeklyFacebookVisits'
 	def get(self):
 		if(not isUserAdmin(self)):
 			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
@@ -45,8 +45,8 @@ class WeeklyIncome(BaseHandler):
 			'prev':prevMonday,
 			'next':nextMonday
 		}
-		template = jinja_environment.get_template('templates/admin/weeklyIncome.html')
-		self.printPage("Bev&eacute;tel", template.render(template_values), False, False)
+		template = jinja_environment.get_template('templates/admin/weeklyFacebookVisits.html')
+		self.printPage("Facebook", template.render(template_values), False, False)
 	def post(self):
 		monday = getMonday(getFormDate(self))
 		books = Books.all().filter("monday = ", monday);
@@ -63,8 +63,8 @@ class WeeklyIncome(BaseHandler):
 		self.redirect(self.URL +"?" + FORM_DAY +"=" + str(monday))
 		
 		
-class WeeklyOnsiteIncome(BaseHandler):
-	URL = '/weeklyOnsiteIncome'
+class weeklyFacebookVisitsOverview(BaseHandler):
+	URL = '/weeklyFacebookVisitsOverview'
 	def get(self):
 		if not isUserAdmin(self):
 			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
@@ -107,8 +107,8 @@ class WeeklyOnsiteIncome(BaseHandler):
 			'weekTotals':weekTotals,
 			'daysOfWeek' : daysOfWeek
 		}
-		template = jinja_environment.get_template('templates/admin/onsiteIncomeOverview.html')
-		self.printPage("Rendel&eacute;sek", template.render(template_values), False, False)
+		template = jinja_environment.get_template('templates/admin/weeklyFacebookVisitsOverview.html')
+		self.printPage("Facebook", template.render(template_values), False, False)
 		
 		
 		

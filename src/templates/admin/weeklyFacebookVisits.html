@@ -3,11 +3,11 @@
 	<div class="container">
 		<div class="span-24 last calendar">
 			<div class="span-24 last calendarHeader">
-				{% if prev %}<a href="/weeklyIncome?formDay={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
+				{% if prev %}<a href="/weeklyFecebookVisits?formDay={{ prev }}" class="span-2 lastWeek">Előző hét</a> {% else %}<div class="span-2">--</div>{% endif %}
 				{% for day in days %}
 					<div class="span-4"><h3>{{ day.day }}</h3>{{ day.date }}</div>
 				{% endfor%}
-				{% if next %}<a href="/weeklyIncome?formDay={{ next }}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
+				{% if next %}<a href="/weeklyFecebookVisits?formDay={{ next }}" class="span-2 last nextWeek">Következő hét</a> {% else %}<div class="span-2 last nextWeek">--</div>{% endif %}
 			</div>
 			<div class="span-24 last calendarRow">
 				<p class="span-2">&nbsp;</p>
@@ -15,7 +15,7 @@
 					<input type="hidden" name="formDate" value="{{monday}}" />
 					{% for day in days %}
 						<div class="span-4 calendarColumn" style="text-align: center">
-							<input type="text" onkeyup="validateQuantityNotNegative('value_{{day.index}}')" style="width: 40px;text-align: right;" id="value_{{day.index}}" name="value_{{day.index}}" value="{{day.total}}"/> Ft
+							<input type="text" onkeyup="validateQuantityNotNegative('value_{{day.index}}')" style="width: 40px;text-align: right;" id="value_{{day.index}}" name="value_{{day.index}}" value="{{day.total}}"/> látogató
 						</div>
 					{% endfor %}
 					<input type="submit" class="span-2" value="Mentés" style="height: 30px;"/>

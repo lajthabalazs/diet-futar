@@ -38,7 +38,7 @@ from logViewer import ViewLogs
 from userMap import UserMapPage
 from crm import CRMUsersWithTasks, CRMMainPage, CRMUserDetails,\
 	AddHistoryEntry, AddTaskToUser, TaskAccomplished
-from books import WeeklyIncome, WeeklyOnsiteIncome
+from books import weeklyFacebookVisits, weeklyFacebookVisitsOverview
 from downloadData import DishListCsv, MenuItemListCsv, CompositListCsv,\
 	UserListCsv, WeeksCsv
 
@@ -61,8 +61,8 @@ app = webapp2.WSGIApplication([
 										(UserMapPage.URL, UserMapPage),
 										(HashUserPasswordPage.URL, HashUserPasswordPage),
 										(UsersFromCachePage.URL, UsersFromCachePage),
-										(WeeklyIncome.URL, WeeklyIncome),
-										(WeeklyOnsiteIncome.URL, WeeklyOnsiteIncome),
+										(weeklyFacebookVisits.URL, weeklyFacebookVisits),
+										(weeklyFacebookVisitsOverview.URL, weeklyFacebookVisitsOverview),
 										#CRM
 										(CRMMainPage.URL, CRMMainPage),
 										(CRMUsersWithTasks.URL, CRMUsersWithTasks),
