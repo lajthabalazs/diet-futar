@@ -7,6 +7,15 @@
 		<a href="/editZipCodes">Szállítási költségek</a> <br/>
 		<h3>Felhasználók</h3>
 		<a href="/userMap">Összes cím megjelenítése</a> <br/>
+		<h3>Szállítási feltételek</h3>
+		Szerintem az idő: {{currentTime}}
+		<form method="post" action="/changeDeliveryTime">
+			<strong>Rendelés határideje</strong> <input type="text" id="orderDeadline" name="orderDeadline" value="{{orderDeadline}}"/>
+			<strong>Szállítás kezdete</strong> <input type="text" id="deliveryStart" name="deliveryStart" value="{{deliveryStart}}"/>
+			<strong>Szállítás vége</strong> <input type="text" id="deliveryEnd" name="deliveryEnd" value="{{deliveryEnd}}"/>
+			<input type="submit" value="Mentés" />
+		</form>
+		
 		<h3>Leállás</h3>
 		Korábbi leállások
 		<table>

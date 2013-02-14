@@ -12,19 +12,23 @@ import os
 from keys import DISH_CATEGORY_URL
 import datetime
 from timezone import USTimeZone
-from model import Maintenence
+from model import Maintenence, SiteParams
 from string import replace, split
 from cache_zips import getZipCodeEntry
 import logging
 from orderHelper import isMenuItem
 from cache_menu_item import getMenuItem
 from cache_composit import getComposit
+import time
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 LAST_ORDER_HOUR=11
 timeZone=USTimeZone(1, "CEST", "CEST", "CEST")
 dayNames=["H&#233;tf&#337;","Kedd","Szerda","Cs&#252;t&#246;rt&#246;k","P&#233;ntek","Szombat","Vas&#225;rnap"]
 FORM_DAY = "formDay"
+ORDER_DEADLINE_KEY = "orderDeadline"
+DELIVERY_START_KEY = "deliveryStart"
+DELIVERY_END_KEY = "deliveryEnd"
 
 def getZipBasedDeliveryCost(code, price):
 	costs = getZipCodeEntry(code)
@@ -38,7 +42,32 @@ def getZipBasedDeliveryCost(code, price):
 			return 1000
 		else:
 			return 0
-	
+
+def getSiteParam(paramName):
+	params = SiteParams.all().get()
+	if params == None:
+		return None
+	paramValue = None
+	for parameter in params.params:
+		parts = parameter.partition(" ")
+		if (parts[0] == paramName):
+			paramValue = parts[2]
+	return paramValue
+
+def setSiteParam(paramName, paramValue):
+	paramDb = SiteParams.all().get()
+	newParams = []
+	for parameter in paramDb.params:
+		parts = parameter.partition(" ")
+		if (parts[0] == paramName):
+			paramValue = parts[2]
+			newParam = paramName + " " + paramValue
+			newParams.append(newParam)
+		else:
+			newParams.append(parameter)
+	paramDb.params = newParams
+	paramDb.put()
+
 def getZipBasedDeliveryLimit(code):
 	costs = getZipCodeEntry(code)
 	if costs != None:
@@ -61,7 +90,11 @@ def getFirstOrderableDate(handler):
 	today=datetime.date.today()
 	now=datetime.datetime.now(timeZone)
 	firstOrderableDay = today
-	if now.hour > LAST_ORDER_HOUR:
+	orderDeadline = getSiteParam(ORDER_DEADLINE_KEY)
+	deadline = time.strptime("10:30", "%H:%M")
+	if orderDeadline != None:
+		deadline = time.strptime(orderDeadline, "%H:%M")
+	if now.hour > deadline.tm_hour or ((now.hour == deadline.tm_hour) and (now.minute > deadline.tm_min)):
 		firstOrderableDay=today+datetime.timedelta(days=1)
 	return firstOrderableDay;
 

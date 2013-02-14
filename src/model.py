@@ -14,6 +14,9 @@ ROLE_AGENT="agent"
 class Role(db.Model):
 	name = db.StringProperty()
 
+class SiteParams(db.Model):
+	params = db.StringListProperty()
+
 class Maintenence(db.Model):
 	startDate = db.DateTimeProperty()
 	endDate = db.DateTimeProperty()

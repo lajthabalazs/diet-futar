@@ -1,4 +1,6 @@
-from base_handler import BaseHandler, jinja_environment, getMonday, parseDate
+from base_handler import BaseHandler, jinja_environment, getMonday, parseDate,\
+	getSiteParam, DELIVERY_START_KEY, DELIVERY_END_KEY, ORDER_DEADLINE_KEY,\
+	timeZone
 from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, User,\
 	Maintenence, ZipCodes, UserWeekOrder
 from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
@@ -16,9 +18,14 @@ class AdminConsolePage(BaseHandler):
 			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
 			self.redirect("/")
 			return
+		
 		orderedMaintenences = Maintenence.all().order('startDate')
 		template_values = {
-			'maintenences':orderedMaintenences
+			'maintenences':orderedMaintenences,
+			ORDER_DEADLINE_KEY:getSiteParam(ORDER_DEADLINE_KEY),
+			DELIVERY_START_KEY:getSiteParam(DELIVERY_START_KEY),
+			DELIVERY_END_KEY:getSiteParam(DELIVERY_END_KEY),
+			'currentTime':datetime.datetime.now(timeZone)
 		}
 		template = jinja_environment.get_template('templates/admin/siteAdmin.html')
 		self.printPage("dashboard", template.render(template_values), False, False)
@@ -293,7 +300,12 @@ class ReplaceComposit(BaseHandler):
 		template = jinja_environment.get_template('templates/admin/replaceComposit.html')
 		self.printPage("Kompositok cser&eacute;je", template.render(template_values), False, False)
 
-
+class ChangeDeliveryTime(BaseHandler):
+	def post(self):
+		orderDeadline = self.request.get(ORDER_DEADLINE_KEY)
+		deliveryStart = self.request.get(DELIVERY_START_KEY)
+		deliveryEnd = self.request.get(DELIVERY_END_KEY)
+		self.redirect(AdminConsolePage.URL)
 
 
 
