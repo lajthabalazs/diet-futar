@@ -132,14 +132,22 @@ def getBaseDate(handler):
 			day=day+datetime.timedelta(days=1)
 	return day
 
-# Returns the day indicated by the posted form if any otherwise the current day
-def getFormDate(handler):
-	day=datetime.date.today()
-	requestDay=handler.request.get(FORM_DAY)
+def parseDate(requestDay):
 	if ((requestDay != None) and (requestDay != "")):
 		parts=requestDay.rsplit("-")
 		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
-	return day
+		return day
+	else:
+		return None
+	
+# Returns the day indicated by the posted form if any otherwise the current day
+def getFormDate(handler):
+	requestDay=handler.request.get(FORM_DAY)
+	day=parseDate(requestDay)
+	if day != None:
+		return day
+	else:
+		return datetime.date.today()
 
 class BaseHandler(webapp2.RequestHandler):
 	def dispatch(self):

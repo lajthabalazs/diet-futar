@@ -1,0 +1,18 @@
+<div>
+	<div class="container">
+		<div class="span-24">
+			{%if toReplace != None%}{{toReplace}} -> {{replaceWith}} on {{monday}}{% endif%}<br/>
+			{% for week in weeks %}
+				{% for composit in week.orderedComposits%}
+					{{composit}}<br/>
+				{% endfor%}
+			{% endfor%}
+			<form method="post">
+				<label for="monday">Melyik héten</label><input type="text" name="monday" id="monday"/><br />
+				<label for="toReplace">Mit</label><input type="text" name="toReplace" id="toReplace"/><br />
+				<label for="toReplace">Mire</label><input type="text" name="replaceWith" id="replaceWith"/><br />
+				<input type="submit"  value="Csere"/>
+			</form>
+		</div>
+	</div>
+</div>

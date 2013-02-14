@@ -1,6 +1,6 @@
-from base_handler import BaseHandler, jinja_environment, getMonday
+from base_handler import BaseHandler, jinja_environment, getMonday, parseDate
 from model import Role, ROLE_ADMIN, ROLE_DELIVERY_GUY, ROLE_COOK, ROLE_AGENT, User,\
-	Maintenence, ZipCodes
+	Maintenence, ZipCodes, UserWeekOrder
 from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 
 import datetime
@@ -248,3 +248,60 @@ class UsersFromCachePage(BaseHandler):
 		}
 		template = jinja_environment.get_template('templates/admin/users.html')
 		self.printPage("Rendel&eacute;sek", template.render(template_values), False, False)
+		
+class ReplaceComposit(BaseHandler):
+	URL = '/replaceComposit'
+	def get(self):
+		self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
+		template = jinja_environment.get_template('templates/admin/replaceComposit.html')
+		self.printPage("Kompositok cser&eacute;je", template.render(), False, False)
+	def post(self):
+		self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
+		toReplace = self.request.get('toReplace')
+		replaceWith = self.request.get('replaceWith')
+		monday = self.request.get('monday')
+		mondaysWeeks = UserWeekOrder.all().filter("monday = ", parseDate(monday))
+		weeks = []
+		for week in mondaysWeeks:
+			week = UserWeekOrder()
+			newComposits = []
+			modified = False
+			for item in week.orderedComposits:
+				if item.find(toReplace) != -1:
+					modified = True
+					newItem = item.replace(toReplace, replaceWith)
+					newComposits.append(newItem)
+				else:
+					newComposits.append(item)
+			if modified:
+				week.orderedComposits = newComposits
+				weeks.append(week)
+		template_values = {
+			'toReplace':toReplace,
+			'replaceWith':replaceWith,
+			'monday':monday,
+			'weeks':weeks
+		}
+		template = jinja_environment.get_template('templates/admin/replaceComposit.html')
+		self.printPage("Kompositok cser&eacute;je", template.render(template_values), False, False)
+
+
+
+
+
+
+
+
+
+
+
+
+
