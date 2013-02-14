@@ -271,7 +271,6 @@ class ReplaceComposit(BaseHandler):
 		mondaysWeeks = UserWeekOrder.all().filter("monday = ", parseDate(monday))
 		weeks = []
 		for week in mondaysWeeks:
-			week = UserWeekOrder()
 			newComposits = []
 			modified = False
 			for item in week.orderedComposits:
@@ -283,6 +282,7 @@ class ReplaceComposit(BaseHandler):
 					newComposits.append(item)
 			if modified:
 				week.orderedComposits = newComposits
+				week.put()
 				weeks.append(week)
 		template_values = {
 			'toReplace':toReplace,
