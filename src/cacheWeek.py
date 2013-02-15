@@ -110,3 +110,7 @@ def getUsers():
 			users.append(createUser(userDb))
 		client.add(USERS_KEY, users)
 	return users
+
+def clearUsersFromCache():
+	client = memcache.Client()
+	client.delete(USERS_KEY)

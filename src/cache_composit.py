@@ -47,8 +47,11 @@ def getComposit(key):
 	client = memcache.Client()
 	composit = client.get(key)
 	if composit == None:
-		compositDb = Composit.get(key)
-		if compositDb == None:
+		try:
+			compositDb = Composit.get(key)
+			if compositDb == None:
+				return None
+		except:
 			return None
 		composit = createCompositData(compositDb)
 		client.set(key,composit)

@@ -8,7 +8,7 @@ from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 import datetime
 from zipCodeInit import createZipCodeList
 from cache_zips import updateZipCodeEntry, updateZipCodeScript
-from cacheWeek import getUsers, getUserWeekForDay
+from cacheWeek import getUsers, getUserWeekForDay, clearUsersFromCache
 from orderHelper import getOrderTotal
 
 class AdminConsolePage(BaseHandler):
@@ -256,6 +256,17 @@ class UsersFromCachePage(BaseHandler):
 		template = jinja_environment.get_template('templates/admin/users.html')
 		self.printPage("Rendel&eacute;sek", template.render(template_values), False, False)
 		
+class ClearUserArrayFromCache(BaseHandler):
+	URL = '/clearUserArrayFromCache'
+	def post(self):
+		self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
+		clearUsersFromCache()
+		self.redirect(UsersFromCachePage.URL)
+
 class ReplaceComposit(BaseHandler):
 	URL = '/replaceComposit'
 	def get(self):
