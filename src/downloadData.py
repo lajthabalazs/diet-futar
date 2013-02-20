@@ -48,6 +48,13 @@ class MenuItemListCsv(BaseHandler):
 			self.redirect("/")
 			return
 		menuItems = MenuItem.all()
+		newMenuItems = []
+		for menuItem in menuItems:
+			try:
+				menuItem.dish.key()
+			except:
+				menuItem.dish = None
+			newMenuItems.append(menuItem)
 		template_values = {
 			'menuItems' : menuItems
 		}
