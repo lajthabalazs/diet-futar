@@ -1,3 +1,4 @@
-{% for week in weeks%}{% for item in week.orderedMenuItems %}{% if week.user != None%}{{week.user.key()}}{% else %}N/A{% endif %},{{week.monday}},{{item}}
-{% endfor %}{% for item in week.orderedComposits %}{% if week.user != None%}{{week.user.key()}}{% else %}N/A{% endif %},{{week.monday}},{{item}}
+USER,MONDAY,COUNT,ITEM
+{% for week in weeks%}{% for item in week.orderedMenuItems %}{% if week.user != None%}{{week.user.key()}}{% else %}N/A{% endif %},{{week.monday}},{{item|replace(" ", ",")}}
+{% endfor %}{% for item in week.orderedComposits %}{% if week.user != None%}{{week.user.key()}}{% else %}N/A{% endif %},{{week.monday}},{{item|replace(" ", ",")}}
 {% endfor %}{% endfor %}

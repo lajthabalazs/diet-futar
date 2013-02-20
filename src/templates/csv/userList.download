@@ -1,2 +1,3 @@
+KEY,NAME,REGISTRATION
 {% for user in users %}{{user.key()}},{{user.familyName}} {{user.givenName}},{{user.registrationDate}}
 {% endfor %}
