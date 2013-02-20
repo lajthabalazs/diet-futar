@@ -40,7 +40,7 @@ from crm import CRMUsersWithTasks, CRMMainPage, CRMUserDetails,\
 	AddHistoryEntry, AddTaskToUser, TaskAccomplished
 from books import weeklyFacebookVisits, weeklyFacebookVisitsOverview
 from downloadData import DishListCsv, MenuItemListCsv, CompositListCsv,\
-	UserListCsv, WeeksCsv
+	UserListCsv, WeeksCsv, DataDownloadMainPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -73,6 +73,7 @@ app = webapp2.WSGIApplication([
 										(AddTaskToUser.URL, AddTaskToUser),
 										(TaskAccomplished.URL, TaskAccomplished),
 										#Data download
+										(DataDownloadMainPage.URL, DataDownloadMainPage),
 										(DishListCsv.URL, DishListCsv),
 										(MenuItemListCsv.URL, MenuItemListCsv),
 										(CompositListCsv.URL, CompositListCsv),
