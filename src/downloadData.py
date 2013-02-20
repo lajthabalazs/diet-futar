@@ -84,7 +84,7 @@ class WeeksCsv(BaseHandler):
 				week.user = None
 			newWeeks.append(week)
 		template_values = {
-			'weeks' : weeks
+			'weeks' : newWeeks
 		}
 		template = jinja_environment.get_template('templates/csv/userOrders.download')
 		self.response.out.write(template.render(template_values))
