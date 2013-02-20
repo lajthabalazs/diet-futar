@@ -283,6 +283,10 @@ class BaseHandler(webapp2.RequestHandler):
 			onsiteIncome["label"]="Facebook l&aacute;togat&oacute;k"
 			onsiteIncome["target"]="/weeklyFacebookVisits"
 			topMenu.append(onsiteIncome)
+			dataDownload={}
+			dataDownload["label"]="Adatok let&ouml;lt&eacute;se"
+			dataDownload["target"]="/dataDownloadMainPage"
+			topMenu.append(dataDownload)
 		elif isUserCook(self):
 			dailyMenu={}
 			dailyMenu["label"]="Menu osszeallitas"

@@ -15,13 +15,13 @@ class Role(db.Model):
 	name = db.StringProperty()
 
 class SiteParams(db.Model):
-	params = db.StringListProperty()
+	params = db.StringListProperty(multiline=True)
 
 class Maintenence(db.Model):
 	startDate = db.DateTimeProperty()
 	endDate = db.DateTimeProperty()
-	displayedDate = db.StringProperty()
-	features = db.StringProperty()
+	displayedDate = db.StringProperty(multiline=True)
+	features = db.StringProperty(multiline=True)
 	active = db.BooleanProperty()
 
 class ZipCodes(db.Model):
@@ -56,8 +56,8 @@ class Address (db.Model):
 	user = db.ReferenceProperty(User, collection_name='addresses')
 	zipCode = db.StringProperty()
 	zipNumCode = db.IntegerProperty()
-	street = db.StringProperty()
-	streetNumber = db.StringProperty()
+	street = db.StringProperty(multiline=True)
+	streetNumber = db.StringProperty(multiline=True)
 	active = db.BooleanProperty(default=True)
 	lat = db.StringProperty(default=None)
 	lon = db.StringProperty(default=None)
@@ -72,7 +72,7 @@ class DishCategory(db.Model):
 class Dish(db.Model):
 	title = db.StringProperty()
 	price = db.IntegerProperty()
-	subtitle=db.StringProperty()
+	subtitle=db.StringProperty(multiline=True)
 	description = db.StringProperty(multiline=True)
 	category=db.ReferenceProperty(DishCategory, collection_name='dishes')
 	eggFree = db.BooleanProperty(default=False)
@@ -130,13 +130,13 @@ class UserWeekOrder(db.Model):
 	fridayAddress=db.ReferenceProperty(Address, collection_name='fridays')
 	saturdayAddress=db.ReferenceProperty(Address, collection_name='saturdays')
 	sundayAddress=db.ReferenceProperty(Address, collection_name='sundays')
-	mondayComment=db.StringProperty(default="")
-	tuesdayComment=db.StringProperty(default="")
-	wednesdayComment=db.StringProperty(default="")
-	thursdayComment=db.StringProperty(default="")
-	fridayComment=db.StringProperty(default="")
-	saturdayComment=db.StringProperty(default="")
-	sundayComment=db.StringProperty(default="")
+	mondayComment=db.StringProperty(default="",multiline=True)
+	tuesdayComment=db.StringProperty(default="",multiline=True)
+	wednesdayComment=db.StringProperty(default="",multiline=True)
+	thursdayComment=db.StringProperty(default="",multiline=True)
+	fridayComment=db.StringProperty(default="",multiline=True)
+	saturdayComment=db.StringProperty(default="",multiline=True)
+	sundayComment=db.StringProperty(default="",multiline=True)
 
 class WebshopItem(db.Model):
 	title=db.StringProperty()
@@ -147,8 +147,8 @@ class WebshopItem(db.Model):
 	price=db.IntegerProperty(default=0)
 	availableQuantity=db.IntegerProperty(default=10000)
 	tags=db.StringListProperty()
-	shortDescription=db.StringProperty()
-	description=db.StringProperty()
+	shortDescription=db.StringProperty(multiline=True)
+	description=db.StringProperty(multiline=True)
 
 class WebshopOrderItem(db.Model):
 	user=db.ReferenceProperty(User, collection_name='webshopOrders')

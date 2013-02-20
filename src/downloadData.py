@@ -2,6 +2,16 @@ from base_handler import BaseHandler, jinja_environment
 from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY
 from model import Dish, Composit, MenuItem, User, UserWeekOrder
 
+class DataDownloadMainPage(BaseHandler):
+	URL = "/dataDownloadPage"
+	def get(self):
+		if not isUserAdmin(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
+		template = jinja_environment.get_template('templates/admin/dataDownloadPage.html')
+		self.response.out.write(template.render())
+	
 class DishListCsv(BaseHandler):
 	URL = "/dishList.csv"
 	def get(self):
