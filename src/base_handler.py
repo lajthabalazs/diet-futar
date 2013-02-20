@@ -285,7 +285,7 @@ class BaseHandler(webapp2.RequestHandler):
 			topMenu.append(onsiteIncome)
 			dataDownload={}
 			dataDownload["label"]="Adatok let&ouml;lt&eacute;se"
-			dataDownload["target"]="/dataDownloadMainPage"
+			dataDownload["target"]="/dataDownloadPage"
 			topMenu.append(dataDownload)
 		elif isUserCook(self):
 			dailyMenu={}

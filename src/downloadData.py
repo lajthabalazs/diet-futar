@@ -76,6 +76,11 @@ class WeeksCsv(BaseHandler):
 			self.redirect("/")
 			return
 		weeks = UserWeekOrder.all()
+		for week in weeks:
+			try:
+				week.user.key()
+			except:
+				week.user = None
 		template_values = {
 			'weeks' : weeks
 		}
