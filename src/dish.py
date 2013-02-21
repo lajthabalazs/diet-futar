@@ -13,6 +13,7 @@ from google.appengine.api.datastore_errors import ReferencePropertyResolveError
 from cache_dish import getDish, deleteDish, modifyDish, addDish
 from cache_dish_category import getDishCategories
 from cache_ingredient import getIngredients
+import datetime
 
 #from user_management import getUserBox
 
@@ -55,6 +56,7 @@ class DishPage(BaseHandler):
 			return
 		else:
 			dish = Dish()
+			dish.creationDate = datetime.datetime.today()
 			dish.title = self.request.get('title')
 			dish.subtitle = self.request.get('subtitle')
 			dish.description = self.request.get('description')

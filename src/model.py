@@ -71,6 +71,7 @@ class DishCategory(db.Model):
 
 class Dish(db.Model):
 	title = db.StringProperty()
+	creationDate = db.DateProperty()
 	price = db.IntegerProperty()
 	subtitle=db.StringProperty(multiline=True)
 	description = db.StringProperty(multiline=True)

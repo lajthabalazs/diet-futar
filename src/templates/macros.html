@@ -10,7 +10,7 @@
 {% endmacro %}
 
 {% macro menuItemTitleAndContentWithIndicatorImage(menuItem)%}
-		<h3 class='menuItamMainDish'>{{ menuItem.dish.title }}</h3>
+		<h3 class='menuItamMainDish'>{% if menuItem.novelty%} <span style="color:RED;">Új! </span>{% endif %}{{ menuItem.dish.title }}</h3>
 		<p class='menuItamSubDish'>{% for component in menuItem.components %}
 			{{ component.dish.title }} 
 		{% endfor %}

@@ -7,6 +7,7 @@ from google.appengine.api import memcache
 from model import MenuItem
 from google.appengine.ext import db
 from cache_dish import getDish
+import datetime
 
 MENU_ITEMS_FOR_DAY="MI_DAY"
 
@@ -68,6 +69,7 @@ def getMenuItem(key):
 	eggFree = False
 	milkFree = False
 	if dish == None:
+		creationDate = datetime.datetime.strptime("2011-10-01", "%Y-%m-%d").date()
 		menuItem['dish'] = dummyDish()
 		sumprice = 0
 		energy = 0
@@ -76,6 +78,10 @@ def getMenuItem(key):
 		fiber = 0
 		protein = 0
 	else:
+		if dish['creationDate'] == None:
+			creationDate = datetime.datetime.strptime("2011-10-01", "%Y-%m-%d").date()
+		else:
+			creationDate = dish['creationDate']
 		menuItem['dish'] = dish
 		try:
 			eggFree = dish['eggFree']
@@ -95,6 +101,8 @@ def getMenuItem(key):
 	components = []
 	for subItemKey in menuItem['componentKeys']:
 		component = getMenuItem(subItemKey)
+		if component['creationDate'] > creationDate:
+			creationDate = component['creationDate']
 		components.append(component)
 		componentPrice = component['dish']['price']
 		componentEnergy = component['dish']['energy']
@@ -125,6 +133,7 @@ def getMenuItem(key):
 	menuItem['components'] = components
 	menuItem['eggFree']=eggFree
 	menuItem['milkFree']=milkFree
+	menuItem['novelty']=((datetime.datetime.today().date() - creationDate).days < 7)
 	return menuItem
 	
 def getDaysMenuItems(day, categoryKey):
