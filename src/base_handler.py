@@ -14,7 +14,6 @@ import datetime
 from timezone import USTimeZone
 from model import Maintenence, SiteParams
 from string import replace, split
-from cache_zips import getZipCodeEntry
 import logging
 from orderHelper import isMenuItem
 from cache_menu_item import getMenuItem
@@ -29,19 +28,6 @@ FORM_DAY = "formDay"
 ORDER_DEADLINE_KEY = "orderDeadline"
 DELIVERY_START_KEY = "deliveryStart"
 DELIVERY_END_KEY = "deliveryEnd"
-
-def getZipBasedDeliveryCost(code, price):
-	costs = getZipCodeEntry(code)
-	if costs != None:
-		if (price < costs['limit']):
-			return costs['cost']
-		else:
-			return 0
-	else:
-		if (price < 5000):
-			return 1000
-		else:
-			return 0
 
 def getSiteParam(paramName):
 	params = SiteParams.all().get()
@@ -67,13 +53,6 @@ def setSiteParam(paramName, paramValue):
 			newParams.append(parameter)
 	paramDb.params = newParams
 	paramDb.put()
-
-def getZipBasedDeliveryLimit(code):
-	costs = getZipCodeEntry(code)
-	if costs != None:
-		return costs['limit']
-	else:
-		return 5000
 	
 def logInfo(handler, url, message):
 	template_values_for_logging = {

@@ -1,9 +1,30 @@
 from cache_menu_item import getMenuItem
 from cache_composit import getComposit
 from model import UserWeekOrder
+from cache_zips import getZipCodeEntry
 def isMenuItem(key):
 	# What better way than to get it from cache
 	return (getMenuItem(key) != None)
+
+def getZipBasedDeliveryCost(code, price):
+	costs = getZipCodeEntry(code)
+	if costs != None:
+		if (price < costs['limit']):
+			return costs['cost']
+		else:
+			return 0
+	else:
+		if (price < 5000):
+			return 1000
+		else:
+			return 0
+
+def getZipBasedDeliveryLimit(code):
+	costs = getZipCodeEntry(code)
+	if costs != None:
+		return costs['limit']
+	else:
+		return 5000
 
 def getOrderedItemsFromWeekData (weeks, day):
 	orderedMenuItemIndexes={}
@@ -61,6 +82,70 @@ def getOrderAddress (week, day):
 		return week.saturdayAddress
 	elif day.weekday() == 6:
 		return week.sundayAddress
+
+def getPaid (week, day):
+	if week == None:
+		return None
+	if day.weekday() == 0:
+		return week.mondayPaid
+	elif day.weekday() == 1:
+		return week.tuesdayPaid
+	elif day.weekday() == 2:
+		return week.wednesdayPaid
+	elif day.weekday() == 3:
+		return week.thursdayPaid
+	elif day.weekday() == 4:
+		return week.fridayPaid
+	elif day.weekday() == 5:
+		return week.saturdayPaid
+	elif day.weekday() == 6:
+		return week.sundayPaid
+
+def getWeeklyPaid (week):
+	if week == None:
+		return 0
+	weeklyPaid = week.mondayPaid
+	weeklyPaid += week.tuesdayPaid
+	weeklyPaid += week.wednesdayPaid
+	weeklyPaid += week.thursdayPaid
+	weeklyPaid += week.fridayPaid
+	weeklyPaid += week.saturdayPaid
+	weeklyPaid += week.sundayPaid
+	return weeklyPaid
+
+def getWeeklyDelivery (week):
+	if week == None:
+		return 0
+	weeklyDelivery = 0
+	try:
+		weeklyDelivery += getZipBasedDeliveryCost(week.mondayAddress.zipCode, week.mondayPaid)
+	except:
+		pass
+	try:
+		weeklyDelivery += getZipBasedDeliveryCost(week.tuesdayAddress.zipCode, week.tuesdayPaid)
+	except:
+		pass
+	try:
+		weeklyDelivery += getZipBasedDeliveryCost(week.wednesdayPaid.zipCode, week.wednesdayPaid)
+	except:
+		pass
+	try:
+		weeklyDelivery += getZipBasedDeliveryCost(week.thursdayAddress.zipCode, week.thursdayPaid)
+	except:
+		pass
+	try:
+		weeklyDelivery += getZipBasedDeliveryCost(week.fridayAddress.zipCode, week.fridayPaid)
+	except:
+		pass
+	try:
+		weeklyDelivery += getZipBasedDeliveryCost(week.saturdayAddress.zipCode, week.saturdayPaid)
+	except:
+		pass
+	try:
+		weeklyDelivery += getZipBasedDeliveryCost(week.sundayAddress.zipCode, week.sundayPaid)
+	except:
+		pass
+	return weeklyDelivery
 
 def getOrderComment (week, day):
 	if week == None:

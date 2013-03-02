@@ -13,4 +13,5 @@ DISH_CATEGORY_ADD_URL='/addDishToCategory'
 # Param names
 DISH_CATEGORY_NAME='dishCategoryName'
 DISH_CATEGORY_INDEX='dishCategoryIndex'
+DISH_CATEGORY_ABBREVIATION='dishCategoryAbbreviation'
 

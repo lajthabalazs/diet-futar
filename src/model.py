@@ -64,6 +64,7 @@ class Address (db.Model):
 
 class DishCategory(db.Model):
 	name = db.StringProperty()
+	abbreviation = db.StringProperty()
 	isMenu = db.BooleanProperty()
 	canBeTopLevel = db.BooleanProperty()
 	basePrice=db.IntegerProperty()
@@ -123,7 +124,7 @@ class UserWeekOrder(db.Model):
 	monday=db.DateProperty() # Monday of the week
 	orderedComposits=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
 	orderedMenuItems=db.StringListProperty() # The list of ordered composit keys of form: quantity SPACE key
-	orderHistory=db.StringListProperty() # The list of ordered items keys of form: date_time SPACE quantity SPACE key
+	orderHistory=db.StringListProperty() # The list of ordered items keys of form: date_time SPACE quantity SPACE key	
 	mondayAddress=db.ReferenceProperty(Address, collection_name='mondays')
 	tuesdayAddress=db.ReferenceProperty(Address, collection_name='tuesdays')
 	wednesdayAddress=db.ReferenceProperty(Address, collection_name='wednesdays')
@@ -138,6 +139,13 @@ class UserWeekOrder(db.Model):
 	fridayComment=db.StringProperty(default="",multiline=True)
 	saturdayComment=db.StringProperty(default="",multiline=True)
 	sundayComment=db.StringProperty(default="",multiline=True)
+	mondayPaid=db.IntegerProperty(default=0)
+	tuesdayPaid=db.IntegerProperty(default=0)
+	wednesdayPaid=db.IntegerProperty(default=0)
+	thursdayPaid=db.IntegerProperty(default=0)
+	fridayPaid=db.IntegerProperty(default=0)
+	saturdayPaid=db.IntegerProperty(default=0)
+	sundayPaid=db.IntegerProperty(default=0)
 
 class WebshopItem(db.Model):
 	title=db.StringProperty()

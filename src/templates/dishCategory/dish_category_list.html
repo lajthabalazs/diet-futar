@@ -4,6 +4,7 @@
 		<table>
 		<tr>
 			<th>Név</th>
+			<th>Kód</th>
 			<th>Sorrend</th>
 			<th>Alapár</th>
 			<th>Menü</th>
@@ -16,6 +17,7 @@
 			<td><a href="/dishCategory?dishCategoryKey={{ dishCategory.key }}">{{ dishCategory.name }}</a></td>
 			<form method="post">
 			<input type="hidden" name="dishCategoryKey" value="{{ dishCategory.key }}"/>
+			<td><input type="text" name="dishCategoryAbbreviation" style="width: 40px;" value="{{ dishCategory.abbreviation }}"/></td>
 			<td><input type="number" name="dishCategoryIndex" cols="60" value="{{ dishCategory.index }}"/></td>
 			<td><input type="number" name="basePrice" cols="60" value="{{ dishCategory.basePrice }}"/></td>
 			<td><input type="checkbox" name="isMenuCategory" cols="60" value="yes" {% if(dishCategory.isMenu) %} checked="true"{% endif %}/></td>

@@ -3,16 +3,16 @@
 import jinja2
 import os
 
-from base_handler import BaseHandler, getBaseDate, getMonday, getZipBasedDeliveryCost
+from base_handler import BaseHandler, getBaseDate, getMonday
 import datetime
-from model import ROLE_ADMIN, Role, ROLE_DELIVERY_GUY, UserWeekOrder,\
-	User
+from model import UserWeekOrder, User
 from order import dayNames, getOrderAddress, getOrderedItemsFromWeekData
 from user_management import isUserCook, isUserDelivery, LOGIN_NEXT_PAGE_KEY
 from cache_dish_category import getDishCategories
 from cache_menu_item import getDaysMenuItems
 from cache_composit import getDaysComposits
-from orderHelper import getOrdersForWeek, getOrderComment
+from orderHelper import getOrdersForWeek, getOrderComment, getOrderTotal,\
+	getPaid, getWeeklyPaid, getWeeklyDelivery, getZipBasedDeliveryCost
 
 ACTUAL_ORDER="actualOrder"
 
@@ -113,12 +113,10 @@ class DeliveryReviewOrdersPage(BaseHandler):
 		weeks = UserWeekOrder.all().filter('monday = ', monday)
 		deliveries = []
 		for week in weeks:
-			items = getOrderedItemsFromWeekData([week], day)
 			dailyUserTotal = 0
+			items = getOrderedItemsFromWeekData([week], day)
 			if len(items) > 0:
 				for item in items:
-					dayCount = dayCount + 1
-					dayQuantity = dayQuantity + item['orderedQuantity']
 					dayTotal = dayTotal + item['orderedQuantity'] * item['price']
 					dailyUserTotal = dailyUserTotal + item['orderedQuantity'] * item['price']
 				orderAddress = getOrderAddress(week, day)
@@ -128,22 +126,19 @@ class DeliveryReviewOrdersPage(BaseHandler):
 				orderAddress.orderedItems = items
 				orderAddress.week = week
 				orderAddress.dailyUserTotal = dailyUserTotal
+				orderAddress.dailyUserDelivery = getZipBasedDeliveryCost(orderAddress.zipCode, dailyUserTotal)
+				orderAddress.todayPaid = getPaid(week, day)
+				orderAddress.weeklyPaid = getWeeklyPaid(week)
+				orderAddress.weeklyTotal = getOrderTotal([week])
+				orderAddress.weeklyDelivery = getWeeklyDelivery(week)
 				deliveries.append(orderAddress)
 		sortedDeliveries = sorted(deliveries, key=lambda item:item.zipNumCode)
-		admins=Role.all().filter("name = ", ROLE_ADMIN)[0].users
-		delivereryGuys=Role.all().filter("name = ", ROLE_DELIVERY_GUY)[0].users
-		deliverers=[]
-		deliverers.extend(admins)
-		deliverers.extend(delivereryGuys)
 		template_values = {
 			'next':nextDay,
 			'actual':today,
 			'orders':sortedDeliveries,
 			'day':dayObject,
-			'deliverers':deliverers,
 			'dayTotal': dayTotal,
-			'dayCount' : dayCount,
-			'dayQuantity' : dayQuantity
 		}
 		template_values['prev'] = prevDay
 		template = jinja_environment.get_template('templates/deliveryReviewOrders.html')

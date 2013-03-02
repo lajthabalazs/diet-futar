@@ -4,7 +4,8 @@ import jinja2
 import os
 from base_handler import BaseHandler
 from keys import DISH_CATEGORY_KEY, DISH_KEY, DISH_CATEGORY_URL, DISH_CATEGORY_NAME,\
-	DISH_CATEGORY_DELETE_URL, DISH_CATEGORY_ADD_URL, DISH_CATEGORY_INDEX
+	DISH_CATEGORY_DELETE_URL, DISH_CATEGORY_ADD_URL, DISH_CATEGORY_INDEX,\
+	DISH_CATEGORY_ABBREVIATION
 from user_management import isUserCook
 from cache_dish_category import getDishCategories, getCategoryWithDishes,\
 	modifyCategory, deleteCategory, addCategory
@@ -36,6 +37,7 @@ class DishCategoryPage(BaseHandler):
 		else:
 			dishCategory = DishCategory()
 			dishCategory.name = self.request.get(DISH_CATEGORY_NAME)
+		dishCategory.abbreviation = self.request.get(DISH_CATEGORY_ABBREVIATION)
 		try:
 			dishCategory.index = int(self.request.get(DISH_CATEGORY_INDEX))
 		except ValueError:

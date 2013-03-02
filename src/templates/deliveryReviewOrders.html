@@ -1,7 +1,6 @@
 ﻿{% from '/templates/macros.html' import menuItemTitleAndContentSmall, compositTitleAndContentSmall %}
 <div class="mainBg staticPage">
 	<div class="container">
-
 		{% if prev %}<a href="/deliveryReviewOrders?day={{ prev }}">Előző nap</a> {% endif %} <a href="/deliveryReviewOrders?day={{ actual }}">Ma</a> <a href="/deliveryReviewOrders?day={{ next }}">Következő nap</a>
 		<br/>
 		{{ day.date }} <br/>
@@ -11,29 +10,39 @@
 		Összesen: {{ dayTotal}} Ft
 		<table border="1">
 			<tr>
-				<th>Folyamatban</th><th>Irányítószám</th><th>Cím</th><th>Megjegyzés</th><th>Név</th><th>Rendelés</th><th>Összesen</th>
+				<th>Ir. Sz.</th><th>Cím</th><th>Megjegyzés</th><th>Név</th><th>Rendelés</th><th>Összesen</th><th>Fizetve</th>
 			</tr>
 			{% for order in orders%}
 			<form method="post">
 				<tr>
-					<td><input type="checkbox" name="delivered" {% if order.delivered %} checked="checked" {% endif %}/></td>
 					<td>{{order.zipNumCode}}</td>
 					<td>{{order.street}} {{order.streetNumber}}</td>
 					<td>{{order.comment}}</td>
 					<td><a href="/deliverable?monday={{ order.week.monday }}&userKey={{ order.week.user.key() }}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a></td>
 					<td>
 						{% for item in order.orderedItems %}
-							{{item.orderedQuantity}}
+							{{item.orderedQuantity}}* 
 							{% if item.isMenuItem %}
-								{{menuItemTitleAndContentSmall (item)}}
+								{{item.dish.category.abbreviation}}
 							{% else %}
-								{{compositTitleAndContentSmall (item)}}
+								{{item.category.abbreviation}}
 							{% endif %}
-							{{ item.price }} Ft
+							<!--{{ item.price }} Ft-->
 							<br/>
 						{% endfor %}
 					</td>
-					<td>{{order.dailyUserTotal}} Ft</td>
+					<td>{{ order.dailyUserTotal }} Ft<br/>
+						 {{ order.dailyUserDelivery }} Ft<br />
+						<form action="/savePaidAmount">
+							<input type="hidden" name="weekKey" id="weekKey" value="{{ order.week.key() }}"/>
+							<input type="text" name="todayPaid" id="todayPaid" style="width: 50px" value="{{order.todayPaid}}"/><br/>
+							<input type="submit" value="Ment"/>
+						</form>
+					</td>
+					<td>{{order.weeklyPaid}} Ft<br/>
+						<strong>{{order.weeklyTotal}} Ft<br />
+						(+ {{order.weeklyDelivery}} Ft)</strong>
+					</td>
 				</tr>
 			</form>
 			{% endfor %}

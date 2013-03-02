@@ -7,6 +7,7 @@ from google.appengine.api import memcache
 from model import DishCategory, MenuItem, Composit,\
 	CompositMenuItemListItem
 from cache_menu_item import getMenuItem
+from cache_dish_category import getDishCategory
 
 COMPOSIT_FOR_DAY="COMP_DAY"
 
@@ -56,6 +57,7 @@ def getComposit(key):
 		composit = createCompositData(compositDb)
 		client.set(key,composit)
 	# Fetch menu item data for keys
+	composit['category'] = getDishCategory(composit['categoryKey'])
 	composit['components'] = fetchMenuItemsForComposit(composit)
 	return composit
 

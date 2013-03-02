@@ -13,6 +13,7 @@ def createCategoryObject(categoryDb):
 	categoryObject={
 		'key':str(categoryDb.key()),
 		'name':categoryDb.name,
+		'abbreviation':categoryDb.abbreviation,
 		'basePrice':categoryDb.basePrice,
 		'isMenu':categoryDb.isMenu,
 		'canBeTopLevel':categoryDb.canBeTopLevel,
@@ -36,6 +37,19 @@ def getDishCategories():
 		client.set(CATEGORIES_KEY, categoryList)
 		return categoryList
 	return categories
+
+def getDishCategory(key):
+	if key == None:
+		return None
+	client = memcache.Client()
+	dishCategory = client.get(key)
+	if dishCategory == None:
+		dishCategoryDb = DishCategory.get(key)
+		if dishCategoryDb != None:
+			dishCategory = createCategoryObject(dishCategoryDb)
+			client.set(dishCategory['key'], dishCategory)
+	return dishCategory
+
 
 def addCategory(category):
 	client = memcache.Client()

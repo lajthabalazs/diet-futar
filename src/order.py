@@ -5,8 +5,7 @@ import os
 from google.appengine.ext import db
 
 from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
-	getFirstOrderableDate, getMonday,\
-	getZipBasedDeliveryCost, getZipBasedDeliveryLimit, logInfo, timeZone,\
+	getFirstOrderableDate, getMonday, logInfo, timeZone,\
 	getBasketBaseDate, dayNames
 import datetime
 from model import MenuItem, User, UserWeekOrder, Address, UserOrderEvent
@@ -17,7 +16,8 @@ from cache_composit import getDaysComposits, getComposit
 from google.appengine.api import mail
 from cache_dish_category import getDishCategories
 from orderHelper import getUserOrdersForWeek, getOrderedItemsFromWeekData,\
-	getOrderAddress, isMenuItem, getOrderComment
+	getOrderAddress, isMenuItem, getOrderComment, getZipBasedDeliveryCost,\
+	getZipBasedDeliveryLimit
 from cacheWeek import updateUser
 #from user_management import getUserBox
 
