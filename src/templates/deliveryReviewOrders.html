@@ -8,48 +8,47 @@
 		Elemek: {{ dayCount}}<br/>
 		Mennyiség: {{ dayQuantity}}<br/>
 		Összesen: {{ dayTotal}} Ft
-		<table border="1">
+		<table>
 			<tr>
-				<th>Ir. Sz.</th><th>Cím</th><th>Megjegyzés</th><th>Név</th><th>Rendelés</th><th>Mai nap</th><th>Hét</th>
+				<th>Ir. Sz.</th><th>Cím</th><th>Megjegyzés</th><th>Név</th><th>Rendelés</th><th style="width: 120px;">Mai nap</th><th style="width: 110px;">Hét</th>
 			</tr>
+			<tbody>
 			{% for order in orders%}
-			<form method="post">
-				<tr>
-					<td>{{order.zipNumCode}}</td>
-					<td>{{order.street}} {{order.streetNumber}}</td>
-					<td>{{order.comment}}</td>
-					<td>
-						<a href="/deliverable?monday={{ order.week.monday }}&userKey={{ order.week.user.key() }}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a><br/>
-						{{order.week.user.phoneNumber}}
-					</td>
-					<td>
-						{% for item in order.orderedItems %}
-							{{item.orderedQuantity}}* 
-							{% if item.isMenuItem %}
-								{{item.dish.category.abbreviation}}
-							{% else %}
-								{{item.category.abbreviation}}
-							{% endif %}
-							<!--{{ item.price }} Ft-->
-							<br/>
-						{% endfor %}
-					</td>
-					<td>{{ order.dailyUserTotal }}<i>+{{ order.dailyUserDelivery }}=</i> {{ order.dailyUserTotal + order.dailyUserDelivery }}Ft
-						<form></form> <!-- A form tag is somehow removed! -->
-						<form action="savePaidAmount" method="post">
-							<input type="hidden" name="day" value="{{ day.date }}"/>
-							<input type="hidden" name="weekKey" value="{{ order.week.key() }}"/>
-							<input type="text" name="todayPaid" style="width: 50px" value="{{order.todayPaid}}"/>
-							<input type="submit" value="Ment"/>
-						</form>
-					</td>
-					<td>
-						<strong>{{order.weeklyTotal}}<i>+{{order.weeklyDelivery}}=</i> {{order.weeklyTotal + order.weeklyDelivery}}Ft</strong><br/>
-						{{order.weeklyPaid}} Ft
-					</td>
-				</tr>
-			</form>
+			<tr>
+				<td>{{order.zipNumCode}}</td>
+				<td>{{order.street}} {{order.streetNumber}}</td>
+				<td>{{order.comment}}</td>
+				<td>
+					<a href="/deliverable?monday={{ order.week.monday }}&userKey={{ order.week.user.key() }}">{{order.week.user.familyName}} {{order.week.user.givenName}}</a><br/>
+					{{order.week.user.phoneNumber}}
+				</td>
+				<td>
+					{% for item in order.orderedItems %}
+						{{item.orderedQuantity}}* 
+						{% if item.isMenuItem %}
+							{{item.dish.category.abbreviation}}
+						{% else %}
+							{{item.category.abbreviation}}
+						{% endif %}
+						<!--{{ item.price }} Ft-->
+						<br/>
+					{% endfor %}
+				</td>
+				<td>{{ order.dailyUserTotal }}<i>+{{ order.dailyUserDelivery }}=</i> {{ order.dailyUserTotal + order.dailyUserDelivery }}Ft
+					<form action="savePaidAmount" method="post">
+						<input type="hidden" name="day" value="{{ day.date }}"/>
+						<input type="hidden" name="weekKey" value="{{ order.week.key() }}"/>
+						<input type="text" name="todayPaid" style="width: 50px" value="{{order.todayPaid}}"/>
+						<input type="submit" value="Ment"/>
+					</form>
+				</td>
+				<td>
+					{{order.weeklyTotal}}<i>+{{order.weeklyDelivery}}=</i> {{order.weeklyTotal + order.weeklyDelivery}}Ft<br/>
+					{{order.weeklyPaid}} Ft
+				</td>
+			</tr>
 			{% endfor %}
+			</tbody>
 		</table>
 	</div>
 </div>
