@@ -65,6 +65,26 @@ def getOrderedItemsFromWeekData (weeks, day):
 	orderedItems.extend(orderedMenuItems)
 	return orderedItems
 
+def dayTotals (week):
+	ret = [0,0,0,0,0,0,0]
+	for menuItemString in week.orderedMenuItems:
+		parts = menuItemString.split(" ")
+		orderedQuantity = int(parts[0])
+		menuItemKey = parts[1]
+		menuItem = getMenuItem(menuItemKey)
+		if menuItem != None:
+			total = orderedQuantity * menuItem['price']
+			ret[menuItem['day'].weekday()] = ret[menuItem['day'].weekday()] + total
+	for compositString in week.orderedComposits:
+		parts = compositString.split(" ")
+		orderedQuantity = int(parts[0])
+		compositKey = parts[1]
+		composit = getComposit(compositKey)
+		if composit != None:
+			total = orderedQuantity * composit['price']
+			ret[composit['day'].weekday()] = ret[composit['day'].weekday()] + total
+	return ret
+
 def getOrderAddress (week, day):
 	if week == None:
 		return None
@@ -114,35 +134,43 @@ def getWeeklyPaid (week):
 	return weeklyPaid
 
 def getWeeklyDelivery (week):
+	totals = dayTotals(week)
 	if week == None:
 		return 0
 	weeklyDelivery = 0
 	try:
-		weeklyDelivery += getZipBasedDeliveryCost(week.mondayAddress.zipCode, week.mondayPaid)
+		if totals[0] > 0:
+			weeklyDelivery += getZipBasedDeliveryCost(week.mondayAddress.zipNumCode, totals[0])
 	except:
 		pass
 	try:
-		weeklyDelivery += getZipBasedDeliveryCost(week.tuesdayAddress.zipCode, week.tuesdayPaid)
+		if totals[1] > 0:
+			weeklyDelivery += getZipBasedDeliveryCost(week.tuesdayAddress.zipNumCode, totals[1])
 	except:
 		pass
 	try:
-		weeklyDelivery += getZipBasedDeliveryCost(week.wednesdayPaid.zipCode, week.wednesdayPaid)
+		if totals[2] > 0:
+			weeklyDelivery += getZipBasedDeliveryCost(week.wednesdayAddress.zipNumCode, totals[2])
 	except:
 		pass
 	try:
-		weeklyDelivery += getZipBasedDeliveryCost(week.thursdayAddress.zipCode, week.thursdayPaid)
+		if totals[3] > 0:
+			weeklyDelivery += getZipBasedDeliveryCost(week.thursdayAddress.zipNumCode, totals[3])
 	except:
 		pass
 	try:
-		weeklyDelivery += getZipBasedDeliveryCost(week.fridayAddress.zipCode, week.fridayPaid)
+		if totals[4] > 0:
+			weeklyDelivery += getZipBasedDeliveryCost(week.fridayAddress.zipNumCode, totals[4])
 	except:
 		pass
 	try:
-		weeklyDelivery += getZipBasedDeliveryCost(week.saturdayAddress.zipCode, week.saturdayPaid)
+		if totals[5] > 0:
+			weeklyDelivery += getZipBasedDeliveryCost(week.saturdayAddress.zipNumCode, totals[5])
 	except:
 		pass
 	try:
-		weeklyDelivery += getZipBasedDeliveryCost(week.sundayAddress.zipCode, week.sundayPaid)
+		if totals[6] > 0:
+			weeklyDelivery += getZipBasedDeliveryCost(week.sundayAddress.zipNumCode, totals[6])
 	except:
 		pass
 	return weeklyDelivery

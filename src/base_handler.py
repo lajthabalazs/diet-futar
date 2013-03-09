@@ -125,6 +125,7 @@ def getBasketBaseDate(actualOrder, handler):
 		return getOrderBaseDate(handler)
 	else:
 		return firstDay
+
 # Returns the first date user can order or the date indicated by the request
 def getBaseDate(handler):
 	day=datetime.date.today()	

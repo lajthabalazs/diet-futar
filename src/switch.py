@@ -19,7 +19,8 @@ from order import MenuOrderPage, ClearOrderPage, ReviewPendingOrderPage,\
 from ingredientCategory import CategoryIngredientDeletePage,\
 	IngredientCategoryPage, IngredientCategoryDeletePage
 from dishCategory import DishCategoryPage, DishCategoryDeletePage
-from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, DeliveryPage
+from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, DeliveryPage,\
+	SavePaidAmount
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage,\
 	HashUserPasswordPage
 from index import CaloryCalculator, GooglePage, AboutPage,\
@@ -65,6 +66,7 @@ app = webapp2.WSGIApplication([
 										(weeklyFacebookVisitsOverview.URL, weeklyFacebookVisitsOverview),
 										(ReplaceComposit.URL, ReplaceComposit),
 										(ClearUserArrayFromCache.URL, ClearUserArrayFromCache),
+										(SavePaidAmount.URL, SavePaidAmount),
 										#CRM
 										(CRMMainPage.URL, CRMMainPage),
 										(CRMUsersWithTasks.URL, CRMUsersWithTasks),

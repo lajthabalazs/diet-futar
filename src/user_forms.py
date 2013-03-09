@@ -117,7 +117,7 @@ class RegisterPage(BaseHandler):
 		if refererKey != None and refererKey != "":
 			template_params['referer'] = User.get(refererKey)
 		clearRegistrationError(self)
-		template = jinja_environment.get_template('templates/register.html')
+		template = jinja_environment.get_template('templates/userForms/register.html')
 		self.printPage("Regisztracio", template.render(template_params), True, True)
 	def post(self):
 		referer = None

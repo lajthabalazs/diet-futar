@@ -120,13 +120,13 @@ class DeliveryReviewOrdersPage(BaseHandler):
 					dayTotal = dayTotal + item['orderedQuantity'] * item['price']
 					dailyUserTotal = dailyUserTotal + item['orderedQuantity'] * item['price']
 				orderAddress = getOrderAddress(week, day)
-				orderAddress.comment = getOrderComment(week, day)
 				if orderAddress == None:
 					orderAddress = week.user.addresses.get(0)
+				orderAddress.comment = getOrderComment(week, day)
 				orderAddress.orderedItems = items
 				orderAddress.week = week
 				orderAddress.dailyUserTotal = dailyUserTotal
-				orderAddress.dailyUserDelivery = getZipBasedDeliveryCost(orderAddress.zipCode, dailyUserTotal)
+				orderAddress.dailyUserDelivery = getZipBasedDeliveryCost(orderAddress.zipNumCode, dailyUserTotal)
 				orderAddress.todayPaid = getPaid(week, day)
 				orderAddress.weeklyPaid = getWeeklyPaid(week)
 				orderAddress.weeklyTotal = getOrderTotal([week])
@@ -201,3 +201,43 @@ class DeliveryPage(BaseHandler):
 		template_values['next'] = nextMonday
 		template = jinja_environment.get_template('templates/delivery.html')
 		self.printPage(str(day), template.render(template_values), False, False)
+		
+class SavePaidAmount(BaseHandler):
+	URL = "/savePaidAmount"
+	def post(self):
+		if not isUserDelivery(self):
+			self.session[LOGIN_NEXT_PAGE_KEY] = self.URL
+			self.redirect("/")
+			return
+		day=getBaseDate(self)
+		weekKey = self.request.get("weekKey")
+		try:
+			amount = int(self.request.get("todayPaid"))
+			week = UserWeekOrder.get(weekKey)
+			if day.weekday() == 0:
+				week.mondayPaid = amount
+			elif day.weekday() == 1:
+				week.tuesdayPaid = amount
+			elif day.weekday() == 2:
+				week.wednesdayPaid = amount
+			elif day.weekday() == 3:
+				week.thursdayPaid = amount
+			elif day.weekday() == 4:
+				week.fridayPaid = amount
+			elif day.weekday() == 5:
+				week.saturdayPaid = amount
+			elif day.weekday() == 6:
+				week.sundayPaid = amount
+			week.put()
+		except:
+			pass
+		self.redirect(DeliveryReviewOrdersPage.URL + "?day=" + str(day));
+
+	
+	
+	
+	
+	
+	
+	
+	
