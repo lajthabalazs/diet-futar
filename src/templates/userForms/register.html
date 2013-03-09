@@ -32,6 +32,7 @@
 					<strong style="margin-left: 20px;">Honnan ismeri oldalunkat?</strong><br/>
 					<select name="sourceOfInfo" style="margin-left: 20px;">
 						<option value="None">--</option>
+						<option value="Csajok" {% if user != None and user.sourceOfInfo == 'Friend'%}selected="true"{% endif %}>A Csajokmagazinban láttam a hírdetést</option>
 						<option value="Friend" {% if user != None and user.sourceOfInfo == 'Friend'%}selected="true"{% endif %}>Jó barátom a tulajdonos</option>
 						<option value="Search" {% if user != None and user.sourceOfInfo == 'Search'%}selected="true"{% endif %}>Interneten keresve találtam meg</option>
 						<option value="Print" {% if user != None and user.sourceOfInfo == 'Print'%}selected="true"{% endif %}>Szórólapon láttam</option>
