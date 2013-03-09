@@ -130,6 +130,7 @@ def getMenuItem(key):
 	menuItem['carbs'] = carbs
 	menuItem['fiber'] = fiber
 	menuItem['protein'] = protein
+	menuItem['creationDate'] = creationDate
 	menuItem['components'] = components
 	menuItem['eggFree']=eggFree
 	menuItem['milkFree']=milkFree
