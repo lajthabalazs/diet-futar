@@ -10,6 +10,7 @@ from zipCodeInit import createZipCodeList
 from cache_zips import updateZipCodeEntry, updateZipCodeScript
 from cacheWeek import getUsers, getUserWeekForDay, clearUsersFromCache
 from orderHelper import getOrderTotal
+import time
 
 class AdminConsolePage(BaseHandler):
 	URL = "/siteAdmin"
@@ -20,12 +21,16 @@ class AdminConsolePage(BaseHandler):
 			return
 		
 		orderedMaintenences = Maintenence.all().order('startDate')
+		deadline = time.strptime("10:30", "%H:%M")
+
 		template_values = {
 			'maintenences':orderedMaintenences,
 			ORDER_DEADLINE_KEY:getSiteParam(ORDER_DEADLINE_KEY),
 			DELIVERY_START_KEY:getSiteParam(DELIVERY_START_KEY),
 			DELIVERY_END_KEY:getSiteParam(DELIVERY_END_KEY),
-			'currentTime':datetime.datetime.now(timeZone)
+			'currentTime':datetime.datetime.now(timeZone),
+			'hour':datetime.datetime.now(timeZone).hour,
+			'deadline':deadline.tm_hour
 		}
 		template = jinja_environment.get_template('templates/admin/siteAdmin.html')
 		self.printPage("dashboard", template.render(template_values), False, False)
