@@ -15,7 +15,8 @@ class Role(db.Model):
 	name = db.StringProperty()
 
 class SiteParams(db.Model):
-	params = db.StringListProperty()
+	name = db.StringProperty(multiline=True, default='')
+	value = db.StringProperty(multiline=True,default='')
 
 class Maintenence(db.Model):
 	startDate = db.DateTimeProperty()

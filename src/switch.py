@@ -27,7 +27,8 @@ from index import CaloryCalculator, GooglePage, AboutPage,\
 	ContactsPage, PrivacyPage
 from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage,\
-	ZipCodeEditorPage, UsersFromCachePage, ReplaceComposit, ClearUserArrayFromCache
+	ZipCodeEditorPage, UsersFromCachePage, ReplaceComposit, ClearUserArrayFromCache,\
+	ChangeDeliveryTime
 from userWeeks import WeeksListPage
 from maintenence import MaintenencePage
 from christmasLunch import ChristmasLunchPage, InitChristmasLunchPage
@@ -67,6 +68,7 @@ app = webapp2.WSGIApplication([
 										(ReplaceComposit.URL, ReplaceComposit),
 										(ClearUserArrayFromCache.URL, ClearUserArrayFromCache),
 										(SavePaidAmount.URL, SavePaidAmount),
+										(ChangeDeliveryTime.URL, ChangeDeliveryTime),
 										#CRM
 										(CRMMainPage.URL, CRMMainPage),
 										(CRMUsersWithTasks.URL, CRMUsersWithTasks),

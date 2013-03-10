@@ -30,28 +30,20 @@ DELIVERY_START_KEY = "deliveryStart"
 DELIVERY_END_KEY = "deliveryEnd"
 
 def getSiteParam(paramName):
-	params = SiteParams.all().get()
-	if params == None:
+	paramDb = SiteParams.all().filter("name = ", paramName).get()
+	if paramDb == None:
 		return None
-	paramValue = None
-	for parameter in params.params:
-		parts = parameter.partition(" ")
-		if (parts[0] == paramName):
-			paramValue = parts[2]
-	return paramValue
+	else:
+		return paramDb.value
 
-def setSiteParam(paramName, paramValue):
-	paramDb = SiteParams.all().get()
-	newParams = []
-	for parameter in paramDb.params:
-		parts = parameter.partition(" ")
-		if (parts[0] == paramName):
-			paramValue = parts[2]
-			newParam = paramName + " " + paramValue
-			newParams.append(newParam)
-		else:
-			newParams.append(parameter)
-	paramDb.params = newParams
+def setSiteParam(name, value):
+	paramDb = SiteParams.all().filter("name = ", name).get()
+	if paramDb != None:
+		paramDb.value = value
+	else:
+		paramDb = SiteParams()
+		paramDb.name = name
+		paramDb.value = value
 	paramDb.put()
 	
 def logInfo(handler, url, message):
@@ -65,14 +57,20 @@ def logInfo(handler, url, message):
 	loggingTemplate = jinja_environment.get_template('templates/log/basic_message.txt')
 	logging.info(loggingTemplate.render(template_values_for_logging))
 
+def getDeadline():
+	orderDeadline = getSiteParam(ORDER_DEADLINE_KEY)
+	if orderDeadline != None:
+		try:
+			return time.strptime(orderDeadline, "%H:%M")
+		except:
+			pass
+	return time.strptime("10:00", "%H:%M")
+	
 def getFirstOrderableDate(handler):
 	today=datetime.date.today()
 	now=datetime.datetime.now(timeZone)
 	firstOrderableDay = today
-	orderDeadline = getSiteParam(ORDER_DEADLINE_KEY)
-	deadline = time.strptime("10:30", "%H:%M")
-	if orderDeadline != None:
-		deadline = time.strptime(orderDeadline, "%H:%M")
+	deadline = getDeadline()
 	if now.hour > deadline.tm_hour or ((now.hour == deadline.tm_hour) and (now.minute > deadline.tm_min)):
 		firstOrderableDay=today+datetime.timedelta(days=1)
 	return firstOrderableDay;

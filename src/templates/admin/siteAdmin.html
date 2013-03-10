@@ -8,7 +8,7 @@
 		<h3>Felhasználók</h3>
 		<a href="/userMap">Összes cím megjelenítése</a> <br/>
 		<h3>Szállítási feltételek</h3>
-		Szerintem az idő: {{currentTime}} elmúlt egész óra: {{ hour }}, határidő órája {{ deadline }}
+		Szerintem az idő: {{ hour }}:{{ minute }}, határidő: {{ deadlineHour }}:{{deadlineMinute}}
 		<form method="post" action="/changeDeliveryTime">
 			<strong>Rendelés határideje</strong> <input type="text" id="orderDeadline" name="orderDeadline" value="{{orderDeadline}}"/>
 			<strong>Szállítás kezdete</strong> <input type="text" id="deliveryStart" name="deliveryStart" value="{{deliveryStart}}"/>
