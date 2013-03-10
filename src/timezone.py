@@ -9,8 +9,8 @@ def first_sunday_on_or_after(dt):
 		dt += timedelta(days_to_go)
 	return dt
 
-DSTSTART_2007 = datetime(1, 3, 8, 2)
-DSTEND_2007 = datetime(1, 11, 1, 1)
+DSTSTART_2007 = datetime(1, 3, 31, 2)
+DSTEND_2007 = datetime(1, 10, 27, 1)
 DSTSTART_1987_2006 = datetime(1, 4, 1, 2)
 DSTEND_1987_2006 = datetime(1, 10, 25, 1)
 DSTSTART_1967_1986 = datetime(1, 4, 24, 2)
