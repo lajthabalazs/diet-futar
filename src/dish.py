@@ -56,7 +56,7 @@ class DishPage(BaseHandler):
 			return
 		else:
 			dish = Dish()
-			dish.creationDate = datetime.datetime.today()
+			dish.creationDate = datetime.datetime.today().date()
 			dish.title = self.request.get('title')
 			dish.subtitle = self.request.get('subtitle')
 			dish.description = self.request.get('description')
