@@ -2,6 +2,7 @@
 
 # Keys
 DISH_CATEGORY_KEY='dishCategoryKey'
+DISH_CODE_MODIFIER='codeModifier'
 DISH_KEY='dishKey'
 
 # URLs

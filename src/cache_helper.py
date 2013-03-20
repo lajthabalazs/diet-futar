@@ -98,6 +98,7 @@ def createDishObjectDb(dishDb):
 			'protein':int(protein/100),
 			'ingredients':ingredients,
 			'eggFree':dishDb.eggFree,
-			'milkFree':dishDb.milkFree
+			'milkFree':dishDb.milkFree,
+			'codeModifier':dishDb.codeModifier
 		}
 		return dish

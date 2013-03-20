@@ -6,7 +6,7 @@ import os
 from google.appengine.ext import db
 from model import Dish, IngredientListItem, DishCategory
 
-from base_handler import BaseHandler, logInfo
+from base_handler import BaseHandler
 from user_management import isUserCook, LOGIN_NEXT_PAGE_KEY
 from keys import DISH_CATEGORY_KEY
 from google.appengine.api.datastore_errors import ReferencePropertyResolveError
@@ -14,6 +14,7 @@ from cache_dish import getDish, deleteDish, modifyDish, addDish
 from cache_dish_category import getDishCategories
 from cache_ingredient import getIngredients
 import datetime
+from keys import DISH_CODE_MODIFIER
 
 #from user_management import getUserBox
 
@@ -48,10 +49,11 @@ class DishPage(BaseHandler):
 			eggFree = (self.request.get('eggFree') == "yes")
 			milkFree = (self.request.get('milkFree') == "yes")
 			dishCategoryKey=self.request.get(DISH_CATEGORY_KEY)
+			codeModifier=self.request.get(DISH_CODE_MODIFIER)
 			dishCategory=None
 			if ((dishCategoryKey != None) and (dishCategoryKey != "")):
 				dishCategory = db.get(dishCategoryKey)
-			modifyDish(dishKey, title, subtitle, description, dishCategory, eggFree, milkFree)
+			modifyDish(dishKey, title, subtitle, description, dishCategory, eggFree, milkFree, codeModifier)
 			self.redirect('/dish?dishKey=%s' % self.request.get('dishKey'))
 			return
 		else:
@@ -123,7 +125,7 @@ class DishIngredientDeletePage(BaseHandler):
 		dish = db.get(self.request.get('dishKey'))
 		ingredientToDish = db.get(self.request.get('dishIngredientKey'))
 		ingredientToDish.delete()
-		modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree)
+		modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree, dish.codeModifier)
 		self.redirect('/dish?dishKey=%s' % str(dish.key()))
 
 class DishIngredientAddPage(BaseHandler):
@@ -140,7 +142,7 @@ class DishIngredientAddPage(BaseHandler):
 			ingredientToDish.quantity = float(self.request.get('quantity'))
 			ingredientToDish.put()
 			#Modification of basic data
-			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree)
+			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree, dish.codeModifier)
 		else:
 			# Retrieve the ingredient
 			ingredientKey = self.request.get('ingredientKey')
@@ -151,7 +153,7 @@ class DishIngredientAddPage(BaseHandler):
 			ingredientListItem.dish = dish
 			ingredientListItem.ingredient = ingredient
 			ingredientListItem.put()
-			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree)
+			modifyDish(str(dish.key()), dish.title, dish.subtitle, dish.description, dish.category, dish.eggFree, dish.milkFree, dish.codeModifier)
 		self.redirect('/dish?dishKey=%s' % str(dish.key()))
 
 

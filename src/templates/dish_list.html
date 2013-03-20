@@ -23,6 +23,7 @@
 		{% for dish in dishes %}
 			<tr><td><a href="?dishKey={{ dish.key() }}">{{ dish.title }}</a></td>
 			<td>{{ dish.category.name }}</td>
+			<td>{% if dish.codeModifier != None %} {{dish.codeModifier}} {% endif %}</td>
 			<td>{% if dish.eggFree %} Tojásmentes{% endif %}</td>
 			<td>{% if dish.milkFree %} Tejmentes {% endif %}</td>
 			<td align="right"><form action="deleteDish" method="post">

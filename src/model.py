@@ -80,6 +80,7 @@ class Dish(db.Model):
 	category=db.ReferenceProperty(DishCategory, collection_name='dishes')
 	eggFree = db.BooleanProperty(default=False)
 	milkFree = db.BooleanProperty(default=False)
+	codeModifier = db.StringProperty(default=None)
 
 class IngredientCategory(db.Model):
 	name = db.StringProperty()

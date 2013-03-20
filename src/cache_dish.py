@@ -48,7 +48,7 @@ def getDish(key):
 	return dish
 
 # Modify dish
-def modifyDish(key, title, subtitle, description, dishCategoryDb, eggFree, milkFree):
+def modifyDish(key, title, subtitle, description, dishCategoryDb, eggFree, milkFree, codeModifier):
 	dishDb = Dish.get(key)
 	client = memcache.Client()
 	dishDb.title = title
@@ -57,6 +57,7 @@ def modifyDish(key, title, subtitle, description, dishCategoryDb, eggFree, milkF
 	dishDb.category = dishCategoryDb
 	dishDb.eggFree = eggFree
 	dishDb.milkFree = milkFree
+	dishDb.codeModifier = codeModifier
 	# Update dishes old category
 	dishObject = getDish(key)
 	categoryKey = None

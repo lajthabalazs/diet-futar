@@ -27,6 +27,14 @@
 						{{item.orderedQuantity}}* 
 						{% if item.isMenuItem %}
 							{{item.dish.category.abbreviation}}
+							{% if item.dish.codeModifier != None %}
+								{{item.dish.codeModifier}}
+							{% endif %}
+							{% for component in item.components %}
+								{% if component.dish.codeModifier != None %}
+									{{component.dish.codeModifier}}
+								{% endif %}
+							{% endfor %}
 						{% else %}
 							{{item.category.abbreviation}}
 						{% endif %}
