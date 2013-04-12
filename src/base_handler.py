@@ -73,7 +73,7 @@ def getFirstOrderableDate(handler):
 	deadline = getDeadline()
 	if now.hour > deadline.tm_hour or ((now.hour == deadline.tm_hour) and (now.minute > deadline.tm_min)):
 		firstOrderableDay=today+datetime.timedelta(days=1)
-	elif firstOrderableDay.weekday()==5:
+	if firstOrderableDay.weekday()==5:
 		firstOrderableDay=firstOrderableDay+datetime.timedelta(days=2)
 	elif firstOrderableDay.weekday()==6:
 		firstOrderableDay=firstOrderableDay+datetime.timedelta(days=1)
@@ -124,7 +124,7 @@ def getBasketBaseDate(actualOrder, handler):
 			elif firstDay > actualDay:
 				firstDay = actualDay
 	if firstDay == None:
-		return getOrderBaseDate(handler)
+		return getFirstOrderableDate(handler)
 	else:
 		return firstDay
 
