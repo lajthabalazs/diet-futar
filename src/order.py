@@ -29,10 +29,10 @@ FURTHEST_DAY_DISPLAYED=14
 class MenuOrderPage(BaseHandler):
 	URL = '/order'
 	def get(self):
-		firstOrderableDay=getFirstOrderableDate(self)
-		day=getOrderBaseDate(self)
-		monday = getMonday(day)
 		#Determine the week
+		firstOrderableDay=getFirstOrderableDate(self)
+		day=firstOrderableDay
+		monday = getMonday(day)
 		#Organize into days
 		menu=[] #Contains menu items
 		actualOrder=self.session.get(ACTUAL_ORDER,[])
