@@ -4,7 +4,7 @@ import os
 
 from google.appengine.ext import db
 
-from base_handler import BaseHandler, getOrderBaseDate, getFormDate,\
+from base_handler import BaseHandler, getFormDate,\
 	getFirstOrderableDate, getMonday, logInfo, timeZone,\
 	getBasketBaseDate, dayNames
 import datetime
@@ -29,8 +29,10 @@ FURTHEST_DAY_DISPLAYED=14
 class MenuOrderPage(BaseHandler):
 	URL = '/order'
 	def get(self):
-		#Determine the week
+		#Determine the week		
 		firstOrderableDay=getFirstOrderableDate(self)
+		print "First orderable date "
+		print firstOrderableDay
 		day=firstOrderableDay
 		monday = getMonday(day)
 		#Organize into days
@@ -305,7 +307,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			self.printPage(None, template.render(), True)
 	def post(self):
 		actualOrder = self.session.get(ACTUAL_ORDER,{})
-		day=getOrderBaseDate(self)
+		day=getFirstOrderableDate(self)
 		# Add order
 		for field in self.request.arguments():
 			if (field[:3]=="MIC"):
@@ -321,7 +323,7 @@ class ReviewOrderedMenuPage(BaseHandler):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/")
 			return
-		day = getOrderBaseDate(self)
+		day = getFirstOrderableDate(self)
 		monday = getMonday(day)
 		firstOrderableDay=getFirstOrderableDate(self);
 		user = getUser(self)
