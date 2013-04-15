@@ -10,6 +10,7 @@ from zipCodeInit import createZipCodeList
 from cache_zips import updateZipCodeEntry, updateZipCodeScript
 from cacheWeek import getUsers, getUserWeekForDay, clearUsersFromCache
 from orderHelper import getOrderTotal
+import hashlib
 
 class AdminConsolePage(BaseHandler):
 	URL = "/siteAdmin"
@@ -164,7 +165,11 @@ class SetupPage(BaseHandler):
 			role.put()
 			user = User()
 			user.email = self.request.get("adminEmail")
-			user.password = self.request.get("adminPassword")
+			user.password = "JELSZO_!@#"
+			m = hashlib.md5()
+			encodedString = self.request.get("adminPassword").encode('ascii', errors='replace')
+			m.update(encodedString)
+			user.passwordHash = str(m.hexdigest())
 			user.activated = True
 			user.role = adminRole
 			user.put();

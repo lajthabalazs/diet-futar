@@ -320,10 +320,26 @@ class BaseHandler(webapp2.RequestHandler):
 		weeklyOrderMenu["label"]="Heti aj&#225;nlat"
 		weeklyOrderMenu["target"]="/order"
 		menuItems.append(weeklyOrderMenu)
+		aboutUsMenu={}
+		aboutUsMenu["label"]="R&oacute;lunk"
+		aboutUsMenu["target"]="/about"
+		menuItems.append(aboutUsMenu)
+		servicesMenu={}
+		servicesMenu["label"]="Szolg&aacute;ltat&aacute;sok"
+		servicesMenu["target"]="/services"
+		menuItems.append(servicesMenu)
+		glutenMenu={}
+		glutenMenu["label"]="Glut&eacute;n&eacute;rz&eacute;kenys&eacute;g"
+		glutenMenu["target"]="/gluten"
+		menuItems.append(glutenMenu)
 		aboutDelivery={}
 		aboutDelivery["label"]="Rendel&eacute;si felt&eacute;telek"
 		aboutDelivery["target"]="/aboutDelivery"
 		menuItems.append(aboutDelivery)
+		faqMenu={}
+		faqMenu["label"]="GY.I.K."
+		faqMenu["target"]="/faq"
+		#menuItems.append(faqMenu)
 		template_params={
 			"menuItems":menuItems
 		}

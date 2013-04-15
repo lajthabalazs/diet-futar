@@ -7,6 +7,24 @@ class AboutPage(BaseHandler):
 		template = jinja_environment.get_template('templates/about/about.html')
 		self.printPage("R&oacute;lunk", template.render(), True, True)
 
+class FAQPage(BaseHandler):
+	URL = '/faq'
+	def get(self):
+		template = jinja_environment.get_template('templates/about/faq.html')
+		self.printPage("GY.I.K", template.render(), True, True)
+
+class ServicesPage(BaseHandler):
+	URL = '/services'
+	def get(self):
+		template = jinja_environment.get_template('templates/about/services.html')
+		self.printPage("Szolg&aacute;ltat&aacute;sok", template.render(), True, True)
+
+class GlutenPage(BaseHandler):
+	URL = '/gluten'
+	def get(self):
+		template = jinja_environment.get_template('templates/about/gluten.html')
+		self.printPage("GY.I.K", template.render(), True, True)
+
 class ContactsPage(BaseHandler):
 	URL = '/contacts'
 	def get(self):

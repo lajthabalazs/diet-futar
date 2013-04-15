@@ -223,6 +223,8 @@ def getOrdersForWeek(monday):
 	return getOrdersFromWeeks(weeks)
 
 def getUserOrdersForWeek(user, monday):
+	if user == None:
+		return None
 	weeks = user.weeks.filter("monday = ", monday)
 	return getOrdersFromWeeks(weeks)
 

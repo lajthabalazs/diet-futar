@@ -24,7 +24,7 @@ from order_overview import ChefReviewOrdersPage, DeliveryReviewOrdersPage, Deliv
 from user_admin import UserListPage, UserOverviewPage, SwitchToUserPage,\
 	HashUserPasswordPage
 from index import CaloryCalculator, GooglePage, AboutPage,\
-	ContactsPage, PrivacyPage
+	ContactsPage, PrivacyPage, FAQPage, GlutenPage, ServicesPage
 from siteAdmin import SetupPage, AdminConsolePage,\
 	ScheduleMainenencePage, EndMainenencePage, EveryUsersOrderPage,\
 	ZipCodeEditorPage, UsersFromCachePage, ReplaceComposit, ClearUserArrayFromCache,\
@@ -110,6 +110,9 @@ app = webapp2.WSGIApplication([
 										(UsersOrdersPage.URL, UsersOrdersPage),
 										(UserWebshopPostMessagePage.URL, UserWebshopPostMessagePage),
 
+										(ServicesPage.URL, ServicesPage),
+										(FAQPage.URL, FAQPage),
+										(GlutenPage.URL, GlutenPage),
 										(AboutPage.URL, AboutPage),
 										(PrivacyPage.URL, PrivacyPage),
 										(ContactsPage.URL, ContactsPage),

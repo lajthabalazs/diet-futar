@@ -31,8 +31,6 @@ class MenuOrderPage(BaseHandler):
 	def get(self):
 		#Determine the week		
 		firstOrderableDay=getFirstOrderableDate(self)
-		print "First orderable date "
-		print firstOrderableDay
 		day=firstOrderableDay
 		monday = getMonday(day)
 		#Organize into days
