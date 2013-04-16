@@ -67,8 +67,8 @@ def getDeadline():
 	return time.strptime("10:00", "%H:%M")
 	
 def getFirstOrderableDate(handler):
-	today=datetime.date.today()
-	now=datetime.datetime.now(timeZone)
+	today = datetime.date.today()
+	now = datetime.datetime.now(timeZone)
 	firstOrderableDay = today
 	deadline = getDeadline()
 	if now.hour > deadline.tm_hour or ((now.hour == deadline.tm_hour) and (now.minute > deadline.tm_min)):
@@ -83,22 +83,15 @@ def getMonday(day):
 	return day + datetime.timedelta(days = - day.weekday())
 	
 # Returns the first date user can order
-#def getOrderBaseDate(handler):
-#	day=datetime.date.today()	
-#	requestDay=handler.request.get('day')
-#	if ((requestDay != None) and (requestDay != "")):
-#		parts=requestDay.rsplit("-")
-#		day=datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
-#	else:
-#		#Organize into days
-#		if day.weekday()==4:
-#			pass
-#		#	day=day+datetime.timedelta(days=3)
-#		elif day.weekday()==5:
-#			day=day+datetime.timedelta(days=2)
-#		elif day.weekday()==6:
-#			day=day+datetime.timedelta(days=1)
-#	return day
+def getOrderBaseDate(handler):
+	day = datetime.date.today()	
+	requestDay=handler.request.get('day')
+	if ((requestDay != None) and (requestDay != "")):
+		parts = requestDay.rsplit("-")
+		day = datetime.date(int(parts[0]), int(parts[1]), int(parts[2]))
+	else:
+		day = getFirstOrderableDate(handler)
+	return day
 
 # Returns the first date the user has an ordered item
 def getBasketBaseDate(actualOrder, handler):

@@ -19,6 +19,7 @@ from orderHelper import getUserOrdersForWeek, getOrderedItemsFromWeekData,\
 	getOrderAddress, isMenuItem, getOrderComment, getZipBasedDeliveryCost,\
 	getZipBasedDeliveryLimit
 from cacheWeek import updateUser
+from base_handler import getOrderBaseDate
 #from user_management import getUserBox
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -29,9 +30,9 @@ FURTHEST_DAY_DISPLAYED=14
 class MenuOrderPage(BaseHandler):
 	URL = '/order'
 	def get(self):
-		#Determine the week		
-		firstOrderableDay=getFirstOrderableDate(self)
-		day=firstOrderableDay
+		#Determine the week
+		day = getOrderBaseDate(self)
+		firstOrderableDay = getFirstOrderableDate(self)
 		monday = getMonday(day)
 		#Organize into days
 		menu=[] #Contains menu items
@@ -321,9 +322,9 @@ class ReviewOrderedMenuPage(BaseHandler):
 		if(not isUserLoggedIn(self)):
 			self.redirect("/")
 			return
-		day = getFirstOrderableDate(self)
+		day = getOrderBaseDate(self)
 		monday = getMonday(day)
-		firstOrderableDay=getFirstOrderableDate(self);
+		firstOrderableDay = getFirstOrderableDate(self);
 		user = getUser(self)
 		weeks = user.weeks.filter("monday = ", monday)
 		days=[]
