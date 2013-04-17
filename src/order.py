@@ -24,7 +24,7 @@ from base_handler import getOrderBaseDate
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
-ACTUAL_ORDER="actualOrder"
+ACTUAL_ORDER="actualOrder2"
 FURTHEST_DAY_DISPLAYED=14
 
 class MenuOrderPage(BaseHandler):
