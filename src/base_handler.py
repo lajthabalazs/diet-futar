@@ -106,12 +106,15 @@ def getBasketBaseDate(actualOrder, handler):
 		for key in actualOrder.keys():
 			orderedMenuItemKeys.append(key)
 		for key in orderedMenuItemKeys:
+			actualDay = None
 			if isMenuItem(key):
 				menuItem = getMenuItem(key)
-				actualDay = menuItem['day']
+				if (menuItem != None):
+					actualDay = menuItem['day']
 			else:
 				composit = getComposit(key)
-				actualDay = composit['day']
+				if (composit != None):
+					actualDay = composit['day']
 			if (firstDay == None):
 				firstDay = actualDay
 			elif firstDay > actualDay:
