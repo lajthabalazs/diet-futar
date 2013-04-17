@@ -149,8 +149,11 @@ class MenuOrderPage(BaseHandler):
 		day=getFormDate(self)
 		# Add order
 		for field in self.request.arguments():
+			logInfo(self, self.URL, "FIELD key " + field[3:] + " value " + self.request.get(field))
 			if (field[:3]=="MIC"):
+				logInfo(self, self.URL, "ORDERED_COMPONENT key " + field[3:] + " value " + self.request.get(field))
 				actualOrder[field[3:]]=self.request.get(field)
+		logInfo(self, self.URL, "TOTAL_ORDERED " + str(len(actualOrder)))
 		self.session[ACTUAL_ORDER]=actualOrder
 		logInfo(self, self.URL, "SAVED_ORDER")
 		self.redirect("/order?day="+str(day))
