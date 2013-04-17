@@ -158,7 +158,10 @@ class MenuOrderPage(BaseHandler):
 					logInfo(self, self.URL, "ORDERED_COMPONENT key " + field[3:] + " value " + self.request.get(field))
 					actualOrder[field[3:]]=self.request.get(field)
 				else:
-					del actualOrder[field[3:]]
+					try:
+						del actualOrder[field[3:]]
+					except:
+						pass
 		logInfo(self, self.URL, "TOTAL_ORDERED " + str(len(actualOrder)))
 		self.session[ACTUAL_ORDER]=actualOrder
 		logInfo(self, self.URL, "SAVED_TO_SESSION " + str(len(self.session[ACTUAL_ORDER])))
