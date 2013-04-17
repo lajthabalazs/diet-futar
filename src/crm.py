@@ -9,8 +9,6 @@ from user_management import isUserAdmin, LOGIN_NEXT_PAGE_KEY, getUser
 from xmlrpclib import datetime
 from timeit import itertools
 
-ACTUAL_ORDER="actualOrder"
-
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 def getLastOrderDate(x):

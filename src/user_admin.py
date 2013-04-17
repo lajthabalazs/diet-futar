@@ -9,8 +9,6 @@ from user_management import isUserAdmin, getUser, USER_KEY, LOGIN_NEXT_PAGE_KEY
 from google.appengine.api.datastore_errors import BadKeyError
 import hashlib
 
-ACTUAL_ORDER="actualOrder"
-
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class UserListPage(BaseHandler):

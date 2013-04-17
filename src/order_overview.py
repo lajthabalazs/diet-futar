@@ -14,8 +14,6 @@ from cache_composit import getDaysComposits
 from orderHelper import getOrdersForWeek, getOrderComment, getOrderTotal,\
 	getPaid, getWeeklyPaid, getWeeklyDelivery, getZipBasedDeliveryCost
 
-ACTUAL_ORDER="actualOrder"
-
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 #An accumulated overview of every ordered item

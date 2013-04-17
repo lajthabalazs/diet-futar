@@ -154,8 +154,11 @@ class MenuOrderPage(BaseHandler):
 		for field in self.request.arguments():
 			logInfo(self, self.URL, "FIELD key " + field[3:] + " value " + self.request.get(field))
 			if (field[:3]=="MIC"):
-				logInfo(self, self.URL, "ORDERED_COMPONENT key " + field[3:] + " value " + self.request.get(field))
-				actualOrder[field[3:]]=self.request.get(field)
+				if (self.request.get(field) != 0 and self.request.get(field) != "0"):
+					logInfo(self, self.URL, "ORDERED_COMPONENT key " + field[3:] + " value " + self.request.get(field))
+					actualOrder[field[3:]]=self.request.get(field)
+				else:
+					del actualOrder[field[3:]]
 		logInfo(self, self.URL, "TOTAL_ORDERED " + str(len(actualOrder)))
 		self.session[ACTUAL_ORDER]=actualOrder
 		logInfo(self, self.URL, "SAVED_TO_SESSION " + str(len(self.session[ACTUAL_ORDER])))
@@ -319,6 +322,7 @@ class ReviewPendingOrderPage(BaseHandler):
 			if (field[:3]=="MIC"):
 				actualOrder[field[3:]]=self.request.get(field)
 		self.session[ACTUAL_ORDER]=actualOrder
+		logInfo(self, self.URL, "SAVED_TO_SESSION " + str(len(self.session[ACTUAL_ORDER])))
 		# Get addresses and save them to the proper date
 		logInfo(self, self.URL, "MODIFIED_ADDRESS")
 		self.redirect("/pendingOrder?day="+str(day))

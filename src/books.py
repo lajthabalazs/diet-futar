@@ -8,8 +8,6 @@ from xmlrpclib import datetime
 from model import Books
 from base_handler import BaseHandler, getFormDate, getMonday, dayNames, FORM_DAY
 
-ACTUAL_ORDER="actualOrder"
-
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class weeklyFacebookVisits(BaseHandler):
