@@ -37,6 +37,9 @@ class MenuOrderPage(BaseHandler):
 		#Organize into days
 		menu=[] #Contains menu items
 		actualOrder=self.session.get(ACTUAL_ORDER,[])
+		logInfo(self, self.URL, "DAY " + str(day))
+		logInfo(self, self.URL, "First orderable day " + str(firstOrderableDay))
+		logInfo(self, self.URL, "LOADED_ORDERS " + str(len(actualOrder)))
 		dishCategories=getDishCategories()
 		orderedPrice = [0,0,0,0,0]
 		basketPrice = [0,0,0,0,0]
@@ -155,6 +158,7 @@ class MenuOrderPage(BaseHandler):
 				actualOrder[field[3:]]=self.request.get(field)
 		logInfo(self, self.URL, "TOTAL_ORDERED " + str(len(actualOrder)))
 		self.session[ACTUAL_ORDER]=actualOrder
+		logInfo(self, self.URL, "SAVED_TO_SESSION " + str(len(self.session[ACTUAL_ORDER])))
 		logInfo(self, self.URL, "SAVED_ORDER")
 		self.redirect("/order?day="+str(day))
 
