@@ -118,8 +118,14 @@ body {
 	color: #555;
 }
 
+.calendarElementExtra {
+	background-image: url(../img/calendarElementBgGreen.png);
+}
 .calendarElement {
 	background-image: url(../img/calendarElementBg.png);
+}
+
+.calendarElement, .calendarElementExtra {
 	background-repeat: no-repeat;
 	background-position: center bottom;
 	padding-top: 10px;
@@ -133,13 +139,13 @@ body {
 	color: #333;
 }
 
-.calendarElement p {
+.calendarElement p, .calendarElementExtra p {
 	line-height: 1;
 	margin: 0;
 	margin-bottom: 5px;
 }
 
-.calendarElement h3 {
+.calendarElement h3, .calendarElementExtra h3 {
 	margin: 0;
 	font-size: 14px;
 	font-weight: bold;
@@ -148,7 +154,7 @@ body {
 	color: #333;
 }
 
-.calendarElement strong {
+.calendarElement strong, .calendarElementExtra strong {
 	font-size: 16px;
 	margin-left: -1px;
 	color: #333;

@@ -46,6 +46,7 @@ class DishCategoryPage(BaseHandler):
 			dishCategory.basePrice = int(self.request.get('basePrice'))
 		except ValueError:
 			dishCategory.basePrice = 0
+		dishCategory.isExtra = self.request.get('isExtra', default_value="no")=='yes'
 		dishCategory.isMenu = self.request.get('isMenuCategory', default_value="no")=='yes'
 		dishCategory.canBeTopLevel = self.request.get('canBeTopLevel', default_value="no")=='yes'
 		dishCategory.put()

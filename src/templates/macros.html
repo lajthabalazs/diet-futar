@@ -67,7 +67,7 @@
 {% endmacro %}
 
 {% macro menuItemToOrderMacro(menuItem) %}
-	<div class="calendarElement {% if (not menuItem.orderable ) and menuItem.orderedQuantity == 0 %}  inactive {% endif%}"
+	<div class="{% if menuItem.dish.category.isExtra %} calendarElementExtra {% else %} calendarElement {% endif %} {% if (not menuItem.orderable ) and menuItem.orderedQuantity == 0 %}  inactive {% endif%}"
 	id="tooltip{{menuItem.key}}"
 	title=" {{ menuItemTooltip(menuItem) }} ">
 		<script type="text/javascript">
@@ -89,7 +89,7 @@
 
 {% macro compositToOrderMacro(composit) %}
 	<div
-		class="calendarElement {% if (not composit.orderable ) and composit.orderedQuantity == 0 %}  inactive {% endif%}">
+		class="{% if composit.category.isExtra %} calendarElementExtra {% else %} calendarElement {% endif %} {% if (not composit.orderable ) and composit.orderedQuantity == 0 %}  inactive {% endif%}">
 		{% for component in composit.components%}
 			<div class="componentMenuItem"
 				id="tooltip{{component.uid}}"

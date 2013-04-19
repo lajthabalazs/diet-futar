@@ -55,6 +55,7 @@ def createDishCategoryObjectDb(categoryDb):
 			'key':str(categoryDb.key()),
 			'name':categoryDb.name,
 			'abbreviation':categoryDb.abbreviation,
+			'isExtra':categoryDb.isExtra,
 			'isMenu':categoryDb.isMenu,
 			'index':categoryDb.index,
 			'dishKeys': []

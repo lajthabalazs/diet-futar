@@ -15,6 +15,7 @@ def createCategoryObject(categoryDb):
 		'name':categoryDb.name,
 		'abbreviation':categoryDb.abbreviation,
 		'basePrice':categoryDb.basePrice,
+		'isExtra':categoryDb.isExtra,
 		'isMenu':categoryDb.isMenu,
 		'canBeTopLevel':categoryDb.canBeTopLevel,
 		'index':categoryDb.index
