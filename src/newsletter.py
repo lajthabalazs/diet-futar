@@ -42,12 +42,13 @@ class NewsletterPage(BaseHandler):
 				if str(user.key()) in recipientKeys:
 					# Send mail
 					message_template = {
+						'user' : user,
 						'htmlText' : htmlMessage,
 						'textMessage' : textMessage,
 						'messageTitle': messageTitle
 					}
-					messageTxtTemplate = jinja_environment.get_template('templates/newsletter/newsletter.txt')
-					messageHtmlTemplate = jinja_environment.get_template('templates/newsletter/newsletter.html')
+					messageTxtTemplate = jinja_environment.get_template('templates/newsletter/newsletterText.txt')
+					messageHtmlTemplate = jinja_environment.get_template('templates/newsletter/newsletterText.html')
 					message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
 					message.subject=messageTitle
 					message.to = user.email
