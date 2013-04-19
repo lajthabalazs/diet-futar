@@ -43,7 +43,7 @@ class NewsletterPage(BaseHandler):
 					# Send mail
 					message_template = {
 						'user' : user,
-						'htmlText' : htmlMessage,
+						'htmlMessage' : htmlMessage,
 						'textMessage' : textMessage,
 						'messageTitle': messageTitle
 					}
@@ -52,7 +52,6 @@ class NewsletterPage(BaseHandler):
 					message = mail.EmailMessage(sender="Diet Futar <dietfutar@dietfutar.hu>")
 					message.subject=messageTitle
 					message.to = user.email
-					message.bcc = "diet-futar@diet-futar.hu"
 					message.body = messageTxtTemplate.render(message_template)
 					message.html = messageHtmlTemplate.render(message_template)
 					message.send()
