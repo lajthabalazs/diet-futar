@@ -1,0 +1,3 @@
+Kedves {{ user.familyName }} {{ user.givenName }}!
+{{textMessage}}
+Ha nem szeretne több tájékoztató levelet kapni újdonságainkról, akciós ajánlatainkról akkor látogasson el a http://www.diet-futar.hu/unsubscribe?userKey={{user.key()}} linkre!
