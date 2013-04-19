@@ -89,7 +89,7 @@
 
 {% macro compositToOrderMacro(composit) %}
 	<div
-		class="{% if composit.category.isExtra %} calendarElementExtra {% else %} calendarElement {% endif %} {% if (not composit.orderable ) and composit.orderedQuantity == 0 %}  inactive {% endif%}">
+		class="calendarElement {% if (not composit.orderable ) and composit.orderedQuantity == 0 %}  inactive {% endif%}">
 		{% for component in composit.components%}
 			<div class="componentMenuItem"
 				id="tooltip{{component.uid}}"
