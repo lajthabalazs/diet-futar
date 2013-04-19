@@ -265,6 +265,10 @@ class BaseHandler(webapp2.RequestHandler):
 			dataDownload["label"]="Adatok let&ouml;lt&eacute;se"
 			dataDownload["target"]="/dataDownloadPage"
 			topMenu.append(dataDownload)
+			newsLetter={}
+			newsLetter["label"]="H&iacute;rlev&eacute;l"
+			newsLetter["target"]="/newsletter"
+			topMenu.append(newsLetter)
 		elif isUserCook(self):
 			dailyMenu={}
 			dailyMenu["label"]="Menu osszeallitas"
