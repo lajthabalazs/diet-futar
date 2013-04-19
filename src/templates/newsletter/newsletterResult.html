@@ -1,0 +1,26 @@
+<div class="staticPage" style="margin-top: 40px;">
+	<div class="container" align="center">
+		Cím <br/>
+		{{messageTitle}}<br/>
+		HTML <br/>
+		{{ htmlMessage }} <br />
+		TEXT <br/>
+		{{ textMessage }} <br />	
+		<table>
+		<tr>
+			<th>Küldve</th>
+			<th>Regisztráció</th>
+			<th>Név</th>
+			<th>Aktivált</th>
+		</tr>
+		{% for user in userList%}
+			<tr>
+				<td>{% if not user.unsubscribedFromNewsletter %} {% if user.mailSent%} Küldve {% else %} Nem küldve {% endif %} {% else %} Leiratkozott {% endif %} </td>
+				<td>{% if user.registrationDate != None%}{{ user.registrationDate.strftime('%Y-%m-%d %H:%M') }}{%else%}-{% endif%}</td>
+				<td><a href="/userOverview?userKey={{user.key()}}" target="_blank">{{ user.familyName }} {{user.givenName}}</a></td>
+				<td>{% if user.activated%} Igen {% else %} Nem {% endif %}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>

@@ -52,6 +52,8 @@ class User(db.Model):
 	taskList = db.StringListProperty()
 	doneTasks = db.StringListProperty()
 	contactHistory = db.StringListProperty()
+	unsubscribedFromNewsletter = db.BooleanProperty(default=False)
+	inNewsLetterTargetGroup = db.BooleanProperty(default=True)
 	
 class Address (db.Model):
 	user = db.ReferenceProperty(User, collection_name='addresses')

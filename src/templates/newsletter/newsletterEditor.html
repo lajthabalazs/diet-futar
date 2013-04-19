@@ -1,0 +1,37 @@
+<div class="staticPage" style="margin-top: 40px;">
+	<div class="container" align="center">	
+		<form method="post">
+			<table>
+			<tr>
+				<th>Küldés</th>
+				<th>Regisztráció</th>
+				<th>Név</th>
+				<th>Aktivált</th>
+				<th>Címek</th>
+			</tr>
+			{% for user in userList%}
+				<tr>
+					<td>{% if not user.unsubscribedFromNewsletter %} <input type="checkbox" name="USER_{{user.key()}}" value="send" checked="checked" /> {% else %} Leiratkozott {% endif %} </td>
+					<td>{% if user.registrationDate != None%}{{ user.registrationDate.strftime('%Y-%m-%d %H:%M') }}{%else%}-{% endif%}</td>
+					<td><a href="/userOverview?userKey={{user.key()}}" target="_blank">{{ user.familyName }} {{user.givenName}}</a></td>
+					<td>{% if user.activated%} Igen {% else %} Nem {% endif %}</td>
+					<td>
+						{% for address in user.addresses%}
+							{% if address.active %}
+								{{address.zipNumCode}} {{address.street}} {{address.streetNum}}<br/>
+							{% endif %}
+						{% endfor %}
+					</td>
+				</tr>
+			{% endfor %}
+			</table>
+			Cím
+			<input type="text" name="messageTitle" /><br/>
+			TEXT / HTML <br/>
+			<textarea name="textMessage">Üdvözlettel: Diet-futár</textarea>
+			<textarea name="htmlMessage"><p>Üdvözlettel: Diet-futár</p></textarea><br/>
+			<input type="submit" value="Küldés" />
+		</form>
+	</div>
+</div>
+

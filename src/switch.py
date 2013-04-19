@@ -43,6 +43,7 @@ from crm import CRMUsersWithTasks, CRMMainPage, CRMUserDetails,\
 from books import weeklyFacebookVisits, weeklyFacebookVisitsOverview
 from downloadData import DishListCsv, MenuItemListCsv, CompositListCsv,\
 	UserListCsv, WeeksCsv, DataDownloadMainPage
+from newsletter import UnsubscribePage, NewsletterPage
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -76,6 +77,7 @@ app = webapp2.WSGIApplication([
 										(AddHistoryEntry.URL, AddHistoryEntry),
 										(AddTaskToUser.URL, AddTaskToUser),
 										(TaskAccomplished.URL, TaskAccomplished),
+										(NewsletterPage.URL, NewsletterPage),
 										#Data download
 										(DataDownloadMainPage.URL, DataDownloadMainPage),
 										(DishListCsv.URL, DishListCsv),
@@ -109,6 +111,8 @@ app = webapp2.WSGIApplication([
 										(UserWebshopOrderDetailsPage.URL, UserWebshopOrderDetailsPage),
 										(UsersOrdersPage.URL, UsersOrdersPage),
 										(UserWebshopPostMessagePage.URL, UserWebshopPostMessagePage),
+
+										(UnsubscribePage.URL, UnsubscribePage),
 
 										(ServicesPage.URL, ServicesPage),
 										(FAQPage.URL, FAQPage),
